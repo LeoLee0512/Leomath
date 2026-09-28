@@ -35,8 +35,8 @@ export interface Software {
   latest?: SoftwareRelease;
 }
 
-// Ordered as shown on the site. Leo Tree and MathForge run on the same Aliyun host
-// as LeoMath (see deploy/DEPLOYMENT.md for the port layout).
+// Ordered as shown on the site. Leo Tree is deployed with Docker on the same Aliyun host
+// as LeoMath, behind tree.leomath.cn (see deploy/DEPLOYMENT.md and the leotree repo).
 export const software: Software[] = [
   {
     slug: "leo-tree",
@@ -53,7 +53,7 @@ export const software: Software[] = [
       en: "Leo Tree is a local-first personal knowledge-structure system: a garden holds knowledge trees, trees have sections, sections grow nodes; each node records understanding, a learning state (not started / learning / mastered), practice and review. Knowledge stays in your browser and can be exported as JSON or a full backup with attachments. 1.0.0-beta.3 renders LaTeX in node notes. The web version is moving to a new address and is not open yet; a Windows build is coming.",
     },
     // No public URL yet: the bare-IP deployment was retired when the server was rebuilt (2026-09-28).
-    // When Leo Tree is redeployed, point useUrl at a hostname such as https://tree.leomath.cn/, never an IP.
+    // Once the Docker deployment at https://tree.leomath.cn/ is live, set useUrl to it (never an IP).
     repoUrl: "https://github.com/LeoLee0512/leotree",
   },
   {
