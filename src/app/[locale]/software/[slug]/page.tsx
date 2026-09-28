@@ -31,18 +31,29 @@ export default async function SoftwareDetail({ params }: { params: Promise<{ loc
         // eslint-disable-next-line @next/next/no-img-element
         <img src={s.screenshot} alt={`${s.name} screenshot`} className="mt-8 w-full border border-rule rounded" />
       )}
-      <dl className="mt-10 grid grid-cols-[auto_1fr] gap-x-8 gap-y-2 text-sm border-t border-rule pt-6">
-        <dt className="text-muted">{t.software.version}</dt><dd className="mono">v{s.latest.version}</dd>
-        <dt className="text-muted">{t.software.released}</dt><dd className="mono">{s.latest.date}</dd>
-        <dt className="text-muted">{t.software.platform}</dt><dd>{s.latest.platforms.join(", ")}</dd>
-        <dt className="text-muted">{t.software.status}</dt><dd>{s.status === "preview" ? t.software.statusPreview : t.software.statusStable}{!s.repoUrl && ` · ${t.software.closedSource}`}</dd>
-        {s.latest.sha256 && (<><dt className="text-muted">{t.software.checksum}</dt><dd className="mono break-all text-xs">{s.latest.sha256}</dd></>)}
-      </dl>
-      <div className="mt-8 flex flex-wrap gap-3">
-        <a href={s.latest.downloadUrl} className="btn btn-primary" rel="noopener">{t.software.download} ↓</a>
-        <a href={s.releasesUrl} className="btn btn-ghost" rel="noopener">{t.software.releases}</a>
-        {s.repoUrl && <a href={s.repoUrl} className="btn btn-ghost" rel="noopener">GitHub</a>}
-      </div>
+      {s.status === "coming-soon" ? (
+        <div className="mt-10 border-t border-rule pt-6">
+          <p className="inline-block text-sm text-accent-2 border border-accent-2/40 rounded-[3px] px-2 py-1">
+            {t.software.statusComing}{s.upcomingVersion ? ` · v${s.upcomingVersion}` : ""}{!s.repoUrl && ` · ${t.software.closedSource}`}
+          </p>
+          <p className="mt-3 text-sm text-ink-2">{t.software.comingDesc}</p>
+        </div>
+      ) : s.latest ? (
+        <>
+          <dl className="mt-10 grid grid-cols-[auto_1fr] gap-x-8 gap-y-2 text-sm border-t border-rule pt-6">
+            <dt className="text-muted">{t.software.version}</dt><dd className="mono">v{s.latest.version}</dd>
+            <dt className="text-muted">{t.software.released}</dt><dd className="mono">{s.latest.date}</dd>
+            <dt className="text-muted">{t.software.platform}</dt><dd>{s.latest.platforms.join(", ")}</dd>
+            <dt className="text-muted">{t.software.status}</dt><dd>{s.status === "preview" ? t.software.statusPreview : t.software.statusStable}{!s.repoUrl && ` · ${t.software.closedSource}`}</dd>
+            {s.latest.sha256 && (<><dt className="text-muted">{t.software.checksum}</dt><dd className="mono break-all text-xs">{s.latest.sha256}</dd></>)}
+          </dl>
+          <div className="mt-8 flex flex-wrap gap-3">
+            <a href={s.latest.downloadUrl} className="btn btn-primary" rel="noopener">{t.software.download} ↓</a>
+            {s.releasesUrl && <a href={s.releasesUrl} className="btn btn-ghost" rel="noopener">{t.software.releases}</a>}
+            {s.repoUrl && <a href={s.repoUrl} className="btn btn-ghost" rel="noopener">GitHub</a>}
+          </div>
+        </>
+      ) : null}
     </div>
   );
 }

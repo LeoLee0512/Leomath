@@ -16,17 +16,22 @@ export interface Software {
   name: string;
   tagline: Bilingual;
   description: Bilingual;
-  status: "preview" | "stable";
+  /** coming-soon: shown, but not yet downloadable. */
+  status: "coming-soon" | "preview" | "stable";
   /** Closed-source products have no public repository. */
   repoUrl?: string;
-  releasesUrl: string;
+  /** Public releases page; absent while the product is coming soon. */
+  releasesUrl?: string;
   /** Optional screenshot under /public. */
   screenshot?: string;
-  latest: SoftwareRelease;
+  /** Latest release; absent while the product is coming soon. */
+  latest?: SoftwareRelease;
+  /** Version to announce while coming soon. */
+  upcomingVersion?: string;
 }
 
-// Leo AI is closed source. Its source repository is private; only binaries and
-// release notes are published, through a public releases repository.
+// Leo AI is closed source. Its source repository is private. Public download
+// (a releases page with binaries and notes) is not open yet: status "coming-soon".
 export const software: Software[] = [
   {
     slug: "leo-ai",
@@ -39,14 +44,8 @@ export const software: Software[] = [
       zh: "把文献整理、公式推导、数值计算和记录放进同一个工作流。闭源软件，二进制与更新说明通过 GitHub Releases 发布。",
       en: "Bring literature notes, symbolic derivation, numerical computation and record-keeping into one workflow. Closed source; binaries and release notes are published through GitHub Releases.",
     },
-    status: "stable",
-    releasesUrl: "https://github.com/LeoLee0512/leo-ai-releases/releases",
-    latest: {
-      version: "2.1.2",
-      date: "2026-09",
-      platforms: ["Windows x64"],
-      downloadUrl: "https://github.com/LeoLee0512/leo-ai-releases/releases/latest",
-    },
+    status: "coming-soon",
+    upcomingVersion: "2.1.2",
   },
 ];
 
