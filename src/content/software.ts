@@ -68,6 +68,8 @@ export const software: Software[] = [
       zh: "静力学：二维梁柱、桁架与刚性单元，节点与分布荷载，铰接释放，位移、反力、内力图、体系判断与 PDF 计算书。动力学：质点与刚体、碰撞与摩擦、约束轨道、随时间与空间变化的力场，数值核心在浏览器中运行。Python 服务端负责账户、静力学求解与报告；代码 MIT。v1.5.1 起所有账户拥有相同能力，没有套餐或会员。",
       en: "Statics: 2D beams, trusses and rigid elements, nodal and distributed loads, hinge releases, displacements, reactions, internal-force diagrams, system classification and PDF reports. Dynamics: particles and rigid bodies, collisions and friction, constraint tracks, force fields varying in time and space, with the numerical core running in the browser. A Python server handles accounts, static solving and reports; MIT licensed. Since v1.5.1 every account has the same capabilities; there are no plans or memberships.",
     },
+    // Docker deployment on the same host as LeoMath (see the first-app repo, docs/DOCKER_DEPLOYMENT.md).
+    useUrl: "https://cms.leomath.cn/",
     openSource: true,
   },
   {
