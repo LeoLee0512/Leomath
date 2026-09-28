@@ -5,6 +5,7 @@ import { isLocale } from "@/i18n/config";
 import { getDictionary } from "@/i18n/dictionaries";
 import { experiments, getExperiment, getConcept, concepts } from "@/content/graph";
 import { ExperimentEmbed } from "@/components/experiments/ExperimentEmbed";
+import { Comments } from "@/components/Comments";
 
 export function generateStaticParams() {
   return experiments.map((e) => ({ slug: e.slug }));
@@ -40,6 +41,9 @@ export default async function ExperimentPage({ params }: { params: Promise<{ loc
             <Link href={`/${locale}/concepts/${c.slug}`} className="text-leo hover:underline">{c.title[locale]}</Link>
           </span>
         ))}
+      </div>
+      <div className="max-w-3xl">
+        <Comments type="experiment" slug={slug} path={`/${locale}/explore/${slug}`} locale={locale} t={t} />
       </div>
     </div>
   );

@@ -5,6 +5,7 @@ import { isLocale } from "@/i18n/config";
 import { getDictionary } from "@/i18n/dictionaries";
 import { software, getSoftware } from "@/content/software";
 import { statusLabel } from "@/components/SoftwareCard";
+import { Comments } from "@/components/Comments";
 
 export function generateStaticParams() {
   return software.map((s) => ({ slug: s.slug }));
@@ -44,6 +45,7 @@ export default async function SoftwareDetail({ params }: { params: Promise<{ loc
         {s.kind === "web" && s.useUrl && <a href={s.useUrl} className="btn btn-primary" rel="noopener">{t.software.open}</a>}
         {s.latest && <a href={s.latest.downloadUrl} className="btn btn-primary" rel="noopener">{t.software.download} ↓</a>}
       </div>
+      <Comments type="software" slug={s.slug} path={`/${locale}/software/${s.slug}`} locale={locale} t={t} />
     </div>
   );
 }

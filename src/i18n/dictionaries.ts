@@ -173,6 +173,25 @@ const zh = {
   footer: {
     license: "正文内容采用 CC BY-SA 4.0，代码采用 MIT。",
     built: "LeoMath v0.1.3 · 从定义出发理解数学",
+    feedback: "反馈",
+  },
+  comments: {
+    title: "讨论",
+    feedback: "发现错误、有疑问或建议，也可以直接写信到",
+    empty: "还没有评论。写下你的理解、疑问，或者指出这一页的错误。",
+    placeholder: "写下你的理解、疑问，或指出错误。行内公式用 $…$ 包起来。",
+    hint: "最多 2000 字，支持 $…$ 公式。",
+    submit: "发表",
+    posting: "发表中…",
+    delete: "删除",
+    loginToComment: "登录后参与讨论",
+    errors: {
+      loginRequired: "请先登录。",
+      empty: "评论不能为空。",
+      tooLong: "评论太长了，最多 2000 字。",
+      tooFast: "发得太快了，请稍等几秒再试。",
+      generic: "出错了，请稍后再试。",
+    },
   },
   common: {
     backHome: "返回首页",
@@ -358,6 +377,25 @@ const en: Dictionary = {
   footer: {
     license: "Content is CC BY-SA 4.0; code is MIT.",
     built: "LeoMath v0.1.3 · understanding mathematics from definitions",
+    feedback: "Feedback",
+  },
+  comments: {
+    title: "Discussion",
+    feedback: "Found a mistake, have a question or a suggestion? You can also write to",
+    empty: "No comments yet. Share your understanding, ask a question, or point out an error on this page.",
+    placeholder: "Your understanding, a question, or a correction. Wrap inline maths in $…$.",
+    hint: "Up to 2000 characters; $…$ renders maths.",
+    submit: "Post",
+    posting: "Posting…",
+    delete: "Delete",
+    loginToComment: "log in to join the discussion",
+    errors: {
+      loginRequired: "Please log in first.",
+      empty: "A comment cannot be empty.",
+      tooLong: "That comment is too long; the limit is 2000 characters.",
+      tooFast: "You are posting too quickly. Wait a few seconds and try again.",
+      generic: "Something went wrong. Please try again later.",
+    },
   },
   common: {
     backHome: "Back to home",

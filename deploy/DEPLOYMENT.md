@@ -50,6 +50,7 @@ cp .env.example .env
 #   POSTGRES_PASSWORD=<随机强密码>
 #   SITE_URL=https://leomath.cn
 #   WEB_PORT=3000   （只在本机监听时，把 docker-compose.yml 的 ports 改成 "127.0.0.1:3000:3000"）
+#   ADMIN_EMAILS=<你的登录邮箱>   （可删除任何评论；多个用逗号分隔）
 
 # 4. 启动（自动执行数据库迁移）
 docker compose up -d --build

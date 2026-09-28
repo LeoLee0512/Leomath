@@ -4,6 +4,7 @@ import { isLocale } from "@/i18n/config";
 import { getDictionary } from "@/i18n/dictionaries";
 import { MB } from "@/components/Math";
 import pkg from "../../../../package.json";
+import { FEEDBACK_EMAIL } from "@/content/site";
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
   const { locale } = await params;
@@ -35,6 +36,8 @@ export default async function AboutPage({ params }: { params: Promise<{ locale: 
             <p>第一版刻意很小：三条完整路线（微积分基础、线性代数基础、微分方程入门）、三个交互实验（线性变换、ODE 数值解、指数函数的导数）、一个软件页。功能很少，但产品人格已经完整。</p>
             <h2>关于作者</h2>
             <p>Leo 在学习数学、做数值计算和开发工具。这个站点是一个长期项目：学到的数学、写的计算程序和做的软件，会逐渐沉淀进来。</p>
+            <h2>反馈</h2>
+            <p>每个知识点、实验和软件页面底部都有讨论区，登录后可以留言。发现数学错误、表述不清或有建议，也可以直接写信到 <a href={`mailto:${FEEDBACK_EMAIL}`}>{FEEDBACK_EMAIL}</a>。</p>
             <h2>许可</h2>
             <p>数学正文内容采用 CC BY-SA 4.0，代码采用 MIT。</p>
           </>
@@ -48,6 +51,8 @@ export default async function AboutPage({ params }: { params: Promise<{ locale: 
             <p>The first release is deliberately small: three complete paths (calculus, linear algebra, differential equations), three interactive experiments (linear transformation, numerical ODE, the derivative of the exponential), one software page. Few features, but a complete character.</p>
             <h2>About the author</h2>
             <p>Leo studies mathematics, does numerical computation and builds tools. This site is a long-term project: the mathematics learned, the programs written and the software built will accumulate here.</p>
+            <h2>Feedback</h2>
+            <p>Every concept, experiment and software page ends with a discussion section; log in to leave a comment. For mathematical errors, unclear exposition or suggestions you can also write to <a href={`mailto:${FEEDBACK_EMAIL}`}>{FEEDBACK_EMAIL}</a>.</p>
             <h2>Licence</h2>
             <p>Mathematical content is CC BY-SA 4.0; code is MIT.</p>
           </>

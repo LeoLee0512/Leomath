@@ -1,5 +1,6 @@
 "use server";
 
+import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { z } from "zod";
 import { isLocale, type Locale } from "@/i18n/config";
@@ -7,8 +8,11 @@ import { getDictionary } from "@/i18n/dictionaries";
 import { createUser, currentUser, endSession, startSession, verifyUser } from "@/lib/auth";
 import { hasDatabase } from "@/lib/db";
 import { recordAttempt, setProgress, type ProgressStatus } from "@/lib/progress";
+import { addComment, deleteComment, isAdmin, postedRecently, COMMENT_MAX_LENGTH, type CommentTarget } from "@/lib/comments";
+import { normaliseBody } from "@/lib/comments-format";
 import { checkAnswer, getExercise } from "@/content/exercises";
-import { getConcept } from "@/content/graph";
+import { getConcept, getExperiment } from "@/content/graph";
+import { getSoftware } from "@/content/software";
 
 export interface FormState {
   error?: string;
@@ -107,4 +111,64 @@ export async function checkAnswerAction(_prev: AnswerState, form: FormData): Pro
     await recordAttempt(user.id, id, answer, correct).catch(() => undefined);
   }
   return { checked: true, correct, answer };
+}
+
+// ---- Comments -------------------------------------------------------------
+
+export interface CommentState {
+  error?: string;
+  /** Incremented after each successful post so the form can reset its textarea. */
+  posted: number;
+}
+
+const commentInput = z.object({
+  type: z.enum(["concept", "experiment", "software"]),
+  slug: z.string().regex(/^[a-z0-9-]{1,80}$/),
+  body: z.string().transform(normaliseBody).pipe(z.string().min(1).max(COMMENT_MAX_LENGTH)),
+});
+
+function targetExists(type: CommentTarget["type"], slug: string): boolean {
+  if (type === "concept") return getConcept(slug)?.status === "published";
+  if (type === "experiment") return Boolean(getExperiment(slug));
+  return Boolean(getSoftware(slug));
+}
+
+function pagePath(form: FormData, locale: Locale): string | null {
+  const p = form.get("path");
+  return typeof p === "string" && p.startsWith(`/${locale}/`) && !p.startsWith("//") ? p : null;
+}
+
+export async function addCommentAction(prev: CommentState, form: FormData): Promise<CommentState> {
+  const locale = localeFrom(form);
+  const t = getDictionary(locale).comments.errors;
+  const user = await currentUser();
+  if (!user) return { ...prev, error: t.loginRequired };
+  if (!hasDatabase()) return { ...prev, error: t.generic };
+  const parsed = commentInput.safeParse({ type: form.get("type"), slug: form.get("slug"), body: form.get("body") ?? "" });
+  if (!parsed.success) {
+    const issue = parsed.error.issues[0];
+    if (issue.path[0] === "body") return { ...prev, error: issue.code === "too_big" ? t.tooLong : t.empty };
+    return { ...prev, error: t.generic };
+  }
+  const { type, slug, body } = parsed.data;
+  if (!targetExists(type, slug)) return { ...prev, error: t.generic };
+  try {
+    if (await postedRecently(user.id)) return { ...prev, error: t.tooFast };
+    await addComment(user.id, { type, slug }, body);
+  } catch {
+    return { ...prev, error: t.generic };
+  }
+  const path = pagePath(form, locale);
+  if (path) revalidatePath(path);
+  return { posted: prev.posted + 1 };
+}
+
+export async function deleteCommentAction(form: FormData): Promise<void> {
+  const locale = localeFrom(form);
+  const user = await currentUser();
+  const id = String(form.get("id") ?? "");
+  if (!user || !/^\d{1,18}$/.test(id) || !hasDatabase()) return;
+  await deleteComment(id, user.id, isAdmin(user.email)).catch(() => undefined);
+  const path = pagePath(form, locale);
+  if (path) revalidatePath(path);
 }

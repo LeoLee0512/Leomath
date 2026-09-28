@@ -8,6 +8,8 @@ Depth over breadth.
 - Every experiment ends with "What did you observe?": three questions and an explanation revealed on demand, so a visualisation becomes experiment → observation → conjecture → theory.
 - `scripts/audit-chain.mjs` lists, for each published concept, which links of problem → observe → definition → proof → experiment → exercises → tool are missing.
 - Software catalogue: Computational Mechanics Solver added; Leo Tree no longer links to the retired bare-IP deployment (it moves to tree.leomath.cn with Docker).
+- Comments: every concept, experiment and software page ends with a discussion section. Signed-in users post plain text with `$…$` maths (2000 characters, 20 s cooldown) and delete their own comments; accounts listed in `ADMIN_EMAILS` can delete any. Migration `002_comments.sql`.
+- Feedback address in the footer, on the About page and under every discussion.
 - The site publishes no links to source repositories: footer, About page and software pages drop their GitHub links; `repoUrl`/`releasesUrl` are replaced by an `openSource` flag.
 
 ## 0.1.2 — 2026-09-29

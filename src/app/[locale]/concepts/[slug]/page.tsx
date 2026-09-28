@@ -13,6 +13,7 @@ import { setProgressAction } from "@/app/actions";
 import { ExerciseCard } from "@/components/ExerciseCard";
 import { ArticleNav } from "@/components/ArticleNav";
 import { readingMinutes } from "@/lib/reading";
+import { Comments } from "@/components/Comments";
 
 export function generateStaticParams() {
   return publishedConcepts().map((c) => ({ slug: c.slug }));
@@ -93,6 +94,8 @@ export default async function ConceptPage({ params }: { params: Promise<{ locale
             )}
           </div>
         </nav>
+
+        <Comments type="concept" slug={slug} path={`/${locale}/concepts/${slug}`} locale={locale} t={t} />
       </article>
 
       <aside className="min-w-0 lg:sticky lg:top-20 self-start space-y-8 text-sm">

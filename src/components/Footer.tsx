@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { Locale } from "@/i18n/config";
 import type { Dictionary } from "@/i18n/dictionaries";
+import { FEEDBACK_EMAIL } from "@/content/site";
 
 export function Footer({ locale, t }: { locale: Locale; t: Dictionary }) {
   return (
@@ -13,6 +14,9 @@ export function Footer({ locale, t }: { locale: Locale; t: Dictionary }) {
         </div>
         <div className="flex gap-5">
           <span>{t.footer.license}</span>
+          <a href={`mailto:${FEEDBACK_EMAIL}`} className="hover:text-ink">
+            {t.footer.feedback} · <span className="mono">{FEEDBACK_EMAIL}</span>
+          </a>
           <Link href={`/${locale}/about`} className="hover:text-ink">
             {t.nav.about}
           </Link>
