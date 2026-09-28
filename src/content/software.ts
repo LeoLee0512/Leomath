@@ -5,7 +5,7 @@ export interface SoftwareRelease {
   /** ISO date of the release. */
   date: string;
   platforms: string[];
-  /** Direct download page. Binaries live on a public GitHub Releases repository. */
+  /** Direct download URL of the installer. */
   downloadUrl: string;
   /** SHA-256 of the installer, shown on the detail page only. */
   sha256?: string;
@@ -23,10 +23,8 @@ export interface Software {
   status: SoftwareStatus;
   /** Current version, shown even when nothing is downloadable. */
   version?: string;
-  /** Public source repository; absent for closed-source products. */
-  repoUrl?: string;
-  /** Public releases page. */
-  releasesUrl?: string;
+  /** Shown as “open source” on the card and detail page. No repository links are published on the site. */
+  openSource?: boolean;
   /** Where a web product runs. */
   useUrl?: string;
   /** Optional screenshot under /public. */
@@ -54,7 +52,7 @@ export const software: Software[] = [
     },
     // No public URL yet: the bare-IP deployment was retired when the server was rebuilt (2026-09-28).
     // Once the Docker deployment at https://tree.leomath.cn/ is live, set useUrl to it (never an IP).
-    repoUrl: "https://github.com/LeoLee0512/leotree",
+    openSource: true,
   },
   {
     slug: "computational-mechanics-solver",
@@ -70,7 +68,7 @@ export const software: Software[] = [
       zh: "静力学：二维梁柱、桁架与刚性单元，节点与分布荷载，铰接释放，位移、反力、内力图、体系判断与 PDF 计算书。动力学：质点与刚体、碰撞与摩擦、约束轨道、随时间与空间变化的力场，数值核心在浏览器中运行。Python 服务端负责账户、静力学求解与报告；代码 MIT。v1.5.1 起所有账户拥有相同能力，没有套餐或会员。",
       en: "Statics: 2D beams, trusses and rigid elements, nodal and distributed loads, hinge releases, displacements, reactions, internal-force diagrams, system classification and PDF reports. Dynamics: particles and rigid bodies, collisions and friction, constraint tracks, force fields varying in time and space, with the numerical core running in the browser. A Python server handles accounts, static solving and reports; MIT licensed. Since v1.5.1 every account has the same capabilities; there are no plans or memberships.",
     },
-    repoUrl: "https://github.com/LeoLee0512/first-app",
+    openSource: true,
   },
   {
     slug: "mathforge",
@@ -83,10 +81,10 @@ export const software: Software[] = [
       en: "LeoMath's predecessor: an open-source mathematics learning platform centred on understanding. Archived.",
     },
     description: {
-      zh: "MathForge 0.3「Open Learning Core」围绕 理解 → 可视化 → 练习 → 贡献 一条闭环。它的教学方法、交互实验（割线与切线、Riemann 和、Taylor 逼近、线性变换、方向场）和工具（公式编辑器、函数绘图、计算器）已经在 LeoMath 中重写；其余内容（概率、数论、解析几何的学习单元，《几何原本》语料）保留在归档仓库中，代码 MIT、内容 CC BY-SA。",
-      en: "MathForge 0.3 “Open Learning Core” was built around Understand → Visualize → Practice → Contribute. Its teaching method, experiments (secant and tangent, Riemann sums, Taylor approximation, linear transformation, direction fields) and tools (formula editor, plotter, calculator) have been rewritten inside LeoMath; the rest (probability, number theory and analytic geometry units, the Euclid corpus) stays in the archived repository, MIT code and CC BY-SA content.",
+      zh: "MathForge 0.3「Open Learning Core」围绕 理解 → 可视化 → 练习 → 贡献 一条闭环。它的教学方法、交互实验（割线与切线、Riemann 和、Taylor 逼近、线性变换、方向场）和工具（公式编辑器、函数绘图、计算器）已经在 LeoMath 中重写；其余内容（概率、数论、解析几何的学习单元，《几何原本》语料）随项目一起归档，代码 MIT、内容 CC BY-SA。",
+      en: "MathForge 0.3 “Open Learning Core” was built around Understand → Visualize → Practice → Contribute. Its teaching method, experiments (secant and tangent, Riemann sums, Taylor approximation, linear transformation, direction fields) and tools (formula editor, plotter, calculator) have been rewritten inside LeoMath; the rest (probability, number theory and analytic geometry units, the Euclid corpus) is archived with the project, MIT code and CC BY-SA content.",
     },
-    repoUrl: "https://github.com/LeoLee0512/MathLearn",
+    openSource: true,
   },
   {
     slug: "leo-ai",

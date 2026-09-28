@@ -56,7 +56,7 @@ const zh = {
     labDevlogDesc: "LeoMath 本身以及其他公开项目的开发记录。",
     labComing: "即将开放",
     softwareTitle: "把数学变成工具。",
-    softwareSubtitle: "Leo 开发的知识结构、数学学习与科学计算软件。网页版直接使用，桌面版通过 GitHub Releases 发布。",
+    softwareSubtitle: "Leo 开发的知识结构、数学学习与科学计算软件。网页版直接使用，桌面版提供安装包下载。",
     softwareLearn: "了解 →",
     softwareDownload: "下载 ↓",
   },
@@ -112,7 +112,6 @@ const zh = {
     subtitle: "Leo 开发的数学与科学计算软件，在这里介绍、更新和提供下载。",
     platform: "平台",
     version: "版本",
-    releases: "所有版本（GitHub Releases）",
     learn: "了解",
     download: "下载",
     status: "状态",
@@ -143,10 +142,8 @@ const zh = {
   about: {
     title: "关于 LeoMath",
     builtInPublic: "LeoMath 是公开建设的。",
-    builtInPublicDesc: "它不是一家教育公司的成品，而是一个人长期建设自己的数学世界。版本、变更记录和路线图都是公开的。",
+    builtInPublicDesc: "它不是一家教育公司的成品，而是一个人长期建设自己的数学世界。每一次更新都有版本号和变更记录。",
     version: "当前版本",
-    changelog: "变更记录",
-    roadmap: "路线图",
   },
   auth: {
     loginTitle: "登录",
@@ -176,7 +173,6 @@ const zh = {
   footer: {
     license: "正文内容采用 CC BY-SA 4.0，代码采用 MIT。",
     built: "LeoMath v0.1.3 · 从定义出发理解数学",
-    source: "源代码",
   },
   common: {
     backHome: "返回首页",
@@ -245,7 +241,7 @@ const en: Dictionary = {
     labDevlogDesc: "Development notes for LeoMath itself and other public projects.",
     labComing: "Coming soon",
     softwareTitle: "Turn mathematics into tools.",
-    softwareSubtitle: "Knowledge-structure, mathematics-learning and scientific-computing software by Leo. Web apps run directly; desktop builds ship through GitHub Releases.",
+    softwareSubtitle: "Knowledge-structure, mathematics-learning and scientific-computing software by Leo. Web apps run directly; desktop builds are offered as installers.",
     softwareLearn: "Learn more →",
     softwareDownload: "Download ↓",
   },
@@ -301,7 +297,6 @@ const en: Dictionary = {
     subtitle: "Mathematical and scientific-computing software by Leo, introduced, updated and distributed here.",
     platform: "Platform",
     version: "Version",
-    releases: "All releases (GitHub Releases)",
     learn: "Learn more",
     download: "Download",
     status: "Status",
@@ -332,10 +327,8 @@ const en: Dictionary = {
   about: {
     title: "About LeoMath",
     builtInPublic: "LeoMath is built in public.",
-    builtInPublicDesc: "It is not the finished product of an education company; it is one person building their own mathematical world over time. Version, changelog and roadmap are all public.",
+    builtInPublicDesc: "It is not the finished product of an education company; it is one person building their own mathematical world over time. Every update carries a version number and a changelog entry.",
     version: "Current version",
-    changelog: "Changelog",
-    roadmap: "Roadmap",
   },
   auth: {
     loginTitle: "Log in",
@@ -365,7 +358,6 @@ const en: Dictionary = {
   footer: {
     license: "Content is CC BY-SA 4.0; code is MIT.",
     built: "LeoMath v0.1.3 · understanding mathematics from definitions",
-    source: "Source code",
   },
   common: {
     backHome: "Back to home",

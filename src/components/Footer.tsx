@@ -13,9 +13,6 @@ export function Footer({ locale, t }: { locale: Locale; t: Dictionary }) {
         </div>
         <div className="flex gap-5">
           <span>{t.footer.license}</span>
-          <a href="https://github.com/LeoLee0512/Leomath" className="hover:text-ink" rel="noopener">
-            {t.footer.source}
-          </a>
           <Link href={`/${locale}/about`} className="hover:text-ink">
             {t.nav.about}
           </Link>

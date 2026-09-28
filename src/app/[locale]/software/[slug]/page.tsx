@@ -36,15 +36,13 @@ export default async function SoftwareDetail({ params }: { params: Promise<{ loc
         {(s.latest?.version ?? s.version) && (<><dt className="text-muted">{t.software.version}</dt><dd className="mono">v{s.latest?.version ?? s.version}</dd></>)}
         {s.latest && (<><dt className="text-muted">{t.software.released}</dt><dd className="mono">{s.latest.date}</dd></>)}
         <dt className="text-muted">{t.software.platform}</dt><dd>{s.latest ? s.latest.platforms.join(", ") : s.kind === "web" ? t.software.web : t.software.desktop}</dd>
-        <dt className="text-muted">{t.software.status}</dt><dd>{statusLabel(s, t.software)}{s.repoUrl ? ` · ${t.software.openSource}` : ` · ${t.software.closedSource}`}</dd>
+        <dt className="text-muted">{t.software.status}</dt><dd>{statusLabel(s, t.software)}{s.openSource ? ` · ${t.software.openSource}` : ` · ${t.software.closedSource}`}</dd>
         {s.latest?.sha256 && (<><dt className="text-muted">{t.software.checksum}</dt><dd className="mono break-all text-xs">{s.latest.sha256}</dd></>)}
       </dl>
       {s.status === "coming-soon" && <p className="mt-4 text-sm text-ink-2">{t.software.comingDesc}</p>}
       <div className="mt-8 flex flex-wrap gap-3">
         {s.kind === "web" && s.useUrl && <a href={s.useUrl} className="btn btn-primary" rel="noopener">{t.software.open}</a>}
         {s.latest && <a href={s.latest.downloadUrl} className="btn btn-primary" rel="noopener">{t.software.download} ↓</a>}
-        {s.releasesUrl && <a href={s.releasesUrl} className="btn btn-ghost" rel="noopener">{t.software.releases}</a>}
-        {s.repoUrl && <a href={s.repoUrl} className="btn btn-ghost" rel="noopener">GitHub</a>}
       </div>
     </div>
   );

@@ -22,9 +22,6 @@ export default async function AboutPage({ params }: { params: Promise<{ locale: 
         <p className="mt-2 text-sm text-ink-2 leading-relaxed">{t.about.builtInPublicDesc}</p>
         <dl className="mt-5 grid grid-cols-[auto_1fr] gap-x-6 gap-y-1.5 text-sm">
           <dt className="text-muted">{t.about.version}</dt><dd className="mono">v{pkg.version}</dd>
-          <dt className="text-muted">{t.about.changelog}</dt><dd><a className="text-leo hover:underline" href="https://github.com/LeoLee0512/Leomath/blob/HEAD/CHANGELOG.md">CHANGELOG.md</a></dd>
-          <dt className="text-muted">{t.about.roadmap}</dt><dd><a className="text-leo hover:underline" href="https://github.com/LeoLee0512/Leomath/blob/HEAD/ROADMAP.md">ROADMAP.md</a></dd>
-          <dt className="text-muted">GitHub</dt><dd><a className="text-leo hover:underline" href="https://github.com/LeoLee0512/Leomath">LeoLee0512/Leomath</a></dd>
         </dl>
       </section>
       <div className="prose-math mt-10">
@@ -38,8 +35,8 @@ export default async function AboutPage({ params }: { params: Promise<{ locale: 
             <p>第一版刻意很小：三条完整路线（微积分基础、线性代数基础、微分方程入门）、三个交互实验（线性变换、ODE 数值解、指数函数的导数）、一个软件页。功能很少，但产品人格已经完整。</p>
             <h2>关于作者</h2>
             <p>Leo 在学习数学、做数值计算和开发工具。这个站点是一个长期项目：学到的数学、写的计算程序和做的软件，会逐渐沉淀进来。</p>
-            <h2>许可与源码</h2>
-            <p>数学正文内容采用 CC BY-SA 4.0，代码采用 MIT。源代码托管在 <a href="https://github.com/LeoLee0512/Leomath">GitHub</a>。发现数学错误或表述问题，欢迎提 Issue。</p>
+            <h2>许可</h2>
+            <p>数学正文内容采用 CC BY-SA 4.0，代码采用 MIT。</p>
           </>
         ) : (
           <>
@@ -51,8 +48,8 @@ export default async function AboutPage({ params }: { params: Promise<{ locale: 
             <p>The first release is deliberately small: three complete paths (calculus, linear algebra, differential equations), three interactive experiments (linear transformation, numerical ODE, the derivative of the exponential), one software page. Few features, but a complete character.</p>
             <h2>About the author</h2>
             <p>Leo studies mathematics, does numerical computation and builds tools. This site is a long-term project: the mathematics learned, the programs written and the software built will accumulate here.</p>
-            <h2>Licence and source</h2>
-            <p>Mathematical content is CC BY-SA 4.0; code is MIT. Source is on <a href="https://github.com/LeoLee0512/Leomath">GitHub</a>. Issues for mathematical errors or unclear exposition are welcome.</p>
+            <h2>Licence</h2>
+            <p>Mathematical content is CC BY-SA 4.0; code is MIT.</p>
           </>
         )}
       </div>

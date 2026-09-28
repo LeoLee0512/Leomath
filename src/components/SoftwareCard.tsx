@@ -24,7 +24,7 @@ export function SoftwareCard({ s, locale, t, learnLabel }: { s: Software; locale
         <span className={`text-xs rounded-[3px] px-1.5 py-0.5 border ${s.status === "coming-soon" || s.status === "beta" ? "text-accent-2 border-accent-2/40" : "text-muted border-rule-2"}`}>
           {statusLabel(s, t)}
         </span>
-        <span className="text-xs text-muted">{s.kind === "web" ? t.web : t.desktop}{s.repoUrl ? ` · ${t.openSource}` : ""}</span>
+        <span className="text-xs text-muted">{s.kind === "web" ? t.web : t.desktop}{s.openSource ? ` · ${t.openSource}` : ""}</span>
       </div>
       <p className="mt-2 text-ink-2 flex-1">{s.tagline[locale]}</p>
       <div className="mt-6 flex flex-wrap gap-3">
