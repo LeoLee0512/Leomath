@@ -1,3 +1,11 @@
+## Start from a problem
+
+<Problem>
+What is the area of the region under $y=x^2$ for $0\le x\le1$? We can compute rectangles, triangles and circles, but this shape belongs to none of those.
+
+"Area" is not yet defined for irregular shapes. We need a definition that returns the familiar answers for familiar shapes and a single number for new ones.
+</Problem>
+
 <Observe>
 What is the area under $y=x^2$ for $0\le x\le1$? It is not a shape we know how to measure. But we can cut $[0,1]$ into $n$ pieces and replace each by a rectangle; the total
 $$S_n=\sum_{i=1}^n\left(\frac in\right)^2\frac1n=\frac1{n^3}\cdot\frac{n(n+1)(2n+1)}6$$
@@ -52,6 +60,10 @@ Let $G(x)=\int_a^xf$. By part I, $G'=f=F'$, so $(G-F)'=0$ and $G-F$ is constant.
 </Proof>
 
 Thus $\int_0^1x^2\,dx=\left[\frac{x^3}3\right]_0^1=\frac13$: the opening limit, computed in one line.
+
+<Warning>
+$\int_a^bf(x)\,dx$ is **a number**; the indefinite integral $\int f(x)\,dx$ is **a family of functions** (an antiderivative plus a constant). The fundamental theorem connects them, but it is a theorem to be proved, not a convention of notation. Also, the definition says "regardless of the $\xi_i$": computing rectangle sums for one choice of sample points does not prove integrability.
+</Warning>
 
 ## Applications
 

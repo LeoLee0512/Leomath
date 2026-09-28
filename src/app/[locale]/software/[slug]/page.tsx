@@ -27,15 +27,21 @@ export default async function SoftwareDetail({ params }: { params: Promise<{ loc
       <h1 className="display text-4xl font-semibold mt-3">{s.name}</h1>
       <p className="mt-3 text-lg text-ink-2">{s.tagline[locale]}</p>
       <p className="mt-8 leading-relaxed prose-math">{s.description[locale]}</p>
+      {s.screenshot && (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img src={s.screenshot} alt={`${s.name} screenshot`} className="mt-8 w-full border border-rule rounded" />
+      )}
       <dl className="mt-10 grid grid-cols-[auto_1fr] gap-x-8 gap-y-2 text-sm border-t border-rule pt-6">
-        <dt className="text-muted">{t.software.version}</dt><dd className="mono">v{s.latest.version} · {s.latest.date}</dd>
+        <dt className="text-muted">{t.software.version}</dt><dd className="mono">v{s.latest.version}</dd>
+        <dt className="text-muted">{t.software.released}</dt><dd className="mono">{s.latest.date}</dd>
         <dt className="text-muted">{t.software.platform}</dt><dd>{s.latest.platforms.join(", ")}</dd>
-        <dt className="text-muted">{t.software.status}</dt><dd>{s.status === "preview" ? t.software.statusPreview : t.software.statusStable}</dd>
+        <dt className="text-muted">{t.software.status}</dt><dd>{s.status === "preview" ? t.software.statusPreview : t.software.statusStable}{!s.repoUrl && ` · ${t.software.closedSource}`}</dd>
+        {s.latest.sha256 && (<><dt className="text-muted">{t.software.checksum}</dt><dd className="mono break-all text-xs">{s.latest.sha256}</dd></>)}
       </dl>
       <div className="mt-8 flex flex-wrap gap-3">
         <a href={s.latest.downloadUrl} className="btn btn-primary" rel="noopener">{t.software.download} ↓</a>
         <a href={s.releasesUrl} className="btn btn-ghost" rel="noopener">{t.software.releases}</a>
-        <a href={s.repoUrl} className="btn btn-ghost" rel="noopener">GitHub</a>
+        {s.repoUrl && <a href={s.repoUrl} className="btn btn-ghost" rel="noopener">GitHub</a>}
       </div>
     </div>
   );

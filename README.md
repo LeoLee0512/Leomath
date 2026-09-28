@@ -11,7 +11,7 @@ LeoMath is Leo's long-term personal platform for learning mathematics and scient
 Structure → Principles & derivation → Experiments → Exercises → Tools
 ```
 
-## v0.1.0
+## v0.1.1
 
 第一版刻意很小，但产品人格完整：
 

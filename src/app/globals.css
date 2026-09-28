@@ -105,7 +105,7 @@ button, input {
 .prose-math h2 { font-size: 1.45rem; line-height: 1.3; font-weight: 600; margin-top: 2.6em; padding-top: 0.8em; border-top: 1px solid var(--rule); }
 .prose-math h3 { font-size: 1.15rem; font-weight: 600; margin-top: 2em; }
 .prose-math h2 + *, .prose-math h3 + * { margin-top: 0.8em; }
-.prose-math p { text-wrap: pretty; }
+.prose-math p { text-wrap: pretty; overflow-wrap: anywhere; }
 .prose-math strong { font-weight: 600; }
 .prose-math em { font-style: italic; }
 .prose-math ul, .prose-math ol { padding-left: 1.4em; }
@@ -126,30 +126,61 @@ button, input {
 .prose-math .katex { font-size: 1.08em; }
 .katex-display > .katex { white-space: normal; }
 
-/* Structural blocks used inside MDX: definition, theorem, proof, observation, remark. */
-.mblock {
-  margin: 1.8em 0;
-  padding: 1em 1.25em;
-  border-left: 2px solid var(--rule-2);
-  background: var(--paper-2);
-  border-radius: 0 4px 4px 0;
-}
+/*
+  Semantic mathematical blocks used inside MDX.
+  Each kind has one visual signature so a reader can tell definition ≠ theorem ≠ example ≠ experiment at a glance:
+    definition   thin Leo-blue rule on the left, no fill
+    theorem      thin ink rule on the left, no fill, numbered
+    proof        no box at all; label in small caps, ends with □
+    example      warm grey fill
+    problem      serif italic lead, no rule (the question that makes the concept necessary)
+    observe /    dotted amber rule (things you saw or guessed; not yet established)
+    conjecture
+    warning      faint amber fill
+    experiment   framed, with a flask icon
+*/
+.mblock { margin: 2em 0; }
 .mblock-head {
-  font-family: var(--font-ui);
-  font-size: 0.8rem;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--muted);
-  margin-bottom: 0.5em;
+  display: flex; align-items: baseline; gap: 0.6em; flex-wrap: wrap;
+  font-family: var(--font-ui); font-size: 0.8rem; letter-spacing: 0.06em; text-transform: uppercase;
+  color: var(--muted); margin-bottom: 0.55em;
 }
 .mblock-head b { color: var(--ink); font-weight: 600; }
-.mblock > * + * { margin-top: 0.8em; }
-.mblock-definition { border-left-color: var(--leo); }
-.mblock-theorem { border-left-color: var(--ink); }
-.mblock-proof { background: transparent; border-left-color: var(--rule); }
-.mblock-observe { border-left-color: var(--accent-2); }
-.mblock-proof-end { text-align: right; }
-.mblock-proof-end::after { content: "□"; }
+.mblock-head svg { align-self: center; color: var(--leo); }
+.mblock-title { text-transform: none; letter-spacing: 0; font-size: 0.95rem; color: var(--ink-2); font-family: var(--font-serif); }
+.mblock-body > * + * { margin-top: 0.8em; }
+
+.mblock-definition { border-left: 2px solid var(--leo); padding: 0.2em 0 0.2em 1.2em; }
+.mblock-definition .mblock-head b { color: var(--leo); }
+.mblock-theorem { border-left: 2px solid var(--ink); padding: 0.2em 0 0.2em 1.2em; }
+.mblock-theorem .mblock-body { font-style: italic; }
+.mblock-theorem .mblock-body .katex { font-style: normal; }
+
+.mblock-proof { padding: 0; }
+.mblock-proof .mblock-head b { font-weight: 500; color: var(--ink-2); }
+.mblock-proof .mblock-body { color: var(--ink); }
+.mblock-qed { text-align: right; color: var(--ink-2); line-height: 1; margin-top: 0.6em; }
+
+.mblock-example { background: var(--paper-2); padding: 1.1em 1.3em; border-radius: 3px; }
+.mblock-application { background: var(--paper-2); padding: 1.1em 1.3em; border-radius: 3px; }
+.mblock-application .mblock-head b { color: var(--e2); }
+
+.mblock-problem { padding: 0; }
+.mblock-problem .mblock-head b { color: var(--ink); }
+.mblock-problem .mblock-body { font-size: 1.12em; line-height: 1.75; color: var(--ink); }
+.mblock-problem .mblock-body p:first-child::first-letter { font-weight: 600; }
+
+.mblock-observe, .mblock-conjecture { border-left: 2px dotted var(--accent-2); padding: 0.2em 0 0.2em 1.2em; }
+.mblock-observe .mblock-head b, .mblock-conjecture .mblock-head b { color: var(--accent-2); }
+
+.mblock-remark { border-top: 1px solid var(--rule); padding-top: 0.9em; color: var(--ink-2); font-size: 0.97em; }
+
+.mblock-warning { background: color-mix(in srgb, var(--accent-2) 9%, transparent); padding: 1em 1.3em; border-radius: 3px; }
+.mblock-warning .mblock-head b { color: var(--accent-2); }
+
+.mblock-experiment { margin: 2.2em 0; }
+.mblock-experiment .mblock-head { margin-bottom: 0.6em; }
+.mblock-experiment .mblock-head b { color: var(--leo); }
 
 /* Experiments */
 .exp-frame {
@@ -190,6 +221,7 @@ input[type="range"].e2 { accent-color: var(--e2); }
 .hairline { border-top: 1px solid var(--rule); }
 .section { padding-block: clamp(4rem, 10vw, 8rem); }
 .container { width: 100%; max-width: 72rem; margin-inline: auto; padding-inline: clamp(1rem, 4vw, 2.5rem); }
+.container > * { min-width: 0; }
 .display { font-family: var(--font-serif); letter-spacing: -0.015em; text-wrap: balance; }
 .eyebrow { font-family: var(--font-ui); font-size: 0.78rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); }
 .mono { font-family: var(--font-mono); font-variant-numeric: tabular-nums; }

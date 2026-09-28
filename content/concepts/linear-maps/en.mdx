@@ -1,3 +1,11 @@
+## Start from a problem
+
+<Problem>
+In the home-page experiment you dragged only two arrows, yet infinitely many points of the plane moved with them. What gives two vectors control over every point?
+
+To answer that we must first pin down which transformations "respect" vector addition and scaling. Those should be completely determined by what they do to a basis.
+</Problem>
+
 <Observe>
 Drag the tips of the two basis vectors $\mathbf e_1$, $\mathbf e_2$ below. **The whole grid** follows: straight lines stay straight, parallel lines stay parallel, the origin stays put, equally spaced grid lines stay equally spaced.
 
@@ -64,6 +72,10 @@ Hence $\dim\operatorname{im}T=r=\dim V-k$.
 </Proof>
 
 In the experiment: when $T(\mathbf e_1),T(\mathbf e_2)$ are not collinear the kernel is $\{0\}$ and the image is the whole plane ($0+2=2$); when they are collinear and nonzero, kernel and image are each a line ($1+1=2$).
+
+<Warning>
+A linear map always sends $0$ to $0$. So a translation $v\mapsto v+b$ with $b\ne0$ is not linear, and the school "linear function" $y=kx+b$ is not a linear map when $b\ne0$ (it is affine). When testing linearity, check $T(0)$ first.
+</Warning>
 
 ## Applications
 

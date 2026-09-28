@@ -1,3 +1,11 @@
+## Start from a problem
+
+<Problem>
+A cup of hot water cools on a table. We do not know the temperature function $T(t)$; we only know **the law of its change**: it cools at a rate proportional to how far it is above room temperature.
+
+Many laws of nature come this way: not the quantity itself, but a relation between its rate of change and its value. We need a mathematical object to express such laws, and a way to recover the function from the law.
+</Problem>
+
 <Observe>
 A cup of hot water sits on a table. It does not cool at a constant rate: fast while hot, slowly as it nears room temperature. We do not know the temperature as a function of time, $T(t)$, but we do know **the law of its change**:
 
@@ -66,6 +74,10 @@ Existence is obtained by Picard iteration $\varphi_{n+1}(t)=y_0+\int_{t_0}^tf(s,
 <Example title="Uniqueness fails without Lipschitz">
 $y'=2\sqrt{|y|},\ y(0)=0$. Both $y\equiv0$ and $y=t^2$ (for $t\ge0$) are solutions. $f(y)=2\sqrt{|y|}$ is not Lipschitz near $y=0$.
 </Example>
+
+<Warning>
+The general solution of $y'=ky$ is $Ce^{kt}$, **not** $e^{kt}+C$. Where the constant goes is dictated by the derivation: here $C$ comes from "$ye^{-kt}$ is constant". Also, the existence–uniqueness theorem guarantees only a **local** solution; the solution of $y'=y^2$ blows up at $t=1$.
+</Warning>
 
 ## Application
 

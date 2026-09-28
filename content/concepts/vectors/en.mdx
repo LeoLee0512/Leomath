@@ -1,3 +1,11 @@
+## Start from a problem
+
+<Problem>
+Arrows in the plane, polynomials, matrices, continuous functions: their addition and scaling obey exactly the same rules. Proving the "same" theorem separately for each kind of object is wasted work.
+
+We need a definition that depends only on the rules of the operations, not on what the objects "are". Then one proof holds everywhere.
+</Problem>
+
 <Observe>
 Arrows in the plane can be added (tip to tail) and stretched (scalar multiplication). So can polynomials. So can $2\times2$ matrices, continuous functions, sequences…
 
@@ -55,6 +63,10 @@ It suffices to show: if $u_1,\dots,u_m$ are independent and $v_1,\dots,v_n$ span
 
 **Exchange argument.** $u_1\in\operatorname{span}(v_1,\dots,v_n)$; write $u_1=\sum a_iv_i$. Since $u_1\ne0$ some $a_i\ne0$, say $a_1$. Then $v_1$ is a combination of $u_1,v_2,\dots,v_n$, so these still span $V$. Now expand $u_2$ in this new spanning set; some $v_j$ ($j\ge2$) must have nonzero coefficient, otherwise $u_2\in\operatorname{span}(u_1)$, contradicting independence. Replace that $v_j$ by $u_2$. Continue. Each step trades one $v$ for one $u$, and the $v$'s cannot run out before the $u$'s do (or some $u_k$ would lie in the span of earlier $u$'s). Hence $m\le n$.
 </Proof>
+
+<Warning>
+Linear independence is **not** "no two are collinear". $(1,0,1),(0,1,1),(1,1,2)$ are pairwise non-collinear yet dependent, since the third is the sum of the first two. The definition is about the whole family having only the trivial zero combination; it must be checked all at once.
+</Warning>
 
 ## Application
 

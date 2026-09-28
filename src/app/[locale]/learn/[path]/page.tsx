@@ -8,6 +8,7 @@ import { exercisesForConcept } from "@/content/exercises";
 import { currentUser } from "@/lib/auth";
 import { getProgress } from "@/lib/progress";
 import { KnowledgeTree } from "@/components/KnowledgeTree";
+import { readingMinutesMap } from "@/lib/reading";
 
 export function generateStaticParams() {
   return paths.map((p) => ({ path: p.slug }));
@@ -27,6 +28,7 @@ export default async function PathPage({ params }: { params: Promise<{ locale: s
   const t = getDictionary(locale);
   const user = await currentUser();
   const progress = user ? await getProgress(user.id).catch(() => ({})) : {};
+  const minutes = await readingMinutesMap(p.concepts, locale);
 
   return (
     <div className="container py-14">
@@ -34,7 +36,7 @@ export default async function PathPage({ params }: { params: Promise<{ locale: s
       <h1 className="display text-4xl font-semibold mt-3">{p.title[locale]}</h1>
       <p className="mt-3 text-ink-2 text-lg">{p.subtitle[locale]}</p>
 
-      <div className="mt-12 grid gap-12 lg:grid-cols-[1fr_1.2fr]">
+      <div className="mt-12 grid gap-12">
         <ol className="space-y-px bg-rule border border-rule">
           {p.concepts.map((slug, i) => {
             const c = getConcept(slug)!;
@@ -51,7 +53,7 @@ export default async function PathPage({ params }: { params: Promise<{ locale: s
                   </div>
                   <p className="mt-2 text-sm text-ink-2 pl-10">{c.summary[locale]}</p>
                   <p className="mt-3 text-xs mono text-muted pl-10">
-                    {exps.length} {t.learn.experiments} · {exs.length} {t.learn.exercises}
+                    {minutes[slug] ? `${t.learn.readingTime(minutes[slug])} · ` : ""}{exps.length} {t.learn.experiments} · {exs.length} {t.learn.exercises}
                   </p>
                 </Link>
               </li>
@@ -60,7 +62,7 @@ export default async function PathPage({ params }: { params: Promise<{ locale: s
         </ol>
         <div>
           <p className="eyebrow mb-3">{t.learn.positionInTree}</p>
-          <KnowledgeTree locale={locale} focus={p.concepts[p.concepts.length - 1]} />
+          <KnowledgeTree locale={locale} focus={p.concepts[p.concepts.length - 1]} minutes={minutes} />
         </div>
       </div>
     </div>

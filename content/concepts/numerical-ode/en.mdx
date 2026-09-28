@@ -1,3 +1,11 @@
+## Start from a problem
+
+<Problem>
+The pendulum equation $\theta''+\frac gL\sin\theta=0$ has no elementary closed-form solution. Yet we still want to know what $\theta(t)$ looks like and to draw its curve.
+
+We need a method that computes an approximate solution using only the four arithmetic operations, and we must be able to estimate its error and know when it breaks down.
+</Problem>
+
 <Observe>
 Choose "Pendulum": $\theta''+\gamma\theta'+\frac gL\sin\theta=0$. This equation has no elementary closed-form solution. Yet the experiment draws a curve: it is **computed** step by step. Increase the step $h$: the red Euler curve drifts away from the blue RK4 curve and may even diverge. Switch back to "Exponential growth", which has an exact solution, and watch the end-point errors of the two methods as $h$ changes: halving $h$ roughly halves Euler's error and divides RK4's by about 16.
 
@@ -71,6 +79,10 @@ Substitute: $y_{n+1}=y_n+h\lambda y_n=(1+h\lambda)y_n$.
 </Proof>
 
 Beyond $h=2/|\lambda|$ the factor $(1+h\lambda)^n$ oscillates and grows, bearing no relation to the true solution. This explains the divergence of the Euler curve at large steps. Such "stiff" problems call for implicit methods, a topic of [Numerical analysis](/en/concepts/numerical-analysis).
+
+<Warning>
+Halving the step only halves Euler's error; making $h$ tiny does not compensate for a low-order method, it just adds work and rounding error. And with $h$ too large Euler diverges. **Accuracy** (order) and **stability** (a ceiling on $h$) are separate concerns; both matter.
+</Warning>
 
 ## Application
 

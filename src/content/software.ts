@@ -2,10 +2,13 @@ import type { Bilingual } from "./graph";
 
 export interface SoftwareRelease {
   version: string;
+  /** ISO date of the release. */
   date: string;
   platforms: string[];
-  /** Direct download page. Binaries live on GitHub Releases. */
+  /** Direct download page. Binaries live on a public GitHub Releases repository. */
   downloadUrl: string;
+  /** SHA-256 of the installer, shown on the detail page only. */
+  sha256?: string;
 }
 
 export interface Software {
@@ -14,13 +17,16 @@ export interface Software {
   tagline: Bilingual;
   description: Bilingual;
   status: "preview" | "stable";
-  repoUrl: string;
+  /** Closed-source products have no public repository. */
+  repoUrl?: string;
   releasesUrl: string;
+  /** Optional screenshot under /public. */
+  screenshot?: string;
   latest: SoftwareRelease;
 }
 
-// Binaries and release notes are hosted on GitHub Releases; LeoMath only
-// provides the product page and the download entry point.
+// Leo AI is closed source. Its source repository is private; only binaries and
+// release notes are published, through a public releases repository.
 export const software: Software[] = [
   {
     slug: "leo-ai",
@@ -30,17 +36,16 @@ export const software: Software[] = [
       en: "A tool for scientific research and mathematical workflows.",
     },
     description: {
-      zh: "把文献整理、公式推导、数值计算和记录放进同一个工作流。目前处于预览阶段，功能与界面都会持续变化。",
-      en: "Bring literature notes, symbolic derivation, numerical computation and record-keeping into one workflow. Currently in preview; features and interface will keep changing.",
+      zh: "把文献整理、公式推导、数值计算和记录放进同一个工作流。闭源软件，二进制与更新说明通过 GitHub Releases 发布。",
+      en: "Bring literature notes, symbolic derivation, numerical computation and record-keeping into one workflow. Closed source; binaries and release notes are published through GitHub Releases.",
     },
-    status: "preview",
-    repoUrl: "https://github.com/LeoLee0512/leo-ai",
-    releasesUrl: "https://github.com/LeoLee0512/leo-ai/releases",
+    status: "stable",
+    releasesUrl: "https://github.com/LeoLee0512/leo-ai-releases/releases",
     latest: {
-      version: "0.1.0-preview",
+      version: "2.1.2",
       date: "2026-09",
-      platforms: ["Windows"],
-      downloadUrl: "https://github.com/LeoLee0512/leo-ai/releases/latest",
+      platforms: ["Windows x64"],
+      downloadUrl: "https://github.com/LeoLee0512/leo-ai-releases/releases/latest",
     },
   },
 ];

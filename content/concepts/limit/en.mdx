@@ -1,3 +1,11 @@
+## Start from a problem
+
+<Problem>
+$a_n=\dfrac{n}{n+1}$ never reaches $1$, yet we want to say it "tends to $1$". Right now that sentence has no testable meaning: how close counts as close? From which term on?
+
+Without a precise definition, "tends to" is a feeling; it can be neither proved nor refuted. We need one sentence that turns "arbitrarily close" into a statement that can be checked.
+</Problem>
+
 <Observe>
 Look at the sequence $a_n = \dfrac{n}{n+1}$: $\tfrac12,\ \tfrac23,\ \tfrac34,\ \tfrac45,\ \dots$
 
@@ -64,6 +72,10 @@ If $a_n\le c_n\le b_n$ for all large $n$, and $a_n\to L$, $b_n\to L$, then $c_n\
 <Proof>
 Given $\varepsilon>0$, pick $N$ so that for $n>N$, $L-\varepsilon<a_n$ and $b_n<L+\varepsilon$. Then $L-\varepsilon<a_n\le c_n\le b_n<L+\varepsilon$, i.e. $|c_n-L|<\varepsilon$.
 </Proof>
+
+<Warning>
+The quantifiers do not commute. "For every $\varepsilon$ there is $N$" and "there is $N$ such that for every $\varepsilon$" are different sentences: the second demands that $a_n$ **equal** $L$ from some term on. Also, whether a limit exists has nothing to do with whether $a_n$ ever equals $L$; $\frac n{n+1}$ never equals $1$.
+</Warning>
 
 ## Application: a fundamental limit
 

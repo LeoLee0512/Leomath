@@ -1,3 +1,15 @@
+## Start from a problem
+
+<Problem>
+An object's position is $x(t)$. Its **average velocity** from $t$ to $t+\Delta t$ is
+$$\frac{x(t+\Delta t)-x(t)}{\Delta t}.$$
+But what we really want to ask is: **at the instant $t$, how fast is it going?**
+
+An instant has no length; at $\Delta t=0$ the quotient is $\tfrac00$. Yet "instantaneous speed" clearly means something: the speedometer shows it. So we are forced to consider the [limit](/en/concepts/limit) of the average velocity as $\Delta t\to0$. If that limit exists, it deserves the name instantaneous velocity:
+$$x'(t)=\lim_{\Delta t\to0}\frac{x(t+\Delta t)-x(t)}{\Delta t}.$$
+The derivative is not a notation handed down from above; it is the only reasonable answer to the question "what is the rate of change right now?"
+</Problem>
+
 <Observe>
 Play first, read later. Below are $f(x)=a^x$ and its **difference quotient**
 $$\frac{f(x+h)-f(x)}{h}.$$
@@ -68,6 +80,10 @@ $f(x_0+h)-f(x_0)=\dfrac{f(x_0+h)-f(x_0)}h\cdot h\to f'(x_0)\cdot0=0$.
 </Proof>
 
 The converse fails: $|x|$ is continuous at $0$ but not differentiable; the one-sided difference quotients tend to $-1$ and $1$.
+
+<Warning>
+$f'(x_0)$ is **a number**; $f'(x)$ is **a function**. In $f'(x_0)=\lim_{h\to0}\frac{f(x_0+h)-f(x_0)}h$ the point $x_0$ is fixed and $h$ is what moves. Writing "$f'(x)=2x$" means: for every $x$, this limit was computed, and it happened to equal $2x$.
+</Warning>
 
 ## Applications
 

@@ -1,3 +1,11 @@
+## 从一个问题开始
+
+<Problem>
+$a_n=\dfrac{n}{n+1}$ 永远到不了 $1$，我们却想说它"趋于 $1$"。这句话目前没有可检验的含义：接近到什么程度算接近？从第几项开始？
+
+没有一个精确的定义，"趋于"只是一种感觉，既不能证明，也不能反驳。我们需要一句话，把"任意接近"变成可以验证的陈述。
+</Problem>
+
 <Observe>
 看数列 $a_n = \dfrac{n}{n+1}$：$\tfrac12,\ \tfrac23,\ \tfrac34,\ \tfrac45,\ \dots$
 
@@ -64,6 +72,10 @@ $$|a_nb_n-LM|\le|a_n-L|\,B+|L|\,|b_n-M|<\tfrac\varepsilon2+\tfrac\varepsilon2=\v
 <Proof>
 给定 $\varepsilon>0$，取 $N$ 使 $n>N$ 时 $L-\varepsilon<a_n$ 且 $b_n<L+\varepsilon$。于是 $L-\varepsilon<a_n\le c_n\le b_n<L+\varepsilon$，即 $|c_n-L|<\varepsilon$。
 </Proof>
+
+<Warning>
+量词的顺序不能交换。"对任意 $\varepsilon$ 存在 $N$"与"存在 $N$ 对任意 $\varepsilon$"是两句完全不同的话：后者要求从某一项起 $a_n$ **恒等于** $L$。另外，极限是否存在与 $a_n$ 是否等于 $L$ 无关，$\frac n{n+1}$ 从不等于 $1$。
+</Warning>
 
 ## 应用：一个重要极限
 

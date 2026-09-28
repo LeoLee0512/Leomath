@@ -3,35 +3,34 @@
 import Link from "next/link";
 import { useMemo, useState } from "react";
 import type { Locale } from "@/i18n/config";
-import { concepts, getConcept, prerequisiteChain, prerequisiteClosure } from "@/content/graph";
+import { concepts, getConcept, paths, prerequisiteChain, prerequisiteClosure, type Concept } from "@/content/graph";
 
-/** Hand-laid positions in a 1000 × 720 viewBox. */
+/** Hand-laid positions in a 1000 × 800 viewBox. */
 const positions: Record<string, [number, number]> = {
-  mathematics: [500, 40],
-  analysis: [260, 125],
-  algebra: [620, 125],
-  geometry: [870, 125],
-  functions: [110, 215],
-  limit: [300, 215],
-  vectors: [620, 215],
-  "plane-geometry": [870, 215],
-  derivative: [300, 305],
-  "linear-maps": [620, 305],
-  integral: [190, 395],
-  "what-is-ode": [430, 395],
-  matrices: [620, 395],
-  "taylor-series": [110, 485],
-  "first-order-ode": [430, 485],
-  eigenvalues: [620, 485],
-  "group-theory": [870, 485],
-  "multivariable-calculus": [120, 585],
-  "numerical-ode": [330, 585],
-  "second-order-linear-ode": [580, 585],
-  "numerical-analysis": [330, 675],
-  pde: [580, 675],
+  mathematics: [500, 44],
+  analysis: [250, 140],
+  algebra: [620, 140],
+  geometry: [870, 140],
+  functions: [105, 240],
+  limit: [300, 240],
+  vectors: [620, 240],
+  "plane-geometry": [870, 240],
+  derivative: [300, 340],
+  "linear-maps": [620, 340],
+  integral: [175, 440],
+  "what-is-ode": [430, 440],
+  matrices: [620, 440],
+  "taylor-series": [105, 540],
+  "first-order-ode": [430, 540],
+  eigenvalues: [620, 540],
+  "group-theory": [870, 540],
+  "multivariable-calculus": [120, 640],
+  "numerical-ode": [330, 640],
+  "second-order-linear-ode": [590, 640],
+  "numerical-analysis": [330, 740],
+  pde: [590, 740],
 };
 
-/** Structural (taxonomy) edges drawn in addition to prerequisite edges. */
 const treeEdges: [string, string][] = [
   ["mathematics", "analysis"],
   ["mathematics", "algebra"],
@@ -43,11 +42,48 @@ const treeEdges: [string, string][] = [
 ];
 
 const copy = {
-  zh: { chain: "前置知识链", open: "进入知识点 →", planned: "规划中", hover: "把鼠标放到任意节点上", published: "已发布", plannedLegend: "规划中" },
-  en: { chain: "Prerequisite chain", open: "Open concept →", planned: "Planned", hover: "Hover over any node", published: "Published", plannedLegend: "Planned" },
+  zh: {
+    hover: "把鼠标放到任意节点上，它的前置知识会亮起来。",
+    tap: "点击一个知识点查看它的前置关系。",
+    chain: "前置知识链",
+    prereqs: "前置知识",
+    none: "无前置知识",
+    start: "开始学习 →",
+    planned: "规划中",
+    published: "已发布",
+    building: "正在建设",
+    min: (m: number) => `${m} min`,
+    legendPub: "已发布",
+    legendPlan: "规划中",
+    paths: "三条路线",
+    inPath: "所属路线",
+  },
+  en: {
+    hover: "Hover over any node and its prerequisites light up.",
+    tap: "Tap a concept to see what it builds on.",
+    chain: "Prerequisite chain",
+    prereqs: "Prerequisites",
+    none: "No prerequisites",
+    start: "Start learning →",
+    planned: "Planned",
+    published: "Published",
+    building: "In progress",
+    min: (m: number) => `${m} min`,
+    legendPub: "Published",
+    legendPlan: "Planned",
+    paths: "Three paths",
+    inPath: "Part of",
+  },
 };
 
-export function KnowledgeTree({ locale, focus }: { locale: Locale; focus?: string }) {
+export interface KnowledgeTreeProps {
+  locale: Locale;
+  focus?: string;
+  /** Reading minutes per published concept, computed on the server. */
+  minutes?: Record<string, number>;
+}
+
+export function KnowledgeTree({ locale, focus, minutes = {} }: KnowledgeTreeProps) {
   const [hover, setHover] = useState<string | null>(null);
   const [pinned, setPinned] = useState<string | null>(focus ?? null);
   const active = hover ?? pinned;
@@ -66,144 +102,259 @@ export function KnowledgeTree({ locale, focus }: { locale: Locale; focus?: strin
     return edges;
   }, []);
 
-  const chain = active ? prerequisiteChain(active) : [];
   const activeConcept = active ? getConcept(active) : undefined;
+  const chain = active ? prerequisiteChain(active) : [];
 
   function edgeState(a: string, b: string): "on" | "off" | "idle" {
     if (!highlight) return "idle";
     return highlight.has(a) && highlight.has(b) ? "on" : "off";
   }
 
-  return (
-    <div>
-      <svg viewBox="0 0 1000 720" className="w-full h-auto select-none" role="img" aria-label={t.hover}>
-        <defs>
-          <marker id="kt-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
-            <path d="M 0 0 L 10 5 L 0 10 z" fill="var(--leo)" />
-          </marker>
-        </defs>
-        {treeEdges.map(([a, b]) => {
-          const [x1, y1] = positions[a];
-          const [x2, y2] = positions[b];
-          const s = edgeState(a, b);
-          return (
-            <path
-              key={`t-${a}-${b}`}
-              d={`M ${x1} ${y1 + 14} C ${x1} ${(y1 + y2) / 2}, ${x2} ${(y1 + y2) / 2}, ${x2} ${y2 - 14}`}
-              fill="none"
-              stroke="var(--rule-2)"
-              strokeWidth={1}
-              opacity={s === "off" ? 0.25 : 0.9}
-            />
-          );
-        })}
-        {prereqEdges.map(([a, b]) => {
-          const [x1, y1] = positions[a];
-          const [x2, y2] = positions[b];
-          const s = edgeState(a, b);
-          const dx = x2 - x1;
-          const dy = y2 - y1;
-          const len = Math.hypot(dx, dy) || 1;
-          const ux = dx / len;
-          const uy = dy / len;
-          const sx = x1 + ux * 16;
-          const sy = y1 + uy * 16;
-          const ex = x2 - ux * 18;
-          const ey = y2 - uy * 18;
-          const mx = (sx + ex) / 2 - uy * Math.min(40, len * 0.15);
-          const my = (sy + ey) / 2 + ux * Math.min(40, len * 0.15);
-          return (
-            <path
-              key={`p-${a}-${b}`}
-              d={`M ${sx} ${sy} Q ${mx} ${my}, ${ex} ${ey}`}
-              fill="none"
-              stroke={s === "on" ? "var(--leo)" : "var(--rule-2)"}
-              strokeWidth={s === "on" ? 2 : 1}
-              opacity={s === "off" ? 0.18 : s === "on" ? 1 : 0.7}
-              markerEnd={s === "on" ? "url(#kt-arrow)" : undefined}
-              style={{ transition: "opacity 160ms, stroke 160ms" }}
-            />
-          );
-        })}
-        {concepts.map((c) => {
-          const [x, y] = positions[c.slug];
-          const isStructure = c.level === "structure";
-          const on = !highlight || highlight.has(c.slug);
-          const isActive = active === c.slug;
-          const label = c.title[locale];
-          const w = Math.max(56, label.length * (/[一-鿿]/.test(label) ? 15 : 8) + 22);
-          const published = c.status === "published";
-          const node = (
-            <g
-              transform={`translate(${x}, ${y})`}
-              opacity={on ? 1 : 0.22}
-              style={{ transition: "opacity 160ms", cursor: published ? "pointer" : "default" }}
-              onMouseEnter={() => setHover(c.slug)}
-              onMouseLeave={() => setHover(null)}
-              onClick={() => setPinned((p) => (p === c.slug ? null : c.slug))}
-            >
-              <rect
-                x={-w / 2}
-                y={-14}
-                width={w}
-                height={28}
-                rx={isStructure ? 14 : 3}
-                fill={isActive ? "var(--ink)" : isStructure ? "var(--paper-2)" : "var(--paper)"}
-                stroke={isActive ? "var(--ink)" : published ? "var(--ink-2)" : "var(--rule-2)"}
-                strokeWidth={isActive ? 1.5 : 1}
-                strokeDasharray={published || isStructure ? undefined : "3 3"}
-              />
-              <text
-                textAnchor="middle"
-                dominantBaseline="central"
-                fontSize={isStructure ? 14 : 13}
-                fontWeight={isStructure ? 600 : 500}
-                fill={isActive ? "var(--paper)" : published ? "var(--ink)" : "var(--muted)"}
-                style={{ fontFamily: "var(--font-ui)" }}
-              >
-                {label}
-              </text>
-            </g>
-          );
-          return <g key={c.slug}>{node}</g>;
-        })}
-      </svg>
+  const statusLine = (c: Concept) => {
+    if (c.level === "structure") return null;
+    if (c.status === "published") return minutes[c.slug] ? `${t.published} · ${t.min(minutes[c.slug])}` : t.published;
+    return t.planned;
+  };
 
-      <div className="mt-4 flex flex-wrap items-start gap-x-8 gap-y-2 text-sm min-h-14">
-        <div className="flex items-center gap-4 text-muted">
-          <span className="inline-flex items-center gap-1.5"><span className="inline-block w-4 h-3 border border-ink-2 rounded-[2px]" />{t.published}</span>
-          <span className="inline-flex items-center gap-1.5"><span className="inline-block w-4 h-3 border border-rule-2 border-dashed rounded-[2px]" />{t.plannedLegend}</span>
+  return (
+    <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_19rem] lg:items-start">
+      {/* Desktop: the map. */}
+      <div className="hidden md:block">
+        <svg viewBox="0 0 1000 800" className="w-full h-auto select-none" role="img" aria-label={t.hover}>
+          <defs>
+            <marker id="kt-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+              <path d="M 0 0 L 10 5 L 0 10 z" fill="var(--leo)" />
+            </marker>
+          </defs>
+          {treeEdges.map(([a, b]) => {
+            const [x1, y1] = positions[a];
+            const [x2, y2] = positions[b];
+            const s = edgeState(a, b);
+            return (
+              <path
+                key={`t-${a}-${b}`}
+                d={`M ${x1} ${y1 + 18} C ${x1} ${(y1 + y2) / 2}, ${x2} ${(y1 + y2) / 2}, ${x2} ${y2 - 22}`}
+                fill="none"
+                stroke="var(--rule-2)"
+                strokeWidth={1.2}
+                opacity={s === "off" ? 0.2 : 1}
+                style={{ transition: "opacity 160ms" }}
+              />
+            );
+          })}
+          {prereqEdges.map(([a, b]) => {
+            const [x1, y1] = positions[a];
+            const [x2, y2] = positions[b];
+            const s = edgeState(a, b);
+            const dx = x2 - x1;
+            const dy = y2 - y1;
+            const len = Math.hypot(dx, dy) || 1;
+            const ux = dx / len;
+            const uy = dy / len;
+            const sx = x1 + ux * 22;
+            const sy = y1 + uy * 22;
+            const ex = x2 - ux * 26;
+            const ey = y2 - uy * 26;
+            const bend = Math.min(40, len * 0.15);
+            const mx = (sx + ex) / 2 - uy * bend;
+            const my = (sy + ey) / 2 + ux * bend;
+            return (
+              <path
+                key={`p-${a}-${b}`}
+                d={`M ${sx} ${sy} Q ${mx} ${my}, ${ex} ${ey}`}
+                fill="none"
+                stroke={s === "on" ? "var(--leo)" : "var(--grid-strong)"}
+                strokeWidth={s === "on" ? 2.4 : 1.3}
+                opacity={s === "off" ? 0.15 : 1}
+                markerEnd={s === "on" ? "url(#kt-arrow)" : undefined}
+                style={{ transition: "opacity 160ms, stroke 160ms" }}
+              />
+            );
+          })}
+          {concepts.map((c) => {
+            const [x, y] = positions[c.slug];
+            const isStructure = c.level === "structure";
+            const on = !highlight || highlight.has(c.slug);
+            const isActive = active === c.slug;
+            const inPath = Boolean(highlight?.has(c.slug)) && !isActive;
+            const label = c.title[locale];
+            const sub = statusLine(c);
+            const cjk = /[一-鿿]/.test(label);
+            const w = Math.max(72, label.length * (cjk ? 17 : 9) + 28, (sub?.length ?? 0) * 6.5 + 24);
+            const h = isStructure ? 34 : sub ? 46 : 34;
+            const published = c.status === "published";
+            return (
+              <g
+                key={c.slug}
+                transform={`translate(${x}, ${y})`}
+                opacity={on ? 1 : 0.18}
+                style={{ transition: "opacity 160ms", cursor: "pointer" }}
+                tabIndex={0}
+                role="button"
+                aria-label={label}
+                onMouseEnter={() => setHover(c.slug)}
+                onMouseLeave={() => setHover(null)}
+                onFocus={() => setHover(c.slug)}
+                onBlur={() => setHover(null)}
+                onClick={() => setPinned((p) => (p === c.slug ? null : c.slug))}
+              >
+                <rect
+                  x={-w / 2}
+                  y={-h / 2}
+                  width={w}
+                  height={h}
+                  rx={isStructure ? h / 2 : 4}
+                  fill={isActive ? "var(--ink)" : isStructure ? "var(--paper-2)" : "var(--paper)"}
+                  stroke={isActive ? "var(--ink)" : inPath ? "var(--leo)" : published ? "var(--ink-2)" : "var(--rule-2)"}
+                  strokeWidth={isActive || inPath ? 1.8 : 1.2}
+                  strokeDasharray={published || isStructure ? undefined : "4 3"}
+                />
+                <text
+                  textAnchor="middle"
+                  dominantBaseline="central"
+                  y={sub ? -8 : 0}
+                  fontSize={isStructure ? 15 : 15}
+                  fontWeight={600}
+                  fill={isActive ? "var(--paper)" : published || isStructure ? "var(--ink)" : "var(--muted)"}
+                  style={{ fontFamily: "var(--font-ui)" }}
+                >
+                  {label}
+                </text>
+                {sub && (
+                  <text
+                    textAnchor="middle"
+                    dominantBaseline="central"
+                    y={11}
+                    fontSize={10.5}
+                    fill={isActive ? "var(--paper)" : published ? "var(--leo)" : "var(--muted)"}
+                    opacity={isActive ? 0.8 : 1}
+                    style={{ fontFamily: "var(--font-ui)", letterSpacing: "0.02em" }}
+                  >
+                    {sub}
+                  </text>
+                )}
+              </g>
+            );
+          })}
+        </svg>
+        <div className="mt-3 flex items-center gap-5 text-xs text-muted">
+          <span className="inline-flex items-center gap-1.5"><span className="inline-block w-4 h-3 border border-ink-2 rounded-[2px]" />{t.legendPub}</span>
+          <span className="inline-flex items-center gap-1.5"><span className="inline-block w-4 h-3 border border-rule-2 border-dashed rounded-[2px]" />{t.legendPlan}</span>
+          <span className="inline-flex items-center gap-1.5"><span className="inline-block w-4 h-0.5 bg-leo" />{t.chain}</span>
         </div>
-        {active && activeConcept ? (
-          <div className="flex-1 min-w-64">
-            <div className="text-muted mb-1">{t.chain}</div>
-            <div className="flex flex-wrap items-center gap-1.5 leading-relaxed">
-              {chain.map((s, i) => {
+      </div>
+
+      {/* Mobile: the same graph as a navigable list, one chain per path. */}
+      <div className="md:hidden space-y-6">
+        <p className="text-sm text-muted">{t.tap}</p>
+        {paths.map((p) => (
+          <div key={p.slug}>
+            <p className="eyebrow mb-2">{p.title[locale]}</p>
+            <ol className="border-l border-rule-2 ml-2 pl-4 space-y-2">
+              {p.concepts.map((s) => {
                 const c = getConcept(s)!;
-                const last = i === chain.length - 1;
+                const isActive = active === s;
                 return (
-                  <span key={s} className="inline-flex items-center gap-1.5">
-                    <span className={last ? "font-semibold text-ink border border-ink px-1.5 rounded-[3px]" : "text-ink-2"}>{c.title[locale]}</span>
-                    {!last && <span className="text-muted">→</span>}
-                  </span>
+                  <li key={s} className="relative">
+                    <span className={`absolute -left-[21px] top-2 w-2.5 h-2.5 rounded-full border ${isActive ? "bg-ink border-ink" : "bg-paper border-ink-2"}`} />
+                    <button type="button" className="text-left w-full" onClick={() => setPinned((v) => (v === s ? null : s))}>
+                      <span className="font-medium">{c.title[locale]}</span>
+                      <span className="block text-xs text-leo">{statusLine(c)}</span>
+                    </button>
+                  </li>
                 );
               })}
-            </div>
-            <div className="mt-1.5 text-muted">
-              {activeConcept.summary[locale]}{" "}
+            </ol>
+          </div>
+        ))}
+        <div>
+          <p className="eyebrow mb-2">{t.legendPlan}</p>
+          <div className="flex flex-wrap gap-2">
+            {concepts.filter((c) => c.status === "planned" && c.level !== "structure").map((c) => (
+              <button key={c.slug} type="button" onClick={() => setPinned((v) => (v === c.slug ? null : c.slug))}
+                className={`text-xs border border-dashed rounded px-2 py-1 ${active === c.slug ? "border-ink text-ink" : "border-rule-2 text-muted"}`}>
+                {c.title[locale]}
+              </button>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* The panel: what the hovered/selected node is, what it needs, where to start. */}
+      <aside className="lg:sticky lg:top-20 border-t lg:border-t-0 lg:border-l border-rule pt-5 lg:pt-0 lg:pl-6 min-h-56">
+        {activeConcept && activeConcept.level !== "structure" ? (
+          <div>
+            <p className="eyebrow">
+              {activeConcept.status === "published" ? t.published : t.building}
+              {minutes[activeConcept.slug] ? ` · ${t.min(minutes[activeConcept.slug])}` : ""}
+            </p>
+            <h3 className="display text-2xl font-semibold mt-2">{activeConcept.title[locale]}</h3>
+            <p className="mt-2 text-sm text-ink-2 leading-relaxed">{activeConcept.summary[locale]}</p>
+
+            <p className="eyebrow mt-5 mb-1.5">{t.prereqs}</p>
+            {activeConcept.prerequisites.length === 0 ? (
+              <p className="text-sm text-muted">{t.none}</p>
+            ) : (
+              <ul className="flex flex-wrap gap-1.5">
+                {activeConcept.prerequisites.map((s) => {
+                  const pc = getConcept(s)!;
+                  return (
+                    <li key={s}>
+                      {pc.status === "published" ? (
+                        <Link href={`/${locale}/concepts/${s}`} className="text-sm border border-ink-2 rounded-[3px] px-1.5 py-0.5 hover:border-leo hover:text-leo">{pc.title[locale]}</Link>
+                      ) : (
+                        <span className="text-sm border border-dashed border-rule-2 rounded-[3px] px-1.5 py-0.5 text-muted">{pc.title[locale]}</span>
+                      )}
+                    </li>
+                  );
+                })}
+              </ul>
+            )}
+
+            {chain.length > 1 && (
+              <>
+                <p className="eyebrow mt-5 mb-1.5">{t.chain}</p>
+                <p className="text-sm leading-relaxed text-ink-2">
+                  {chain.map((s, i) => (
+                    <span key={s}>
+                      {i > 0 && <span className="text-muted"> → </span>}
+                      <span className={i === chain.length - 1 ? "text-ink font-semibold" : ""}>{getConcept(s)!.title[locale]}</span>
+                    </span>
+                  ))}
+                </p>
+              </>
+            )}
+
+            <div className="mt-6">
               {activeConcept.status === "published" ? (
-                <Link href={`/${locale}/concepts/${activeConcept.slug}`} className="text-leo hover:underline">
-                  {t.open}
-                </Link>
+                <Link href={`/${locale}/concepts/${activeConcept.slug}`} className="btn btn-primary btn-small">{t.start}</Link>
               ) : (
-                <span>· {t.planned}</span>
+                <span className="text-sm text-muted">{t.planned}</span>
               )}
             </div>
           </div>
+        ) : activeConcept ? (
+          <div>
+            <h3 className="display text-2xl font-semibold">{activeConcept.title[locale]}</h3>
+            <p className="mt-2 text-sm text-ink-2">{activeConcept.summary[locale]}</p>
+          </div>
         ) : (
-          <div className="text-muted">{t.hover}</div>
+          <div>
+            <p className="text-sm text-ink-2 leading-relaxed hidden md:block">{t.hover}</p>
+            <p className="eyebrow mt-4 mb-2">{t.paths}</p>
+            <ul className="space-y-2">
+              {paths.map((p) => (
+                <li key={p.slug}>
+                  <button type="button" className="text-left text-sm hover:text-leo" onClick={() => setPinned(p.concepts[p.concepts.length - 1])}>
+                    <span className="font-medium block">{p.title[locale]}</span>
+                    <span className="text-muted text-xs">{p.subtitle[locale]}</span>
+                  </button>
+                </li>
+              ))}
+            </ul>
+          </div>
         )}
-      </div>
+      </aside>
     </div>
   );
 }

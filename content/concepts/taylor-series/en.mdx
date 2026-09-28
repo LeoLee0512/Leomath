@@ -1,3 +1,11 @@
+## Start from a problem
+
+<Problem>
+A calculator can only add, subtract, multiply and divide. How does it compute $\sin(0.3)$ or $e^{0.3}$?
+
+We need a way to approximate any smooth function by expressions using only those four operations (polynomials), and we must be able to say how large the error is; otherwise the approximation is worthless.
+</Problem>
+
 <Observe>
 How does a calculator compute $\sin(0.3)$? It can only add, subtract, multiply and divide. But near $0$:
 $$\sin x\approx x,\qquad\sin x\approx x-\frac{x^3}6,\qquad\sin x\approx x-\frac{x^3}6+\frac{x^5}{120}.$$
@@ -58,6 +66,10 @@ because $\dfrac{|x|^n}{n!}\to0$ (from some point on each term is multiplied by a
 <Remark>
 Not every Taylor series converges to its function. $f(x)=e^{-1/x^2}$ with $f(0)=0$ has all derivatives equal to $0$ at $0$; its Taylor series is identically $0$, yet $f$ is not. The remainder $R_n(x)=f(x)$ never tends to $0$. The clause "if and only if $R_n\to0$" in the definition is not decoration.
 </Remark>
+
+<Warning>
+A Taylor series converging is not the same as converging to $f$. For $f(x)=e^{-1/x^2}$ (with $f(0)=0$) the series converges everywhere (to $0$) yet equals $f$ only at $x=0$. The only way to know "series $=$ function" is to prove the remainder $R_n\to0$.
+</Warning>
 
 ## Applications
 

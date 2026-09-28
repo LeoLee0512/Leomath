@@ -23,6 +23,8 @@ export interface LearningPath {
   slug: string;
   title: Bilingual;
   subtitle: Bilingual;
+  /** What you will understand: shown as “If you want to understand … start here.” */
+  intent: Bilingual;
   concepts: string[];
 }
 
@@ -67,7 +69,7 @@ export const concepts: Concept[] = [
   { slug: "second-order-linear-ode", title: b("二阶线性方程", "Second-order linear equations"), summary: b("特征方程为什么有效：它其实是特征值问题。", "Why the characteristic equation works: it is an eigenvalue problem."), parent: "analysis", prerequisites: ["first-order-ode", "eigenvalues"], status: "published", level: "undergrad", path: "differential-equations", experiments: ["ode-explorer"] },
   { slug: "numerical-ode", title: b("数值解", "Numerical solutions"), summary: b("Euler 与 RK4：步长、误差与 Taylor 展开的关系。", "Euler and RK4: step size, error and the connection to Taylor expansion."), parent: "analysis", prerequisites: ["first-order-ode", "taylor-series"], status: "published", level: "undergrad", path: "differential-equations", experiments: ["ode-explorer"] },
 
-  // ---- beyond v0.1.0 (planned) ----
+  // ---- beyond v0.1.1 (planned) ----
   { slug: "multivariable-calculus", title: b("多元微积分", "Multivariable calculus"), summary: b("偏导数、梯度与多重积分。", "Partial derivatives, gradients and multiple integrals."), parent: "analysis", prerequisites: ["derivative", "integral", "vectors"], status: "planned", level: "undergrad", experiments: [] },
   { slug: "pde", title: b("PDE", "PDE"), summary: b("热方程、波动方程与 Laplace 方程。", "Heat, wave and Laplace equations."), parent: "analysis", prerequisites: ["multivariable-calculus", "second-order-linear-ode"], status: "planned", level: "advanced", experiments: [] },
   { slug: "numerical-analysis", title: b("数值分析", "Numerical analysis"), summary: b("误差、稳定性与算法。", "Error, stability and algorithms."), parent: "analysis", prerequisites: ["numerical-ode", "matrices"], status: "planned", level: "advanced", experiments: [] },
@@ -79,18 +81,21 @@ export const paths: LearningPath[] = [
     slug: "calculus",
     title: b("微积分基础", "Foundations of calculus"),
     subtitle: b("极限 → 导数 → 积分 → Taylor 展开", "Limits → Derivative → Integral → Taylor expansion"),
+    intent: b("变化、极限、连续与累积", "change, limits, continuity and accumulation"),
     concepts: ["limit", "derivative", "integral", "taylor-series"],
   },
   {
     slug: "linear-algebra",
     title: b("线性代数基础", "Foundations of linear algebra"),
     subtitle: b("向量 → 线性映射 → 矩阵 → 特征值", "Vectors → Linear maps → Matrices → Eigenvalues"),
+    intent: b("空间、变换与结构", "space, transformation and structure"),
     concepts: ["vectors", "linear-maps", "matrices", "eigenvalues"],
   },
   {
     slug: "differential-equations",
     title: b("微分方程入门", "Introduction to differential equations"),
     subtitle: b("ODE 是什么 → 一阶方程 → 二阶线性方程 → 数值解", "What is an ODE → First-order → Second-order linear → Numerical solutions"),
+    intent: b("一个系统如何随时间演化", "how a system evolves in time"),
     concepts: ["what-is-ode", "first-order-ode", "second-order-linear-ode", "numerical-ode"],
   },
 ];

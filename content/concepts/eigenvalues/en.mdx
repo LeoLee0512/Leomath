@@ -1,3 +1,11 @@
+## Start from a problem
+
+<Problem>
+In most directions a linear map both stretches and turns. Are there directions in which it **only stretches**?
+
+If so, perhaps those directions can serve as a new coordinate system in which the map becomes extremely simple. We need a definition capturing "direction unchanged", and a way to find such directions.
+</Problem>
+
 <Observe>
 Tick "Show eigenvectors", then press "Stretch": two dashed lines appear, one horizontal, one vertical. Vectors along these directions keep their **direction** after the transformation; only their length is scaled. Press "Shear": only one dashed line remains, the horizontal one. Press "Rotate": the lines vanish.
 
@@ -64,6 +72,10 @@ The $j$-th column of $AP$ is $Av_j=\lambda_jv_j$; the $j$-th column of $PD$ is t
 </Proof>
 
 Meaning: in coordinates built from eigenvectors, $A$ is the diagonal matrix $D$. The intuition "it only stretches along special directions" has become an exact identity. Shear cannot be diagonalised because it lacks a second independent direction.
+
+<Warning>
+Eigenvectors must be nonzero, but an eigenvalue may be $0$ (then $A$ has a nontrivial kernel and zero determinant). Also, a double eigenvalue does **not** guarantee two independent eigenvectors: the shear has only one direction. Algebraic and geometric multiplicity are different things.
+</Warning>
 
 ## Applications
 

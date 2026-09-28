@@ -1,3 +1,11 @@
+## Start from a problem
+
+<Problem>
+$y'=f(t,y)$ assigns a slope to every point of the plane. How do we recover the whole curve from "slopes everywhere"?
+
+The previous section proved that a solution exists and is unique, but not how to compute it. We need methods that actually produce solutions, even if only for certain types of equation.
+</Problem>
+
 <Observe>
 Choose "Logistic growth" below: $y'=ry\left(1-\dfrac yK\right)$. Vary the initial value $y(0)$: solutions starting below climb, solutions starting above fall, all towards $K$; the one starting at $y(0)=0$ stays $0$ forever. No two solution curves ever cross.
 
@@ -65,6 +73,10 @@ If $y_1,y_2$ both solve $y'+py=q$, then $(y_1-y_2)'+p(y_1-y_2)=q-q=0$, so $y_1-y
 </Proof>
 
 This structure comes from **linearity**: the solution set is an affine space, a translate of the homogeneous solution space, which is a one-dimensional [vector space](/en/concepts/vectors). The same structure reappears in [Second-order linear equations](/en/concepts/second-order-linear-ode), where that space becomes two-dimensional.
+
+<Warning>
+Dividing by $h(y)$ when separating variables throws away the **equilibrium solutions** where $h(y)=0$. For the logistic equation, $y\equiv0$ and $y\equiv K$ are lost this way and must be added back by hand. Every time you divide by an expression in $y$, ask what happens when it is zero.
+</Warning>
 
 ## Application
 

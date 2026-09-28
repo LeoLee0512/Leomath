@@ -9,11 +9,14 @@ import { LinearTransform } from "@/components/experiments/LinearTransform";
 import { ExponentialDerivative } from "@/components/experiments/ExponentialDerivative";
 import { KnowledgeTree } from "@/components/KnowledgeTree";
 import { M, MB } from "@/components/Math";
+import { readingMinutesMap } from "@/lib/reading";
+import { publishedConcepts } from "@/content/graph";
 
 export default async function Home({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
   if (!isLocale(locale)) notFound();
   const t = getDictionary(locale);
+  const minutes = await readingMinutesMap(publishedConcepts().map((c) => c.slug), locale);
 
   return (
     <>
@@ -21,7 +24,7 @@ export default async function Home({ params }: { params: Promise<{ locale: strin
       <section className="relative overflow-hidden">
         <GridBackdrop />
         <div className="container relative grid gap-10 lg:grid-cols-[1.05fr_1fr] items-center py-14 md:py-20 lg:py-24">
-          <div className="max-w-xl">
+          <div className="max-w-xl min-w-0">
             <h1 className="display text-[2.4rem] leading-[1.15] md:text-[3.2rem] font-semibold">{t.home.heroTitle}</h1>
             <p className="mt-6 text-lg text-ink-2 leading-relaxed">{t.home.heroSubtitle}</p>
             <div className="mt-9 flex flex-wrap gap-3">
@@ -34,8 +37,7 @@ export default async function Home({ params }: { params: Promise<{ locale: strin
               <Link href={`/${locale}/concepts/linear-maps`} className="mt-4 inline-block text-sm text-leo hover:underline">{t.home.heroLink}</Link>
             </div>
           </div>
-          <div>
-            <p className="exp-control text-muted mb-2">{t.home.heroHint}</p>
+          <div className="min-w-0">
             <LinearTransform locale={locale} compact />
             <div className="mt-6 lg:hidden">
               <p className="display text-lg text-ink">{t.home.heroCaptionA}</p>
@@ -54,7 +56,7 @@ export default async function Home({ params }: { params: Promise<{ locale: strin
             <p className="mt-4 text-ink-2 leading-relaxed">{t.home.treeSubtitle}</p>
           </div>
           <div className="mt-10">
-            <KnowledgeTree locale={locale} />
+            <KnowledgeTree locale={locale} minutes={minutes} />
           </div>
         </div>
       </section>
@@ -101,15 +103,17 @@ export default async function Home({ params }: { params: Promise<{ locale: strin
               const nExp = new Set(p.concepts.flatMap((c) => experimentsForConcept(c).map((e) => e.slug))).size;
               const nEx = p.concepts.reduce((s, c) => s + exercisesForConcept(c).length, 0);
               return (
-                <Link key={p.slug} href={`/${locale}/learn/${p.slug}`} className="bg-paper p-7 hover:bg-paper-2 transition-colors flex flex-col">
+                <Link key={p.slug} href={`/${locale}/learn/${p.slug}`} className="group bg-paper p-7 hover:bg-paper-2 transition-colors flex flex-col">
                   <h3 className="display text-xl font-semibold">{p.title[locale]}</h3>
-                  <p className="mt-2 text-ink-2 text-sm leading-relaxed">{p.subtitle[locale]}</p>
-                  <ol className="mt-5 space-y-1 text-sm">
+                  <p className="mt-4 text-sm text-muted">{t.home.pathsIntent}</p>
+                  <p className="display text-lg text-ink mt-1 leading-snug">{p.intent[locale]}</p>
+                  <ol className="mt-5 space-y-1 text-sm text-ink-2">
                     {p.concepts.map((c, i) => (
                       <li key={c} className="flex gap-2"><span className="mono text-muted w-4">{i + 1}</span>{getConcept(c)!.title[locale]}</li>
                     ))}
                   </ol>
                   <p className="mt-6 pt-4 border-t border-rule text-xs mono text-muted">{t.home.pathsCounts(p.concepts.length, nExp, nEx)}</p>
+                  <p className="mt-3 text-sm text-leo group-hover:underline">{t.home.pathsStart}</p>
                 </Link>
               );
             })}
@@ -128,7 +132,7 @@ export default async function Home({ params }: { params: Promise<{ locale: strin
             {[
               { title: t.home.labExperiments, desc: t.home.labExperimentsDesc, formula: "\\dot{x}=\\sigma(y-x)", href: `/${locale}/explore`, live: true },
               { title: t.home.labComputing, desc: t.home.labComputingDesc, formula: "\\|y_n-y(t_n)\\|=O(h^4)", href: `/${locale}/explore/ode-explorer`, live: true },
-              { title: t.home.labDevlog, desc: t.home.labDevlogDesc, formula: "\\text{v}0.1.0", href: `/${locale}/about`, live: false },
+              { title: t.home.labDevlog, desc: t.home.labDevlogDesc, formula: "\\text{v}0.1.1", href: `/${locale}/about`, live: false },
             ].map((card) => (
               <Link key={card.title} href={card.href} className="group block border-t border-ink-2 pt-5">
                 <div className="text-muted text-lg h-8"><M>{card.formula}</M></div>

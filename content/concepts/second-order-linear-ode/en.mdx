@@ -1,3 +1,11 @@
+## Start from a problem
+
+<Problem>
+A damped oscillator behaves in three sharply different ways: it oscillates forever, it oscillates and decays, or it slides back without oscillating. What decides whether it oscillates?
+
+We need a method that turns a second-order differential equation into an algebra problem, and explains why the answer splits into exactly three cases.
+</Problem>
+
 <Observe>
 Choose "Damped oscillator": $x''+2\gamma x'+\omega^2x=0$. With $\gamma=0$ the solution is an undying sine wave; for small $\gamma>0$ the oscillation decays; once $\gamma$ exceeds $\omega$ it stops oscillating and simply slides back to zero. In the phase portrait these are an ellipse, an inward spiral, and a curve heading straight for the origin.
 
@@ -63,6 +71,10 @@ $y''+4y=0$: $r^2+4=0$, $r=\pm2i$, $y=C_1\cos2t+C_2\sin2t$.
 
 $y''-3y'+2y=0$: $r^2-3r+2=(r-1)(r-2)$, $y=C_1e^t+C_2e^{2t}$.
 </Example>
+
+<Warning>
+For a double root $r$ the second solution is $te^{rt}$, **not** another $e^{rt}$: two proportional solutions span only one dimension and cannot fill a two-dimensional solution space. For complex roots the general solution is $e^{\alpha t}(C_1\cos\beta t+C_2\sin\beta t)$ with $\beta$ the imaginary part, not some combination like $\alpha^2+\beta^2$.
+</Warning>
 
 ## Applications
 
