@@ -83,7 +83,9 @@ function eigenvector(m: Mat2, lambda: number): Vec2 {
     v = [-r[1], r[0]]; // perpendicular to the row
   }
   const n = Math.hypot(v[0], v[1]);
-  return [v[0] / n, v[1] / n];
+  // Fix the sign so the first nonzero component is positive; eigenvectors are only defined up to scale.
+  const sign = v[0] < -1e-12 || (Math.abs(v[0]) <= 1e-12 && v[1] < 0) ? -1 : 1;
+  return [(sign * v[0]) / n, (sign * v[1]) / n];
 }
 
 export function format(x: number, digits = 2): string {

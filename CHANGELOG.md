@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.1.2 — 2026-09-29
+
+MathForge is archived; its non-overlapping parts are rebuilt here.
+
+- New experiments: secant becomes tangent (derivative, mean value theorem), Riemann sums (integral), Taylor approximation with radius of convergence (Taylor expansion).
+- New Tools page, the last link of the learning chain: formula editor with live KaTeX and copy, function plotter with automatic parameter sliders, pan and zoom, a calculator, and a 2×2 matrix calculator. Built on a new expression parser (tokenizer + recursive descent, unit-tested; "2 3" is an error, "1e3" is a number, "2x" is 2·x).
+- New concepts: Mean value theorem (calculus path, now five concepts) and Inner products & Cauchy–Schwarz (linear algebra path, now five concepts), each with a Problem opening, proofs, a common-mistake note and two exercises. The integral's fundamental theorem and Taylor's remainder now cite the mean value theorem as a prerequisite.
+- Knowledge tree gains a Probability branch (planned).
+- Software: MathForge listed as archived with a GitHub link only.
+- `engines` field; CONTRIBUTING with the content review checklist.
+
 ## 0.1.1 — 2026-09-28
 
 Launch-readiness pass. No new features; four product-quality fixes.

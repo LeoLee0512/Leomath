@@ -10,6 +10,7 @@ export function Nav({ locale, t, user }: { locale: Locale; t: Dictionary; user: 
     { href: `/${locale}/learn`, label: t.nav.learn },
     { href: `/${locale}/explore`, label: t.nav.explore },
     { href: `/${locale}/problems`, label: t.nav.problems },
+    { href: `/${locale}/tools`, label: t.nav.tools },
     { href: `/${locale}/software`, label: t.nav.software },
     { href: `/${locale}/about`, label: t.nav.about },
   ];

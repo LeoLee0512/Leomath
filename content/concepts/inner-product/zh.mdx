@@ -1,0 +1,89 @@
+## 从一个问题开始
+
+<Problem>
+[向量空间](/zh/concepts/vectors)的八条公理只谈加法和数乘，没有"长度"，也没有"角度"。可是几何里最基本的问题恰恰是：这个向量有多长？两个向量夹角多大？它们垂直吗？
+
+我们需要给向量空间补上一种结构，让长度和角度都能定义出来，并且在多项式、函数、随机变量这些"不像箭头"的空间里同样成立。
+</Problem>
+
+<Observe>
+平面上，$u$ 在 $v$ 方向上的投影长度是 $\|u\|\,|\cos\theta|$。无论 $\theta$ 是多少，**投影不会比 $u$ 本身长**。这句话看起来太显然，但它就是本节整个不等式的来源。
+</Observe>
+
+<Conjecture>
+只要有一种"乘法" $\langle u,v\rangle$ 满足几条自然性质，就能定义 $\|u\|=\sqrt{\langle u,u\rangle}$ 和 $\cos\theta=\dfrac{\langle u,v\rangle}{\|u\|\|v\|}$。要让后者有意义，必须证明 $|\langle u,v\rangle|\le\|u\|\|v\|$。而"投影不会变长"应该就是证明。
+</Conjecture>
+
+## 定义
+
+<Definition title="内积">
+实向量空间 $V$ 上的**内积**是映射 $\langle\cdot,\cdot\rangle:V\times V\to\mathbb R$，满足对所有 $u,v,w\in V$、$c\in\mathbb R$：
+1. 对称：$\langle u,v\rangle=\langle v,u\rangle$；
+2. 线性：$\langle cu+w,v\rangle=c\langle u,v\rangle+\langle w,v\rangle$；
+3. 正定：$\langle v,v\rangle\ge0$，且等号当且仅当 $v=0$。
+
+带内积的向量空间称为**内积空间**。
+</Definition>
+
+<Definition title="长度、角度、正交">
+$\|v\|=\sqrt{\langle v,v\rangle}$ 称为 $v$ 的**长度**（范数）。若 $\langle u,v\rangle=0$，称 $u,v$ **正交**。
+</Definition>
+
+<Example title="三个内积空间">
+- $\mathbb R^n$：$\langle a,b\rangle=\sum a_ib_i$（标准内积）。
+- $[0,1]$ 上的连续函数：$\langle f,g\rangle=\int_0^1f(x)g(x)\,dx$。
+- 有限方差的随机变量：$\langle X,Y\rangle=\mathbb E[XY]$。
+
+三条公理逐一验证都成立。第三个例子里 $\|X-\mathbb EX\|^2$ 就是方差。
+</Example>
+
+## 定理与证明
+
+<Theorem title="Cauchy–Schwarz 不等式">
+在任何内积空间中，
+$$\langle u,v\rangle^2\le\langle u,u\rangle\,\langle v,v\rangle,$$
+等号成立当且仅当 $u,v$ 线性相关。
+</Theorem>
+
+<Proof>
+若 $v=0$，两边都是 $0$。设 $v\ne0$，令 $t=\dfrac{\langle u,v\rangle}{\langle v,v\rangle}$（$u$ 在 $v$ 方向的投影系数）。"减去投影后剩下的分量长度非负"：
+$$0\le\langle u-tv,\ u-tv\rangle=\langle u,u\rangle-2t\langle u,v\rangle+t^2\langle v,v\rangle.$$
+代入 $t$，中间两项合并：
+$$0\le\langle u,u\rangle-\frac{\langle u,v\rangle^2}{\langle v,v\rangle}.$$
+乘以 $\langle v,v\rangle>0$ 即得不等式。等号成立当且仅当 $u-tv=0$（正定性），即 $u=tv$；合并 $v=0$ 的情形，就是 $u,v$ 线性相关。
+</Proof>
+
+整个证明只用了两件事：**长度非负**（公理 3）和**减去投影**（公理 1、2 做展开）。所以它在每一个内积空间里都成立，一字不改。
+
+<Corollary title="三角不等式">
+$\|u+v\|\le\|u\|+\|v\|$。
+</Corollary>
+
+<Proof>
+$\|u+v\|^2=\|u\|^2+2\langle u,v\rangle+\|v\|^2\le\|u\|^2+2\|u\|\|v\|+\|v\|^2=(\|u\|+\|v\|)^2$。
+</Proof>
+
+有了三角不等式，$\|\cdot\|$ 才配叫"长度"；有了 Cauchy–Schwarz，$\dfrac{\langle u,v\rangle}{\|u\|\|v\|}\in[-1,1]$，$\cos\theta$ 才有定义。**角度是从内积长出来的，不是反过来。**
+
+<Warning>
+Cauchy–Schwarz 的等号条件是"线性相关"，不是"相等"。$u=3v$ 时等号成立；$u=-v$ 时也成立（此时 $\langle u,v\rangle<0$，平方后仍相等）。另外，公理 3 里"等号当且仅当 $v=0$"不能少：没有它，$\langle v,v\rangle$ 可能为零而 $v\ne0$，投影系数 $t$ 无定义。
+</Warning>
+
+## 应用
+
+<Application title="同一个不等式的三张面孔">
+把三个例子代进去：
+$$\Bigl(\sum a_ib_i\Bigr)^2\le\Bigl(\sum a_i^2\Bigr)\Bigl(\sum b_i^2\Bigr),\qquad
+\Bigl(\int fg\Bigr)^2\le\int f^2\int g^2,\qquad
+|\operatorname{Cov}(X,Y)|\le\sqrt{\operatorname{Var}X}\sqrt{\operatorname{Var}Y}.
+$$
+第三个说的是相关系数在 $[-1,1]$ 内。三个不等式是同一个证明。
+</Application>
+
+<Application title="最小二乘">
+在子空间 $W$ 中离 $u$ 最近的点，是 $u$ 在 $W$ 上的正交投影。证明的核心仍是"减去投影后剩下的分量与 $W$ 正交"。这是线性回归的全部几何。
+</Application>
+
+<Remark>
+这一节展示了代数的典型做法：不问"内积是什么"，只问"内积满足什么"，然后一个证明覆盖所有情形。下一节[线性映射](/zh/concepts/linear-maps)会用同样的态度对待"变换"。
+</Remark>

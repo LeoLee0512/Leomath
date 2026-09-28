@@ -88,6 +88,10 @@ docker compose up -d --build
 4. 在 `src/components/KnowledgeTree.tsx` 的 `positions` 中给节点一个坐标。
 5. `npm test` 会验证图谱完整性（无环、引用存在、路线只含已发布节点）。
 
+## 前身 · Predecessor
+
+MathForge（[LeoLee0512/MathLearn](https://github.com/LeoLee0512/MathLearn)，v0.3.1）是 LeoMath 的前身，已归档。它的实验、工具和两篇内容已在 LeoMath 中重写；迁移记录见 [ROADMAP.md](./ROADMAP.md)。
+
 ## 许可 · Licence
 
 代码 MIT（[LICENSE](./LICENSE)）；数学正文与文档 CC BY-SA 4.0（[LICENSE-CONTENT](./LICENSE-CONTENT)）。

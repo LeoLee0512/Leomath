@@ -133,7 +133,7 @@ export default async function Home({ params }: { params: Promise<{ locale: strin
             {[
               { title: t.home.labExperiments, desc: t.home.labExperimentsDesc, formula: "\\dot{x}=\\sigma(y-x)", href: `/${locale}/explore`, live: true },
               { title: t.home.labComputing, desc: t.home.labComputingDesc, formula: "\\|y_n-y(t_n)\\|=O(h^4)", href: `/${locale}/explore/ode-explorer`, live: true },
-              { title: t.home.labDevlog, desc: t.home.labDevlogDesc, formula: "\\text{v}0.1.1", href: `/${locale}/about`, live: false },
+              { title: t.home.labDevlog, desc: t.home.labDevlogDesc, formula: "\\text{v}0.1.2", href: `/${locale}/about`, live: false },
             ].map((card) => (
               <Link key={card.title} href={card.href} className="group block border-t border-ink-2 pt-5">
                 <div className="text-muted text-lg h-8"><M>{card.formula}</M></div>

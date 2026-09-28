@@ -1,0 +1,78 @@
+## Start from a problem
+
+<Problem>
+A car covers 200 km in two hours: average speed 100 km/h. Can you assert that **at some instant the speedometer read exactly 100**?
+
+Intuition says yes: slower than 100 the whole way and you never reach 200 km; faster the whole way and you overshoot. Speed varies continuously, so it must pass through 100. But "intuition says yes" is not a proof. We need a theorem that connects "overall average" to "some single instant" precisely.
+</Problem>
+
+<Observe>
+Fix the point $x_0$ below and make $h$ large: the secant joins two endpoints. The mean value theorem says the tangent somewhere in between is parallel to that secant. Try a few functions and hunt for that place.
+
+<Experiment slug="secant-tangent" />
+</Observe>
+
+<Conjecture>
+If $f$ is "nice enough" on $[a,b]$ (continuous, differentiable), there is $\xi\in(a,b)$ with
+$$f'(\xi)=\frac{f(b)-f(a)}{b-a}.$$
+Strategy for the proof: **reduce to the special case of equal endpoint values**, where all we need is an extremum.
+</Conjecture>
+
+## Theorems and proofs
+
+<Theorem title="Rolle's theorem">
+Let $f$ be continuous on $[a,b]$, differentiable on $(a,b)$, with $f(a)=f(b)$. Then there is $\xi\in(a,b)$ with $f'(\xi)=0$.
+</Theorem>
+
+<Proof>
+A continuous function on a closed interval attains a maximum $M$ and a minimum $m$ (extreme value theorem). If $M=m$, $f$ is constant and any $\xi$ works. Otherwise at least one of $M,m$ differs from $f(a)=f(b)$ and is attained at an interior point $\xi\in(a,b)$; say $f(\xi)=M$. For small $h$, $f(\xi+h)\le f(\xi)$, so
+$$\frac{f(\xi+h)-f(\xi)}{h}\le0\ (h>0),\qquad\frac{f(\xi+h)-f(\xi)}{h}\ge0\ (h<0).$$
+Taking limits (the one-sided limits agree because $f$ is differentiable at $\xi$) gives $f'(\xi)\le0$ and $f'(\xi)\ge0$, hence $f'(\xi)=0$.
+</Proof>
+
+The heart of this step: **the derivative vanishes at an interior extremum.** That is Fermat's lemma.
+
+<Theorem title="Lagrange's mean value theorem">
+Let $f$ be continuous on $[a,b]$ and differentiable on $(a,b)$. Then there is $\xi\in(a,b)$ with
+$$f'(\xi)=\frac{f(b)-f(a)}{b-a}.$$
+</Theorem>
+
+<Proof>
+The secant through the endpoints is
+$$\ell(x)=f(a)+\frac{f(b)-f(a)}{b-a}(x-a),$$
+whose derivative is the constant average slope $m=\frac{f(b)-f(a)}{b-a}$. Put $g(x)=f(x)-\ell(x)$. Then $g$ is continuous on $[a,b]$, differentiable on $(a,b)$, and since the secant passes through both endpoints, $g(a)=g(b)=0$. Rolle gives $\xi$ with $g'(\xi)=0$, i.e. $f'(\xi)-m=0$.
+</Proof>
+
+The chain: build the secant → subtract it → equal endpoints → Rolle → conclusion. The entire trick is "subtract the secant".
+
+## Which hypothesis cannot be dropped
+
+<Example title="Not differentiable: f(x) = |x|">
+On $[-1,1]$ the secant slope is $0$, but $f'$ takes only the values $-1$ and $1$, and $f$ is not differentiable at $0$. No $\xi$ satisfies the conclusion. **Differentiability on the open interval** cannot be dropped.
+</Example>
+
+<Example title="Discontinuous at an endpoint">
+Let $f(x)=x$ for $0\le x<1$ and $f(1)=2$. The secant slope is $2$; the interior derivative is identically $1$. **Continuity at the endpoints** cannot be dropped, even at a single point.
+</Example>
+
+<Warning>
+$\xi$ **exists**, but the theorem says nothing about where it is, how many there are, or how to find it. Never treat $\xi$ as a quantity you can solve for; the theorem's value lies in estimates: $|f(b)-f(a)|\le\max|f'|\cdot|b-a|$.
+</Warning>
+
+## Applications
+
+<Application title="Zero derivative means constant">
+If $f'\equiv0$ on an interval $I$, then for any $a<b$ in $I$, $f(b)-f(a)=f'(\xi)(b-a)=0$. This corollary is used in part II of the fundamental theorem in [The integral](/en/concepts/integral) and in the uniqueness proof for $y'=ky$ in [What is an ODE](/en/concepts/what-is-ode). **Without the mean value theorem both proofs are empty.**
+</Application>
+
+<Application title="Monotonicity test">
+$f'>0$ on $(a,b)$ implies $f$ is strictly increasing: for $x_1<x_2$, $f(x_2)-f(x_1)=f'(\xi)(x_2-x_1)>0$.
+</Application>
+
+<Application title="Taylor's theorem">
+The Lagrange-remainder proof in [Taylor expansion](/en/concepts/taylor-series) is Rolle's theorem applied $n+1$ times to a carefully built function.
+</Application>
+
+<Remark>
+The mean value theorem is the bridge from local information to global behaviour: knowing the derivative at every point controls the difference of function values between any two points. Nearly every statement of the form "a property of $f'$ implies a property of $f$" rests on it.
+</Remark>

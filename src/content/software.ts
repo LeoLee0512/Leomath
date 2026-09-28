@@ -11,7 +11,7 @@ export interface SoftwareRelease {
   sha256?: string;
 }
 
-export type SoftwareStatus = "coming-soon" | "beta" | "preview" | "stable";
+export type SoftwareStatus = "coming-soon" | "beta" | "preview" | "stable" | "archived";
 
 export interface Software {
   slug: string;
@@ -59,17 +59,16 @@ export const software: Software[] = [
     slug: "mathforge",
     name: "MathForge",
     kind: "web",
-    status: "stable",
+    status: "archived",
     version: "0.3.1",
     tagline: {
-      zh: "LeoMath 的前身：以理解为中心的开源数学学习平台。",
-      en: "LeoMath's predecessor: an open-source mathematics learning platform centred on understanding.",
+      zh: "LeoMath 的前身：以理解为中心的开源数学学习平台。已归档。",
+      en: "LeoMath's predecessor: an open-source mathematics learning platform centred on understanding. Archived.",
     },
     description: {
-      zh: "MathForge 0.3「Open Learning Core」围绕 理解 → 可视化 → 练习 → 贡献 一条闭环，保留导数、Riemann 和、线性变换、Taylor、ODE 等交互实验和公式工具。它是一个纯静态单页应用，代码 MIT、内容 CC BY-SA。LeoMath 继承了它的教学方法并重新从零构建；MathForge 进入维护模式。",
-      en: "MathForge 0.3 “Open Learning Core” is built around Understand → Visualize → Practice → Contribute, with interactive experiments (derivative, Riemann sums, linear transformation, Taylor, ODE) and formula tools. It is a static single-page app, MIT code and CC BY-SA content. LeoMath inherits its teaching method and was rebuilt from scratch; MathForge is now in maintenance mode.",
+      zh: "MathForge 0.3「Open Learning Core」围绕 理解 → 可视化 → 练习 → 贡献 一条闭环。它的教学方法、交互实验（割线与切线、Riemann 和、Taylor 逼近、线性变换、方向场）和工具（公式编辑器、函数绘图、计算器）已经在 LeoMath 中重写；其余内容（概率、数论、解析几何的学习单元，《几何原本》语料）保留在归档仓库中，代码 MIT、内容 CC BY-SA。",
+      en: "MathForge 0.3 “Open Learning Core” was built around Understand → Visualize → Practice → Contribute. Its teaching method, experiments (secant and tangent, Riemann sums, Taylor approximation, linear transformation, direction fields) and tools (formula editor, plotter, calculator) have been rewritten inside LeoMath; the rest (probability, number theory and analytic geometry units, the Euclid corpus) stays in the archived repository, MIT code and CC BY-SA content.",
     },
-    useUrl: "http://8.130.33.10:8090/",
     repoUrl: "https://github.com/LeoLee0512/MathLearn",
   },
   {

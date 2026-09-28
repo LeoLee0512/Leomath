@@ -16,6 +16,8 @@ $$S_n=\sum_{i=1}^n\left(\frac in\right)^2\frac1n=\frac{1}{n^3}\cdot\frac{n(n+1)(
 "曲线下的面积"应该定义为矩形和的[极限](/zh/concepts/limit)。而且极限值不应依赖于我们怎么切、在每段上取哪个点：只要切得足够细，结果都一样。
 </Conjecture>
 
+<Experiment slug="riemann-sums" />
+
 ## 定义
 
 <Definition title="Riemann 和与定积分">
@@ -56,7 +58,7 @@ $f$ 连续，故在 $[x,x+h]$ 上有 $\min f\le\dfrac1h\int_x^{x+h}f\le\max f$�
 </Theorem>
 
 <Proof>
-令 $G(x)=\int_a^xf$。由第一部分 $G'=f=F'$，故 $(G-F)'=0$，$G-F$ 是常数。$G(a)=0$ 给出常数为 $-F(a)$，所以 $G(b)=F(b)-F(a)$。
+令 $G(x)=\int_a^xf$。由第一部分 $G'=f=F'$，故 $(G-F)'=0$，由[中值定理](/zh/concepts/mean-value-theorem)的推论，$G-F$ 是常数。$G(a)=0$ 给出常数为 $-F(a)$，所以 $G(b)=F(b)-F(a)$。
 </Proof>
 
 于是 $\int_0^1x^2\,dx=\left[\frac{x^3}3\right]_0^1=\frac13$：开头那个极限一秒钟算出。

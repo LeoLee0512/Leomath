@@ -5,36 +5,43 @@ import { useMemo, useState } from "react";
 import type { Locale } from "@/i18n/config";
 import { concepts, getConcept, paths, prerequisiteChain, prerequisiteClosure, type Concept } from "@/content/graph";
 
-/** Hand-laid positions in a 1000 × 800 viewBox. */
+/** Hand-laid positions in a 1120 × 800 viewBox. */
 const positions: Record<string, [number, number]> = {
-  mathematics: [500, 44],
-  analysis: [250, 140],
-  algebra: [620, 140],
-  geometry: [870, 140],
-  functions: [105, 240],
-  limit: [300, 240],
-  vectors: [620, 240],
-  "plane-geometry": [870, 240],
-  derivative: [300, 340],
-  "linear-maps": [620, 340],
-  integral: [175, 440],
-  "what-is-ode": [430, 440],
-  matrices: [620, 440],
-  "taylor-series": [105, 540],
-  "first-order-ode": [430, 540],
-  eigenvalues: [620, 540],
-  "group-theory": [870, 540],
-  "multivariable-calculus": [120, 640],
-  "numerical-ode": [330, 640],
-  "second-order-linear-ode": [590, 640],
-  "numerical-analysis": [330, 740],
-  pde: [590, 740],
+  mathematics: [560, 44],
+  analysis: [230, 140],
+  algebra: [600, 140],
+  geometry: [850, 140],
+  probability: [1020, 140],
+  functions: [120, 240],
+  limit: [280, 240],
+  vectors: [560, 240],
+  "plane-geometry": [820, 240],
+  "conditional-probability": [1020, 240],
+  "mean-value-theorem": [120, 340],
+  derivative: [280, 340],
+  "linear-maps": [520, 340],
+  "inner-product": [745, 340],
+  "central-limit-theorem": [1020, 340],
+  integral: [170, 440],
+  "what-is-ode": [400, 440],
+  matrices: [560, 440],
+  "taylor-series": [95, 540],
+  "first-order-ode": [400, 540],
+  eigenvalues: [560, 540],
+  "group-theory": [820, 540],
+  "multivariable-calculus": [125, 640],
+  "numerical-ode": [320, 640],
+  "second-order-linear-ode": [570, 640],
+  "numerical-analysis": [320, 740],
+  pde: [570, 740],
 };
 
 const treeEdges: [string, string][] = [
   ["mathematics", "analysis"],
   ["mathematics", "algebra"],
   ["mathematics", "geometry"],
+  ["mathematics", "probability"],
+  ["probability", "conditional-probability"],
   ["analysis", "functions"],
   ["analysis", "limit"],
   ["algebra", "vectors"],
@@ -120,7 +127,7 @@ export function KnowledgeTree({ locale, focus, minutes = {} }: KnowledgeTreeProp
     <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_19rem] lg:items-start">
       {/* Desktop: the map. */}
       <div className="hidden md:block">
-        <svg viewBox="0 0 1000 800" className="w-full h-auto select-none" role="img" aria-label={t.hover}>
+        <svg viewBox="0 0 1120 800" className="w-full h-auto select-none" role="img" aria-label={t.hover}>
           <defs>
             <marker id="kt-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
               <path d="M 0 0 L 10 5 L 0 10 z" fill="var(--leo)" />
@@ -179,8 +186,8 @@ export function KnowledgeTree({ locale, focus, minutes = {} }: KnowledgeTreeProp
             const inPath = Boolean(highlight?.has(c.slug)) && !isActive;
             const label = c.title[locale];
             const sub = statusLine(c);
-            const cjk = /[一-鿿]/.test(label);
-            const w = Math.max(72, label.length * (cjk ? 17 : 9) + 28, (sub?.length ?? 0) * 6.5 + 24);
+            const textWidth = [...label].reduce((acc, ch) => acc + (/[\u4e00-\u9fff]/.test(ch) ? 15.5 : /[A-Z]/.test(ch) ? 9.5 : 8), 0);
+            const w = Math.max(72, textWidth + 28, (sub?.length ?? 0) * 6.5 + 24);
             const h = isStructure ? 34 : sub ? 46 : 34;
             const published = c.status === "published";
             return (

@@ -10,11 +10,24 @@ LeoMath is built in public. This file is the plan; CHANGELOG.md is what actually
 - [x] P0-4 Full mobile acceptance at 390 px: no horizontal overflow on any page, list-view tree, stacked experiment panels, horizontal section navigator.
 - [ ] ICP filing for leomath.cn, HTTPS, first deployment on the Aliyun host.
 
+## Inherited from MathForge (archived 2026-09)
+
+MathForge (LeoLee0512/MathLearn) is archived. What was worth keeping has been rewritten here; nothing was copied as code.
+
+- [x] Experiments: secant → tangent, Riemann sums, Taylor approximation (the linear transformation and direction field already existed).
+- [x] Tools: formula editor, function plotter with parameters, calculator, 2×2 matrix calculator, on a new expression parser with tests.
+- [x] Content: mean value theorem (calculus path), inner products and Cauchy–Schwarz (linear algebra path).
+- [ ] Probability path: conditional probability and Bayes, maximum likelihood, central limit theorem with its experiment, random walks. Planned nodes exist in the tree.
+- [ ] Number theory (gcd and Bézout) and analytic geometry (conics and eccentricity): not yet placed in the tree.
+- [ ] Stolz–Cesàro: an advanced sequences node after Limits.
+- [ ] Proof exercises: MathForge's competition problems are proofs, which the numeric/choice checker cannot grade. Needs a "worked solution, self-check" exercise kind.
+- [ ] The Euclid corpus (7,152 semantic blocks with a dependency graph) stays in the archived repository; a possible future Leo Lab experiment on structured reading.
+
 ## After launch
 
 - Search across concepts and exercises.
 - Leo Lab: Lorenz system, Fourier series, numerical integration experiments.
 - Dev log.
 - More paths: multivariable calculus, numerical analysis.
-- Computational tools: matrix calculator, ODE solver with exportable data.
+- Computational tools: ODE solver with exportable data; 3×3 matrices.
 - Software: screenshots, SHA-256 checksums, update history per release.

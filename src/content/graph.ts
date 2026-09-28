@@ -28,7 +28,7 @@ export interface LearningPath {
   concepts: string[];
 }
 
-export type ExperimentKind = "linear-transform" | "ode-explorer" | "exponential-derivative";
+export type ExperimentKind = "linear-transform" | "ode-explorer" | "exponential-derivative" | "secant-tangent" | "riemann-sums" | "taylor-approx";
 
 export interface Experiment {
   slug: string;
@@ -46,19 +46,24 @@ export const concepts: Concept[] = [
   { slug: "analysis", title: b("分析", "Analysis"), summary: b("极限、连续、微分与积分。", "Limits, continuity, differentiation and integration."), parent: "mathematics", prerequisites: [], status: "planned", level: "structure", experiments: [] },
   { slug: "algebra", title: b("代数", "Algebra"), summary: b("结构、运算与对称。", "Structure, operations and symmetry."), parent: "mathematics", prerequisites: [], status: "planned", level: "structure", experiments: [] },
   { slug: "geometry", title: b("几何", "Geometry"), summary: b("形状、空间与变换。", "Shape, space and transformation."), parent: "mathematics", prerequisites: [], status: "planned", level: "structure", experiments: [] },
+  { slug: "probability", title: b("概率", "Probability"), summary: b("不确定性的数学。", "The mathematics of uncertainty."), parent: "mathematics", prerequisites: [], status: "planned", level: "structure", experiments: [] },
+  { slug: "conditional-probability", title: b("条件概率与 Bayes", "Bayes' theorem"), summary: b("用结果反推原因。", "Reasoning from effects back to causes."), parent: "probability", prerequisites: [], status: "planned", level: "undergrad", experiments: [] },
+  { slug: "central-limit-theorem", title: b("中心极限定理", "Central limit theorem"), summary: b("分布为什么走向钟形。", "Why distributions tend to the bell curve."), parent: "probability", prerequisites: ["conditional-probability"], status: "planned", level: "undergrad", experiments: [] },
 
   // ---- foundations (planned) ----
-  { slug: "functions", title: b("函数与实数", "Functions & real numbers"), summary: b("实数的完备性与函数的语言。", "Completeness of the reals and the language of functions."), parent: "analysis", prerequisites: [], status: "planned", level: "highschool", experiments: [] },
-  { slug: "plane-geometry", title: b("平面几何与变换", "Plane geometry & transformations"), summary: b("对称、旋转、相似。", "Symmetry, rotation, similarity."), parent: "geometry", prerequisites: [], status: "planned", level: "highschool", experiments: [] },
+  { slug: "functions", title: b("函数与实数", "Functions & reals"), summary: b("实数的完备性与函数的语言。", "Completeness of the reals and the language of functions."), parent: "analysis", prerequisites: [], status: "planned", level: "highschool", experiments: [] },
+  { slug: "plane-geometry", title: b("平面几何与变换", "Plane geometry"), summary: b("对称、旋转、相似。", "Symmetry, rotation, similarity."), parent: "geometry", prerequisites: [], status: "planned", level: "highschool", experiments: [] },
 
   // ---- calculus path ----
   { slug: "limit", title: b("极限", "Limits"), summary: b("用 ε–δ 精确说出“无限接近”。", "Saying “arbitrarily close” precisely with ε–δ."), parent: "analysis", prerequisites: ["functions"], status: "published", level: "undergrad", path: "calculus", experiments: [] },
-  { slug: "derivative", title: b("导数", "The derivative"), summary: b("变化率的极限，以及为什么 eˣ 的导数是自己。", "The limit of a rate of change, and why eˣ is its own derivative."), parent: "analysis", prerequisites: ["limit"], status: "published", level: "undergrad", path: "calculus", experiments: ["exponential-derivative"] },
-  { slug: "integral", title: b("积分", "The integral"), summary: b("Riemann 和的极限，与微积分基本定理。", "The limit of Riemann sums and the fundamental theorem."), parent: "analysis", prerequisites: ["limit", "derivative"], status: "published", level: "undergrad", path: "calculus", experiments: [] },
-  { slug: "taylor-series", title: b("Taylor 展开", "Taylor expansion"), summary: b("用多项式逼近函数，并控制误差。", "Approximating functions by polynomials, with error control."), parent: "analysis", prerequisites: ["derivative", "integral"], status: "published", level: "undergrad", path: "calculus", experiments: [] },
+  { slug: "derivative", title: b("导数", "The derivative"), summary: b("变化率的极限，以及为什么 eˣ 的导数是自己。", "The limit of a rate of change, and why eˣ is its own derivative."), parent: "analysis", prerequisites: ["limit"], status: "published", level: "undergrad", path: "calculus", experiments: ["exponential-derivative", "secant-tangent"] },
+  { slug: "mean-value-theorem", title: b("中值定理", "Mean value theorem"), summary: b("整体平均变化率一定在某一瞬间出现；Rolle → Lagrange，以及每个条件为什么不能省。", "The overall average rate of change is attained at some instant; Rolle → Lagrange, and why no hypothesis can be dropped."), parent: "analysis", prerequisites: ["derivative"], status: "published", level: "undergrad", path: "calculus", experiments: ["secant-tangent"] },
+  { slug: "integral", title: b("积分", "The integral"), summary: b("Riemann 和的极限，与微积分基本定理。", "The limit of Riemann sums and the fundamental theorem."), parent: "analysis", prerequisites: ["limit", "derivative", "mean-value-theorem"], status: "published", level: "undergrad", path: "calculus", experiments: ["riemann-sums"] },
+  { slug: "taylor-series", title: b("Taylor 展开", "Taylor expansion"), summary: b("用多项式逼近函数，并控制误差。", "Approximating functions by polynomials, with error control."), parent: "analysis", prerequisites: ["derivative", "mean-value-theorem", "integral"], status: "published", level: "undergrad", path: "calculus", experiments: ["taylor-approx"] },
 
   // ---- linear algebra path ----
   { slug: "vectors", title: b("向量", "Vectors"), summary: b("向量空间的公理，以及基与坐标。", "Axioms of a vector space; bases and coordinates."), parent: "algebra", prerequisites: ["plane-geometry"], status: "published", level: "undergrad", path: "linear-algebra", experiments: [] },
+  { slug: "inner-product", title: b("内积与 Cauchy–Schwarz", "Inner products & Cauchy–Schwarz"), summary: b("长度与角度从哪里来；投影不会变长这一件事推出整个不等式。", "Where length and angle come from; the whole inequality follows from “a projection is never longer”."), parent: "algebra", prerequisites: ["vectors"], status: "published", level: "undergrad", path: "linear-algebra", experiments: [] },
   { slug: "linear-maps", title: b("线性映射", "Linear maps"), summary: b("保持加法与数乘的映射，由它对基的作用完全决定。", "Maps preserving addition and scaling, determined entirely by what they do to a basis."), parent: "algebra", prerequisites: ["vectors"], status: "published", level: "undergrad", path: "linear-algebra", experiments: ["linear-transform"] },
   { slug: "matrices", title: b("矩阵", "Matrices"), summary: b("线性映射的坐标表示；矩阵乘法为什么这样定义。", "Coordinate representation of linear maps; why matrix multiplication is defined the way it is."), parent: "algebra", prerequisites: ["linear-maps"], status: "published", level: "undergrad", path: "linear-algebra", experiments: ["linear-transform"] },
   { slug: "eigenvalues", title: b("特征值", "Eigenvalues"), summary: b("变换只是拉伸的方向。", "Directions along which a map is just a stretch."), parent: "algebra", prerequisites: ["matrices"], status: "published", level: "undergrad", path: "linear-algebra", experiments: ["linear-transform"] },
@@ -80,16 +85,16 @@ export const paths: LearningPath[] = [
   {
     slug: "calculus",
     title: b("微积分基础", "Foundations of calculus"),
-    subtitle: b("极限 → 导数 → 积分 → Taylor 展开", "Limits → Derivative → Integral → Taylor expansion"),
+    subtitle: b("极限 → 导数 → 中值定理 → 积分 → Taylor 展开", "Limits → Derivative → Mean value theorem → Integral → Taylor expansion"),
     intent: b("变化、极限、连续与累积", "change, limits, continuity and accumulation"),
-    concepts: ["limit", "derivative", "integral", "taylor-series"],
+    concepts: ["limit", "derivative", "mean-value-theorem", "integral", "taylor-series"],
   },
   {
     slug: "linear-algebra",
     title: b("线性代数基础", "Foundations of linear algebra"),
-    subtitle: b("向量 → 线性映射 → 矩阵 → 特征值", "Vectors → Linear maps → Matrices → Eigenvalues"),
+    subtitle: b("向量 → 内积 → 线性映射 → 矩阵 → 特征值", "Vectors → Inner products → Linear maps → Matrices → Eigenvalues"),
     intent: b("空间、变换与结构", "space, transformation and structure"),
-    concepts: ["vectors", "linear-maps", "matrices", "eigenvalues"],
+    concepts: ["vectors", "inner-product", "linear-maps", "matrices", "eigenvalues"],
   },
   {
     slug: "differential-equations",
@@ -121,6 +126,27 @@ export const experiments: Experiment[] = [
     title: b("为什么 eˣ 的导数是自己", "Why eˣ is its own derivative"),
     summary: b("拖动底数 a 与步长 h，观察差商曲线何时与 aˣ 重合。", "Drag the base a and the step h; watch when the difference-quotient curve coincides with aˣ."),
     concept: "derivative",
+  },
+  {
+    slug: "secant-tangent",
+    kind: "secant-tangent",
+    title: b("割线变成切线", "Secant becomes tangent"),
+    summary: b("缩短两点之间的距离 h，观察割线斜率如何趋近切线斜率：差商 → 导数。", "Shrink the distance h between two points and watch the secant slope approach the tangent slope: difference quotient → derivative."),
+    concept: "derivative",
+  },
+  {
+    slug: "riemann-sums",
+    kind: "riemann-sums",
+    title: b("Riemann 和", "Riemann sums"),
+    summary: b("增加分割数，比较左端点、右端点与中点取样如何逼近同一块面积。", "Increase the number of subintervals and compare how left, right and midpoint sampling approach the same area."),
+    concept: "integral",
+  },
+  {
+    slug: "taylor-approx",
+    kind: "taylor-approx",
+    title: b("Taylor 逼近", "Taylor approximation"),
+    summary: b("逐级提高多项式阶数，看它在展开点附近如何贴近原函数，误差如何向外增长，以及收敛半径在哪里。", "Raise the polynomial order step by step: see it hug the function near the centre, the error grow outward, and where the radius of convergence ends."),
+    concept: "taylor-series",
   },
 ];
 

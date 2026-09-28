@@ -56,6 +56,22 @@ export const exercises: Exercise[] = [
     hint: b("写 $2^h=e^{h\\ln 2}$，再用 $e^u\\approx 1+u$。", "Write $2^h=e^{h\\ln 2}$ and use $e^u\\approx 1+u$."),
     solution: b("$\\frac{2^h-1}{h}=\\frac{e^{h\\ln2}-1}{h}\\to\\ln 2\\approx0.693$。", "$\\frac{2^h-1}{h}=\\frac{e^{h\\ln2}-1}{h}\\to\\ln 2\\approx0.693$."),
   },
+  // ---- mean value theorem ----
+  {
+    id: "mean-value-theorem-1", concept: "mean-value-theorem", kind: "numeric",
+    statement: b("$f(x)=x^3$ 在 $[0,2]$ 上，求满足 $f'(\\xi)=\\dfrac{f(2)-f(0)}{2-0}$ 的 $\\xi\\in(0,2)$（保留三位小数）。", "For $f(x)=x^3$ on $[0,2]$, find $\\xi\\in(0,2)$ with $f'(\\xi)=\\dfrac{f(2)-f(0)}{2-0}$ (three decimals)."),
+    answer: 2 / Math.sqrt(3), tolerance: 0.002,
+    hint: b("平均斜率是 $4$，所以要解 $3\\xi^2=4$。", "The average slope is $4$, so solve $3\\xi^2=4$."),
+    solution: b("$3\\xi^2=4\\Rightarrow\\xi=2/\\sqrt3\\approx1.155$，它确实在 $(0,2)$ 内。", "$3\\xi^2=4\\Rightarrow\\xi=2/\\sqrt3\\approx1.155$, which lies in $(0,2)$."),
+  },
+  {
+    id: "mean-value-theorem-2", concept: "mean-value-theorem", kind: "choice",
+    statement: b("$f(x)=|x|$ 在 $[-1,1]$ 上，割线斜率为 $0$，但没有任何点的导数为 $0$。中值定理的哪个条件不满足？", "For $f(x)=|x|$ on $[-1,1]$ the secant slope is $0$, yet no point has derivative $0$. Which hypothesis of the mean value theorem fails?"),
+    options: [b("在 $[-1,1]$ 上连续", "Continuity on $[-1,1]$"), b("在 $(-1,1)$ 内可导", "Differentiability on $(-1,1)$"), b("端点值相等", "Equal values at the endpoints"), b("区间有界", "Boundedness of the interval")],
+    correct: 1,
+    hint: b("$|x|$ 在哪一点没有导数？", "Where does $|x|$ fail to have a derivative?"),
+    solution: b("$|x|$ 处处连续，但在 $0$ 处不可导；开区间内可导这一条件被破坏，结论随之失效。", "$|x|$ is continuous everywhere but not differentiable at $0$; the differentiability hypothesis fails and so does the conclusion."),
+  },
   // ---- integral ----
   {
     id: "integral-1", concept: "integral", kind: "numeric",
@@ -103,6 +119,22 @@ export const exercises: Exercise[] = [
     correct: 1,
     hint: b("向量空间必须对加法封闭。", "A vector space must be closed under addition."),
     solution: b("$x^2$ 与 $-x^2+x$ 的和是 $x$，次数为 1，不在集合中，因此不封闭。", "$x^2+(-x^2+x)=x$ has degree 1 and is not in the set, so it is not closed."),
+  },
+  // ---- inner product ----
+  {
+    id: "inner-product-1", concept: "inner-product", kind: "numeric",
+    statement: b("求向量 $u=(1,2,2)$ 与 $v=(2,-1,2)$ 夹角的余弦（保留三位小数）。", "Find the cosine of the angle between $u=(1,2,2)$ and $v=(2,-1,2)$ (three decimals)."),
+    answer: 4 / 9, tolerance: 0.002,
+    hint: b("$\\cos\\theta=\\dfrac{\\langle u,v\\rangle}{\\|u\\|\\,\\|v\\|}$。", "$\\cos\\theta=\\dfrac{\\langle u,v\\rangle}{\\|u\\|\\,\\|v\\|}$."),
+    solution: b("$\\langle u,v\\rangle=2-2+4=4$，$\\|u\\|=\\|v\\|=3$，所以 $\\cos\\theta=4/9\\approx0.444$。", "$\\langle u,v\\rangle=2-2+4=4$, $\\|u\\|=\\|v\\|=3$, so $\\cos\\theta=4/9\\approx0.444$."),
+  },
+  {
+    id: "inner-product-2", concept: "inner-product", kind: "choice",
+    statement: b("对实数 $a_1,\\dots,a_n$，Cauchy–Schwarz 不等式给出 $(a_1+\\cdots+a_n)^2\\le C\\,(a_1^2+\\cdots+a_n^2)$。最小的常数 $C$ 是？", "For reals $a_1,\\dots,a_n$, Cauchy–Schwarz gives $(a_1+\\cdots+a_n)^2\\le C\\,(a_1^2+\\cdots+a_n^2)$. The smallest such $C$ is"),
+    options: [b("$1$", "$1$"), b("$\\sqrt n$", "$\\sqrt n$"), b("$n$", "$n$"), b("$n^2$", "$n^2$")],
+    correct: 2,
+    hint: b("取 $b=(1,1,\\dots,1)$。", "Take $b=(1,1,\\dots,1)$."),
+    solution: b("$\\langle a,b\\rangle^2\\le\\|a\\|^2\\|b\\|^2$ 且 $\\|b\\|^2=n$；$a=b$ 时取等，所以 $C=n$ 最小。", "$\\langle a,b\\rangle^2\\le\\|a\\|^2\\|b\\|^2$ with $\\|b\\|^2=n$; equality at $a=b$, so $C=n$ is sharp."),
   },
   // ---- linear maps ----
   {

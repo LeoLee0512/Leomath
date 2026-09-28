@@ -7,6 +7,7 @@ const zh = {
     learn: "学习",
     explore: "探索",
     problems: "问题",
+    tools: "工具",
     software: "软件",
     about: "关于",
     search: "搜索",
@@ -114,6 +115,7 @@ const zh = {
     statusStable: "正式版",
     statusComing: "敬请期待",
     statusBeta: "公开测试版",
+    statusArchived: "已归档",
     open: "立即使用 →",
     openSource: "开源",
     web: "网页应用",
@@ -122,6 +124,16 @@ const zh = {
     released: "发布时间",
     checksum: "SHA-256",
     closedSource: "闭源软件",
+  },
+  tools: {
+    title: "计算工具",
+    subtitle: "学习链的最后一环：公式编辑、函数绘图与计算、矩阵计算。全部在浏览器内运行，不上传任何内容。",
+    formula: "公式编辑器",
+    plot: "函数绘图与计算",
+    matrix: "矩阵计算器",
+    related: "相关知识点",
+    relatedMatrices: "矩阵",
+    relatedEigen: "特征值",
   },
   about: {
     title: "关于 LeoMath",
@@ -158,7 +170,7 @@ const zh = {
   },
   footer: {
     license: "正文内容采用 CC BY-SA 4.0，代码采用 MIT。",
-    built: "LeoMath v0.1.1 · 从定义出发理解数学",
+    built: "LeoMath v0.1.2 · 从定义出发理解数学",
     source: "源代码",
   },
   common: {
@@ -179,6 +191,7 @@ const en: Dictionary = {
     learn: "Learn",
     explore: "Explore",
     problems: "Problems",
+    tools: "Tools",
     software: "Software",
     about: "About",
     search: "Search",
@@ -286,6 +299,7 @@ const en: Dictionary = {
     statusStable: "Stable",
     statusComing: "Coming soon",
     statusBeta: "Public beta",
+    statusArchived: "Archived",
     open: "Open →",
     openSource: "Open source",
     web: "Web app",
@@ -294,6 +308,16 @@ const en: Dictionary = {
     released: "Released",
     checksum: "SHA-256",
     closedSource: "Closed source",
+  },
+  tools: {
+    title: "Tools",
+    subtitle: "The last link of the learning chain: a formula editor, a function plotter with calculator, and a matrix calculator. Everything runs in your browser; nothing is uploaded.",
+    formula: "Formula editor",
+    plot: "Plotter & calculator",
+    matrix: "Matrix calculator",
+    related: "Related concepts",
+    relatedMatrices: "Matrices",
+    relatedEigen: "Eigenvalues",
   },
   about: {
     title: "About LeoMath",
@@ -330,7 +354,7 @@ const en: Dictionary = {
   },
   footer: {
     license: "Content is CC BY-SA 4.0; code is MIT.",
-    built: "LeoMath v0.1.1 · understanding mathematics from definitions",
+    built: "LeoMath v0.1.2 · understanding mathematics from definitions",
     source: "Source code",
   },
   common: {

@@ -1,0 +1,89 @@
+## Start from a problem
+
+<Problem>
+The eight axioms of a [vector space](/en/concepts/vectors) mention only addition and scaling. There is no "length" and no "angle". Yet the most basic geometric questions are exactly these: how long is this vector? what is the angle between two vectors? are they perpendicular?
+
+We need to add a structure to a vector space from which length and angle can be defined, and which works just as well in spaces of polynomials, functions or random variables that do not look like arrows.
+</Problem>
+
+<Observe>
+In the plane, the projection of $u$ onto the direction of $v$ has length $\|u\|\,|\cos\theta|$. Whatever $\theta$ is, **the projection is never longer than $u$ itself**. This sounds too obvious to mention, yet it is the entire source of this section's inequality.
+</Observe>
+
+<Conjecture>
+Given a "product" $\langle u,v\rangle$ with a few natural properties, we can define $\|u\|=\sqrt{\langle u,u\rangle}$ and $\cos\theta=\dfrac{\langle u,v\rangle}{\|u\|\|v\|}$. For the latter to make sense we must prove $|\langle u,v\rangle|\le\|u\|\|v\|$, and "a projection never gets longer" should be the proof.
+</Conjecture>
+
+## Definitions
+
+<Definition title="Inner product">
+An **inner product** on a real vector space $V$ is a map $\langle\cdot,\cdot\rangle:V\times V\to\mathbb R$ such that for all $u,v,w\in V$ and $c\in\mathbb R$:
+1. symmetry: $\langle u,v\rangle=\langle v,u\rangle$;
+2. linearity: $\langle cu+w,v\rangle=c\langle u,v\rangle+\langle w,v\rangle$;
+3. positive definiteness: $\langle v,v\rangle\ge0$, with equality iff $v=0$.
+
+A vector space with an inner product is an **inner product space**.
+</Definition>
+
+<Definition title="Length, angle, orthogonality">
+$\|v\|=\sqrt{\langle v,v\rangle}$ is the **length** (norm) of $v$. If $\langle u,v\rangle=0$, $u$ and $v$ are **orthogonal**.
+</Definition>
+
+<Example title="Three inner product spaces">
+- $\mathbb R^n$ with $\langle a,b\rangle=\sum a_ib_i$ (the standard inner product).
+- Continuous functions on $[0,1]$ with $\langle f,g\rangle=\int_0^1f(x)g(x)\,dx$.
+- Random variables with finite variance, $\langle X,Y\rangle=\mathbb E[XY]$.
+
+All three axioms check out in each case. In the third, $\|X-\mathbb EX\|^2$ is the variance.
+</Example>
+
+## Theorem and proof
+
+<Theorem title="Cauchy–Schwarz inequality">
+In any inner product space,
+$$\langle u,v\rangle^2\le\langle u,u\rangle\,\langle v,v\rangle,$$
+with equality iff $u,v$ are linearly dependent.
+</Theorem>
+
+<Proof>
+If $v=0$ both sides are $0$. Let $v\ne0$ and set $t=\dfrac{\langle u,v\rangle}{\langle v,v\rangle}$, the coefficient of the projection of $u$ onto $v$. "What remains after subtracting the projection has non-negative length":
+$$0\le\langle u-tv,\ u-tv\rangle=\langle u,u\rangle-2t\langle u,v\rangle+t^2\langle v,v\rangle.$$
+Substituting $t$ merges the last two terms:
+$$0\le\langle u,u\rangle-\frac{\langle u,v\rangle^2}{\langle v,v\rangle}.$$
+Multiply by $\langle v,v\rangle>0$. Equality holds iff $u-tv=0$ (positive definiteness), i.e. $u=tv$; together with the case $v=0$, that is linear dependence.
+</Proof>
+
+The proof used exactly two things: **lengths are non-negative** (axiom 3) and **subtract the projection** (axioms 1 and 2 to expand). So it holds, word for word, in every inner product space.
+
+<Corollary title="Triangle inequality">
+$\|u+v\|\le\|u\|+\|v\|$.
+</Corollary>
+
+<Proof>
+$\|u+v\|^2=\|u\|^2+2\langle u,v\rangle+\|v\|^2\le\|u\|^2+2\|u\|\|v\|+\|v\|^2=(\|u\|+\|v\|)^2$.
+</Proof>
+
+Only with the triangle inequality does $\|\cdot\|$ deserve the name "length"; only with Cauchy–Schwarz is $\dfrac{\langle u,v\rangle}{\|u\|\|v\|}\in[-1,1]$, so that $\cos\theta$ is defined. **Angle grows out of the inner product, not the other way round.**
+
+<Warning>
+The equality case of Cauchy–Schwarz is "linearly dependent", not "equal". $u=3v$ gives equality; so does $u=-v$ (then $\langle u,v\rangle<0$, but the squares agree). And the clause "equality iff $v=0$" in axiom 3 cannot be dropped: without it $\langle v,v\rangle$ could vanish for $v\ne0$ and the projection coefficient $t$ would be undefined.
+</Warning>
+
+## Applications
+
+<Application title="Three faces of one inequality">
+Substituting the three examples:
+$$\Bigl(\sum a_ib_i\Bigr)^2\le\Bigl(\sum a_i^2\Bigr)\Bigl(\sum b_i^2\Bigr),\qquad
+\Bigl(\int fg\Bigr)^2\le\int f^2\int g^2,\qquad
+|\operatorname{Cov}(X,Y)|\le\sqrt{\operatorname{Var}X}\sqrt{\operatorname{Var}Y}.
+$$
+The third says the correlation coefficient lies in $[-1,1]$. All three are the same proof.
+</Application>
+
+<Application title="Least squares">
+The point of a subspace $W$ closest to $u$ is the orthogonal projection of $u$ onto $W$. The heart of the proof is again "what remains after subtracting the projection is orthogonal to $W$". That is the entire geometry of linear regression.
+</Application>
+
+<Remark>
+This section shows algebra's typical move: do not ask what an inner product *is*, ask what it *satisfies*, and let one proof cover every case. The next section, [Linear maps](/en/concepts/linear-maps), treats "transformation" with the same attitude.
+</Remark>

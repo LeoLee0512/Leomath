@@ -1,6 +1,6 @@
 {
   "name": "leomath",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "private": true,
   "type": "module",
   "scripts": {
@@ -38,5 +38,8 @@
     "tailwindcss": "^4.3.3",
     "typescript": "^5.9.3",
     "vitest": "^4.1.11"
+  },
+  "engines": {
+    "node": ">=22.12.0"
   }
 }

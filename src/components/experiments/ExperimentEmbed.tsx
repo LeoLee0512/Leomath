@@ -3,6 +3,9 @@ import { getExperiment } from "@/content/graph";
 import { LinearTransform } from "./LinearTransform";
 import { OdeExplorer } from "./OdeExplorer";
 import { ExponentialDerivative } from "./ExponentialDerivative";
+import { SecantTangent } from "./SecantTangent";
+import { RiemannSums } from "./RiemannSums";
+import { TaylorApprox } from "./TaylorApprox";
 
 /** Renders an experiment by slug. Usable from MDX and from pages. */
 export function ExperimentEmbed({ slug, locale, preset, compact }: { slug: string; locale: Locale; preset?: string; compact?: boolean }) {
@@ -15,5 +18,11 @@ export function ExperimentEmbed({ slug, locale, preset, compact }: { slug: strin
       return <OdeExplorer locale={locale} preset={preset} />;
     case "exponential-derivative":
       return <ExponentialDerivative locale={locale} compact={compact} />;
+    case "secant-tangent":
+      return <SecantTangent locale={locale} />;
+    case "riemann-sums":
+      return <RiemannSums locale={locale} />;
+    case "taylor-approx":
+      return <TaylorApprox locale={locale} />;
   }
 }

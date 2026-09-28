@@ -16,6 +16,8 @@ tends to $\dfrac13$ as $n$ grows.
 "Area under a curve" should be defined as a [limit](/en/concepts/limit) of rectangle sums. And the value should not depend on how we cut or which point we sample in each piece: once the cut is fine enough, every choice gives the same answer.
 </Conjecture>
 
+<Experiment slug="riemann-sums" />
+
 ## Definition
 
 <Definition title="Riemann sums and the definite integral">
@@ -56,7 +58,7 @@ If $F'=f$ on $[a,b]$ with $f$ continuous, then $\displaystyle\int_a^bf(x)\,dx=F(
 </Theorem>
 
 <Proof>
-Let $G(x)=\int_a^xf$. By part I, $G'=f=F'$, so $(G-F)'=0$ and $G-F$ is constant. $G(a)=0$ makes the constant $-F(a)$, hence $G(b)=F(b)-F(a)$.
+Let $G(x)=\int_a^xf$. By part I, $G'=f=F'$, so $(G-F)'=0$ and, by the corollary of the [mean value theorem](/en/concepts/mean-value-theorem), $G-F$ is constant. $G(a)=0$ makes the constant $-F(a)$, hence $G(b)=F(b)-F(a)$.
 </Proof>
 
 Thus $\int_0^1x^2\,dx=\left[\frac{x^3}3\right]_0^1=\frac13$: the opening limit, computed in one line.
