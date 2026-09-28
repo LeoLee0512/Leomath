@@ -11,6 +11,24 @@
 
 `.cn` 域名在国内服务器上对公网提供 Web 服务需要完成 ICP 备案，备案通过前 80/443 端口可能被阻断。备案入口在阿里云控制台顶部的「备案」。
 
+## 这台服务器是共享的（重要）
+
+同一台 ECS 上已经运行着另外两个 Leo 产品，部署或改 nginx 前必须知道：
+
+| 产品 | 仓库 | 监听 | 入口 | 运行方式 |
+| --- | --- | --- | --- | --- |
+| Leo Tree 1.0.0-beta.3 | `LeoLee0512/leotree` | 系统 nginx **80/443**，`server_name 8.130.33.10`，反代到 `127.0.0.1:3008` | https://8.130.33.10/ | systemd `leotree`，用户 `leotree`，运行目录 `/opt/leotree/current`，环境 `/etc/leotree.env`；IP 证书由 `leotree-cert-renew.timer` 每 6 小时续期 |
+| MathForge 0.3.1 | `LeoLee0512/MathLearn` | **8090**（独立 nginx 1.21.5 实例或容器） | http://8.130.33.10:8090/ | 静态站，`/var/www/mathforge`，脚本 `deploy/deploy.sh` |
+| LeoMath | `LeoLee0512/Leomath` | 系统 nginx 80/443，`server_name leomath.cn www.leomath.cn`，反代到 `127.0.0.1:3000` | https://leomath.cn | Docker Compose |
+
+规则：
+
+- 三个站点靠 `server_name` 区分，共用 80/443。**不要删除或改写 `/etc/nginx/sites-available/leotree`**，也不要给任何 server 块加 `default_server`。
+- `certbot --nginx -d leomath.cn` 只会改 leomath 的 server 块；Leo Tree 的 IP 证书路径是 `/etc/letsencrypt/live/8.130.33.10/`，不要动。
+- 80 端口的 `/.well-known/acme-challenge/` 两边都要留，否则对方续期失败。
+- 改完 nginx 后逐个验证：`curl -sI https://leomath.cn`、`curl -skI https://8.130.33.10/`、`curl -sI http://127.0.0.1:8090/` 都应是 200 或 301/302，不能出现 nginx 欢迎页。
+- 可选：用子域名替代 IP 入口，配置见 `deploy/nginx.tree.conf`（tree.leomath.cn → 3008）与 `deploy/nginx.mathforge.conf`（mathforge.leomath.cn → 8090），需先在云解析加 A 记录。Leo Tree 的知识按浏览器 origin 保存，换域名后用户需要用完整备份 ZIP 迁移。
+
 ## 首次部署
 
 在 ECS 上（Ubuntu / Alibaba Cloud Linux 均可）：
@@ -37,7 +55,8 @@ docker compose logs -f web   # 看到 "Ready" 即可
 
 # 5. nginx 反向代理
 sudo cp deploy/nginx.leomath.conf /etc/nginx/conf.d/leomath.conf
-sudo rm -f /etc/nginx/conf.d/default.conf /etc/nginx/sites-enabled/default   # 去掉欢迎页
+# 只去掉 nginx 自带的默认站点；leotree、mathforge 的站点配置一律保留
+sudo rm -f /etc/nginx/conf.d/default.conf /etc/nginx/sites-enabled/default
 sudo nginx -t && sudo systemctl reload nginx
 
 # 6. HTTPS（Let's Encrypt）
