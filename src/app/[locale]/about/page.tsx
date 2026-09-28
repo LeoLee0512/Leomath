@@ -22,8 +22,8 @@ export default async function AboutPage({ params }: { params: Promise<{ locale: 
         <p className="mt-2 text-sm text-ink-2 leading-relaxed">{t.about.builtInPublicDesc}</p>
         <dl className="mt-5 grid grid-cols-[auto_1fr] gap-x-6 gap-y-1.5 text-sm">
           <dt className="text-muted">{t.about.version}</dt><dd className="mono">v{pkg.version}</dd>
-          <dt className="text-muted">{t.about.changelog}</dt><dd><a className="text-leo hover:underline" href="https://github.com/LeoLee0512/Leomath/blob/main/CHANGELOG.md">CHANGELOG.md</a></dd>
-          <dt className="text-muted">{t.about.roadmap}</dt><dd><a className="text-leo hover:underline" href="https://github.com/LeoLee0512/Leomath/blob/main/ROADMAP.md">ROADMAP.md</a></dd>
+          <dt className="text-muted">{t.about.changelog}</dt><dd><a className="text-leo hover:underline" href="https://github.com/LeoLee0512/Leomath/blob/HEAD/CHANGELOG.md">CHANGELOG.md</a></dd>
+          <dt className="text-muted">{t.about.roadmap}</dt><dd><a className="text-leo hover:underline" href="https://github.com/LeoLee0512/Leomath/blob/HEAD/ROADMAP.md">ROADMAP.md</a></dd>
           <dt className="text-muted">GitHub</dt><dd><a className="text-leo hover:underline" href="https://github.com/LeoLee0512/Leomath">LeoLee0512/Leomath</a></dd>
         </dl>
       </section>
