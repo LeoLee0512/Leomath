@@ -13,7 +13,9 @@
 
 ## 这台服务器是共享的（重要）
 
-同一台 ECS 上已经运行着另外两个 Leo 产品，部署或改 nginx 前必须知道：
+> **2026-09-28 更新：服务器已清空重装，目前只部署了 LeoMath（leomath.cn）。** 下表是重装前的布局，仅作历史参考。Leo Tree 与 MathForge 目前都不在线。若重新部署 Leo Tree，用 `deploy/nginx.tree.conf` 挂到 `tree.leomath.cn` 并为该子域名签证书，不要再用裸 IP 和 IP 证书；LeoMath 站内的链接也只指向域名。
+
+同一台 ECS 上曾经运行着另外两个 Leo 产品，部署或改 nginx 前必须知道：
 
 | 产品 | 仓库 | 监听 | 入口 | 运行方式 |
 | --- | --- | --- | --- | --- |

@@ -49,10 +49,11 @@ export const software: Software[] = [
       en: "Turn a field of knowledge into a tree you can decompose, learn, revisit and prune.",
     },
     description: {
-      zh: "Leo Tree 是本机优先的个人知识结构系统：园子里种知识树，树分区，区里长节点；每个节点记录理解、学习状态（未学 / 在学 / 掌握）、实践与回顾。知识保存在你的浏览器里，可导出 JSON 或带附件的完整备份。1.0.0-beta.3 支持节点笔记中的 LaTeX 公式。Windows 版即将开放。",
-      en: "Leo Tree is a local-first personal knowledge-structure system: a garden holds knowledge trees, trees have sections, sections grow nodes; each node records understanding, a learning state (not started / learning / mastered), practice and review. Knowledge stays in your browser and can be exported as JSON or a full backup with attachments. 1.0.0-beta.3 renders LaTeX in node notes. A Windows build is coming.",
+      zh: "Leo Tree 是本机优先的个人知识结构系统：园子里种知识树，树分区，区里长节点；每个节点记录理解、学习状态（未学 / 在学 / 掌握）、实践与回顾。知识保存在你的浏览器里，可导出 JSON 或带附件的完整备份。1.0.0-beta.3 支持节点笔记中的 LaTeX 公式。网页版正在迁移到新地址，暂未开放；Windows 版即将开放。",
+      en: "Leo Tree is a local-first personal knowledge-structure system: a garden holds knowledge trees, trees have sections, sections grow nodes; each node records understanding, a learning state (not started / learning / mastered), practice and review. Knowledge stays in your browser and can be exported as JSON or a full backup with attachments. 1.0.0-beta.3 renders LaTeX in node notes. The web version is moving to a new address and is not open yet; a Windows build is coming.",
     },
-    useUrl: "https://8.130.33.10/",
+    // No public URL yet: the bare-IP deployment was retired when the server was rebuilt (2026-09-28).
+    // When Leo Tree is redeployed, point useUrl at a hostname such as https://tree.leomath.cn/, never an IP.
     repoUrl: "https://github.com/LeoLee0512/leotree",
   },
   {
