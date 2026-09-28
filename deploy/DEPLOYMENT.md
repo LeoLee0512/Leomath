@@ -13,7 +13,7 @@
 
 ## 这台服务器是共享的（重要）
 
-> **2026-09-28 更新：服务器已清空重装，目前只部署了 LeoMath（leomath.cn）。** 下表是重装前的布局，仅作历史参考。Leo Tree 与 MathForge 目前都不在线。Leo Tree 的新部署方案是 **Docker + `tree.leomath.cn`**，与 LeoMath 同机、共用系统 nginx：步骤在 leotree 仓库的 `docs/DOCKER_DEPLOYMENT.md`（容器只发布 `127.0.0.1:3008`，nginx 配置同本仓库 `deploy/nginx.tree.conf`，云解析需先加 A 记录 `tree`）。不要再用裸 IP 和 IP 证书；LeoMath 站内的链接也只指向域名，Leo Tree 上线后再把 `src/content/software.ts` 里的 `useUrl` 设为 `https://tree.leomath.cn/`。
+> **2026-09-28 更新：服务器已清空重装，目前只部署了 LeoMath（leomath.cn）。** 下表是重装前的布局，仅作历史参考。Leo Tree 与 MathForge 目前都不在线。Leo Tree 的新部署方案是 **Docker + `tree.leomath.cn`**，与 LeoMath 同机、共用系统 nginx：步骤在 leotree 仓库的 `docs/DOCKER_DEPLOYMENT.md`（容器只发布 `127.0.0.1:3008`，nginx 配置同本仓库 `deploy/nginx.tree.conf`，云解析需先加 A 记录 `tree`）。不要再用裸 IP 和 IP 证书；LeoMath 站内的链接也只指向域名，Leo Tree 已于 2026-09-28 上线于 https://tree.leomath.cn/，`src/content/software.ts` 的 `useUrl` 指向它。
 
 同一台 ECS 上曾经运行着另外两个 Leo 产品，部署或改 nginx 前必须知道：
 
