@@ -1,0 +1,12 @@
+import Link from "next/link";
+
+export default function RootNotFound() {
+  return (
+    <html lang="en">
+      <body style={{ fontFamily: "system-ui", padding: "4rem", textAlign: "center" }}>
+        <p>404 · Page not found</p>
+        <p><Link href="/">LeoMath</Link></p>
+      </body>
+    </html>
+  );
+}

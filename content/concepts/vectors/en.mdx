@@ -1,0 +1,67 @@
+<Observe>
+Arrows in the plane can be added (tip to tail) and stretched (scalar multiplication). So can polynomials. So can $2\times2$ matrices, continuous functions, sequences…
+
+These objects look completely different, yet **the rules obeyed by their addition and scaling are identical**: addition commutes and associates, scaling distributes, there is a zero, there are negatives.
+</Observe>
+
+<Conjecture>
+If a theorem uses only these rules, then whenever it holds for arrows it holds for polynomials, matrices and functions too. So it pays to isolate those rules, name every object satisfying them, and study only the name.
+</Conjecture>
+
+## Definition
+
+<Definition title="Vector space">
+Let $V$ be a set with an addition $u+v$ and a real scalar multiplication $cv$ such that for all $u,v,w\in V$ and $a,b\in\mathbb R$:
+1. $u+v=v+u$;　2. $(u+v)+w=u+(v+w)$;
+3. there is $0\in V$ with $v+0=v$;　4. each $v$ has $-v$ with $v+(-v)=0$;
+5. $a(u+v)=au+av$;　6. $(a+b)v=av+bv$;
+7. $(ab)v=a(bv)$;　8. $1v=v$.
+
+Then $V$ is a (real) **vector space** and its elements are **vectors**.
+</Definition>
+
+$\mathbb R^2$, $\mathbb R^n$, polynomials of degree at most $n$, all $m\times n$ matrices, continuous functions on $[0,1]$: all vector spaces. The exercises contain a non-example: polynomials of degree **exactly** 2 are not, since $x^2+(-x^2+x)$ has degree 1 and leaves the set.
+
+<Definition title="Linear combination, span, independence">
+A **linear combination** of $v_1,\dots,v_k$ is $c_1v_1+\cdots+c_kv_k$. The set of all of them is $\operatorname{span}(v_1,\dots,v_k)$. If $c_1v_1+\cdots+c_kv_k=0$ only for $c_1=\cdots=c_k=0$, the vectors are **linearly independent**.
+</Definition>
+
+Independence means no vector is redundant: none can be built from the others.
+
+<Definition title="Basis and dimension">
+If $v_1,\dots,v_n$ are independent and $\operatorname{span}(v_1,\dots,v_n)=V$, they form a **basis** of $V$. The number of vectors in a basis is the **dimension** $\dim V$.
+</Definition>
+
+For dimension to make sense we must prove that any two bases have the same size.
+
+## Theorems and proofs
+
+<Theorem title="Uniqueness of coordinates">
+If $v_1,\dots,v_n$ is a basis of $V$, every $v\in V$ can be written **uniquely** as $v=c_1v_1+\cdots+c_nv_n$. The tuple $(c_1,\dots,c_n)$ is the **coordinate vector** of $v$ in this basis.
+</Theorem>
+
+<Proof>
+Existence is spanning. For uniqueness, if $v=\sum c_iv_i=\sum d_iv_i$ then $\sum(c_i-d_i)v_i=0$, so $c_i=d_i$ by independence.
+</Proof>
+
+This theorem is the entire justification for the word "coordinates". Once a basis is fixed, every vector in any vector space corresponds to one list of numbers, a point of $\mathbb R^n$.
+
+<Theorem title="Dimension is well defined">
+Any two finite bases of a vector space have the same number of elements.
+</Theorem>
+
+<Proof>
+It suffices to show: if $u_1,\dots,u_m$ are independent and $v_1,\dots,v_n$ span $V$, then $m\le n$ (swap the roles to get equality).
+
+**Exchange argument.** $u_1\in\operatorname{span}(v_1,\dots,v_n)$; write $u_1=\sum a_iv_i$. Since $u_1\ne0$ some $a_i\ne0$, say $a_1$. Then $v_1$ is a combination of $u_1,v_2,\dots,v_n$, so these still span $V$. Now expand $u_2$ in this new spanning set; some $v_j$ ($j\ge2$) must have nonzero coefficient, otherwise $u_2\in\operatorname{span}(u_1)$, contradicting independence. Replace that $v_j$ by $u_2$. Continue. Each step trades one $v$ for one $u$, and the $v$'s cannot run out before the $u$'s do (or some $u_k$ would lie in the span of earlier $u$'s). Hence $m\le n$.
+</Proof>
+
+## Application
+
+<Application title="Why pictures in ℝ² speak for every 2-dimensional space">
+Any two-dimensional vector space, once a basis is chosen, corresponds one-to-one with $\mathbb R^2$, with addition and scaling preserved. So every picture drawn in the plane in [Linear maps](/en/concepts/linear-maps) is true for every two-dimensional space, whether its vectors are arrows, linear polynomials, or solutions of a second-order linear differential equation.
+</Application>
+
+<Remark>
+A vector is not "a quantity with magnitude and direction"; that is one concrete picture valid in $\mathbb R^2,\mathbb R^3$. **A vector is an element of a vector space**, and a vector space is defined by eight axioms. Defining things by the rules their operations obey, rather than by what they "are", is the basic move of all of algebra.
+</Remark>

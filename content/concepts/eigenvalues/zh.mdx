@@ -1,0 +1,80 @@
+<Observe>
+勾选"显示特征向量"，然后按"拉伸"：出现两条虚线，一条水平、一条竖直。这两个方向上的向量变换后**方向不变**，只是长度乘了一个数。再按"剪切"：只剩一条虚线，水平方向。按"旋转"：虚线消失了。
+
+<Experiment slug="linear-transform" />
+</Observe>
+
+<Conjecture>
+每个线性变换可能有一些"特殊方向"，在这些方向上它只做拉伸。如果能找到足够多这样的方向，把它们当作新的基，变换在新基下就只是分别拉伸各个坐标：那是最简单的矩阵，对角矩阵。旋转没有这样的实方向，剪切只有一个。
+</Conjecture>
+
+## 定义
+
+<Definition title="特征值与特征向量">
+设 $A$ 是 $n\times n$ 矩阵。若存在**非零**向量 $v$ 和数 $\lambda$ 使
+$$Av=\lambda v,$$
+则称 $\lambda$ 是 $A$ 的**特征值**，$v$ 是属于 $\lambda$ 的**特征向量**。
+</Definition>
+
+"非零"是必要的：$A0=\lambda0$ 对任何 $\lambda$ 都成立，不含信息。
+
+## 推导：怎么找
+
+$Av=\lambda v\iff(A-\lambda I)v=0$。要有非零解 $v$，矩阵 $A-\lambda I$ 必须不可逆，即（见[矩阵](/zh/concepts/matrices)）
+$$\det(A-\lambda I)=0.$$
+
+<Definition title="特征多项式">
+$p_A(\lambda)=\det(A-\lambda I)$ 称为 $A$ 的**特征多项式**。对 $2\times2$ 矩阵，
+$$p_A(\lambda)=\lambda^2-(\operatorname{tr}A)\lambda+\det A,\qquad\operatorname{tr}A=a+d.$$
+</Definition>
+
+<Proof>
+$\det\begin{pmatrix}a-\lambda&b\\c&d-\lambda\end{pmatrix}=(a-\lambda)(d-\lambda)-bc=\lambda^2-(a+d)\lambda+(ad-bc)$。
+</Proof>
+
+特征值就是特征多项式的根。求出 $\lambda$ 后，解线性方程组 $(A-\lambda I)v=0$ 得特征向量。
+
+<Example title="三种典型情形">
+- **拉伸** $\begin{pmatrix}1.6&0\\0&0.7\end{pmatrix}$：$p=(\lambda-1.6)(\lambda-0.7)$，特征值 $1.6,0.7$，特征向量 $\mathbf e_1,\mathbf e_2$。两个独立方向。
+- **剪切** $\begin{pmatrix}1&1\\0&1\end{pmatrix}$：$p=(\lambda-1)^2$，只有 $\lambda=1$。$(A-I)v=0$ 迫使 $v_2=0$，特征向量只有 $\mathbf e_1$ 的倍数。**一个二重根只给了一个方向。**
+- **旋转** $\begin{pmatrix}0&-1\\1&0\end{pmatrix}$：$p=\lambda^2+1$，无实根。没有实的特征方向；特征值是 $\pm i$。
+</Example>
+
+判别式 $(\operatorname{tr}A)^2-4\det A$ 的符号决定了这三种情形。实验面板里显示的"复数"就是判别式为负。
+
+## 定理与证明
+
+<Theorem title="不同特征值的特征向量线性无关">
+若 $v_1,\dots,v_k$ 是属于两两不同特征值 $\lambda_1,\dots,\lambda_k$ 的特征向量，则它们线性无关。
+</Theorem>
+
+<Proof>
+对 $k$ 归纳。$k=1$ 显然（$v_1\ne0$）。设对 $k-1$ 成立。若 $c_1v_1+\cdots+c_kv_k=0$，两边乘 $A$ 得 $c_1\lambda_1v_1+\cdots+c_k\lambda_kv_k=0$；原式乘 $\lambda_k$ 再相减得
+$$c_1(\lambda_1-\lambda_k)v_1+\cdots+c_{k-1}(\lambda_{k-1}-\lambda_k)v_{k-1}=0.$$
+由归纳假设各系数为零，而 $\lambda_i\ne\lambda_k$，故 $c_1=\cdots=c_{k-1}=0$，进而 $c_kv_k=0$，$c_k=0$。
+</Proof>
+
+<Theorem title="对角化">
+若 $n\times n$ 矩阵 $A$ 有 $n$ 个线性无关的特征向量 $v_1,\dots,v_n$，令 $P=[v_1\cdots v_n]$，$D=\operatorname{diag}(\lambda_1,\dots,\lambda_n)$，则
+$$A=PDP^{-1}.$$
+</Theorem>
+
+<Proof>
+$AP$ 的第 $j$ 列是 $Av_j=\lambda_jv_j$；$PD$ 的第 $j$ 列是 $P$ 的第 $j$ 列乘 $\lambda_j$，也是 $\lambda_jv_j$。故 $AP=PD$。$P$ 的列线性无关，故可逆。
+</Proof>
+
+含义：换到以特征向量为基的坐标系，$A$ 就是对角矩阵 $D$。"在特殊方向上只做拉伸"这句直觉，变成了一个精确等式。剪切不能对角化，因为它凑不齐两个独立方向。
+
+## 应用
+
+<Application title="矩阵的幂">
+$A^k=PD^kP^{-1}$，而 $D^k=\operatorname{diag}(\lambda_1^k,\dots,\lambda_n^k)$。Fibonacci 数列 $F_{n+1}=F_n+F_{n-1}$ 写成 $\begin{pmatrix}F_{n+1}\\F_n\end{pmatrix}=\begin{pmatrix}1&1\\1&0\end{pmatrix}\begin{pmatrix}F_n\\F_{n-1}\end{pmatrix}$，特征值 $\frac{1\pm\sqrt5}2$，由此得到 Binet 公式。
+</Application>
+
+<Application title="二阶线性微分方程">
+$y''+py'+qy=0$ 化为一阶系统 $\begin{pmatrix}y\\y'\end{pmatrix}'=\begin{pmatrix}0&1\\-q&-p\end{pmatrix}\begin{pmatrix}y\\y'\end{pmatrix}$，其特征多项式是 $\lambda^2+p\lambda+q$：**正是**教科书里的"特征方程"。这就是[二阶线性方程](/zh/concepts/second-order-linear-ode)一节的主题。
+</Application>
+
+<Remark>
+特征值回答的问题是："这个变换在哪些方向上最简单？"对称矩阵永远有一整组正交的特征方向（谱定理），这是主成分分析、振动模态、量子力学可观测量的共同数学基础。
+</Remark>

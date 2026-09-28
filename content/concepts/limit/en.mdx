@@ -1,0 +1,80 @@
+<Observe>
+Look at the sequence $a_n = \dfrac{n}{n+1}$: $\tfrac12,\ \tfrac23,\ \tfrac34,\ \tfrac45,\ \dots$
+
+It never reaches $1$, yet it gets ever closer. We want to say "$a_n$ tends to $1$". But what does "ever closer" mean? $b_n = 1-\tfrac1n$ also gets closer; $c_n = 1+\tfrac{(-1)^n}{n}$ jumps from side to side and also gets closer. What do these three kinds of "approaching" have in common?
+</Observe>
+
+<Conjecture>
+This: **however small an error you allow, from some term onward every term is within that error of $1$.**
+
+"However small" becomes an arbitrary positive number $\varepsilon$; "from some term onward" becomes an index $N$. That is what we will turn into a definition.
+</Conjecture>
+
+## Definition
+
+<Definition title="Limit of a sequence">
+Let $(a_n)$ be a real sequence and $L\in\mathbb R$. If for every $\varepsilon>0$ there exists $N\in\mathbb N$ such that $|a_n-L|<\varepsilon$ whenever $n>N$, we say $(a_n)$ **converges to** $L$ and write $\lim_{n\to\infty}a_n=L$.
+</Definition>
+
+Mind the order of quantifiers: **first** an arbitrary $\varepsilon$ is given, **then** we find $N$. $N$ may depend on $\varepsilon$ (usually smaller $\varepsilon$ forces larger $N$). Swapping the order, "there exists $N$ such that for all $\varepsilon$", would demand $a_n=L$ exactly from some point on, which is a different statement.
+
+<Definition title="Limit of a function">
+Let $f$ be defined on a punctured neighbourhood of $x_0$. If for every $\varepsilon>0$ there exists $\delta>0$ such that $|f(x)-L|<\varepsilon$ whenever $0<|x-x_0|<\delta$, we write $\lim_{x\to x_0}f(x)=L$.
+</Definition>
+
+$\varepsilon$ controls the output error, $\delta$ controls the input window. The definition says: **however accurate you want the output, you can find how accurate the input must be.**
+
+## Derivation: verifying a limit from the definition
+
+<Example>
+Show $\lim_{n\to\infty}\dfrac{n}{n+1}=1$.
+
+Let $\varepsilon>0$. We need $\left|\dfrac{n}{n+1}-1\right|=\dfrac1{n+1}<\varepsilon$, which holds when $n+1>\tfrac1\varepsilon$. Take $N=\lceil\tfrac1\varepsilon\rceil$; then for $n>N$, $\tfrac1{n+1}<\tfrac1N\le\varepsilon$.
+</Example>
+
+The pattern is always the same: simplify $|a_n-L|$ to an expression in $n$, then solve for how large $n$ must be.
+
+## Theorems and proofs
+
+<Theorem title="Uniqueness of the limit">
+If $\lim a_n=L$ and $\lim a_n=M$, then $L=M$.
+</Theorem>
+
+<Proof>
+Suppose $L\ne M$ and set $\varepsilon=\tfrac{|L-M|}2>0$. There are $N_1,N_2$ with $|a_n-L|<\varepsilon$ for $n>N_1$ and $|a_n-M|<\varepsilon$ for $n>N_2$. For $n>\max(N_1,N_2)$,
+$$|L-M|\le|L-a_n|+|a_n-M|<2\varepsilon=|L-M|,$$
+a contradiction.
+</Proof>
+
+<Theorem title="Algebra of limits">
+If $a_n\to L$ and $b_n\to M$, then $a_n+b_n\to L+M$, $a_nb_n\to LM$, and if $M\ne0$, $a_n/b_n\to L/M$.
+</Theorem>
+
+<Proof>
+We prove the product rule, the most instructive case. Write
+$$a_nb_n-LM=(a_n-L)b_n+L(b_n-M).$$
+A convergent sequence is bounded: there is $B$ with $|b_n|\le B$ for all $n$. Given $\varepsilon>0$, choose $N$ so that for $n>N$, $|a_n-L|<\dfrac{\varepsilon}{2B}$ and $|b_n-M|<\dfrac{\varepsilon}{2(|L|+1)}$. Then
+$$|a_nb_n-LM|\le|a_n-L|\,B+|L|\,|b_n-M|<\tfrac\varepsilon2+\tfrac\varepsilon2=\varepsilon.$$
+</Proof>
+
+<Theorem title="Squeeze theorem">
+If $a_n\le c_n\le b_n$ for all large $n$, and $a_n\to L$, $b_n\to L$, then $c_n\to L$.
+</Theorem>
+
+<Proof>
+Given $\varepsilon>0$, pick $N$ so that for $n>N$, $L-\varepsilon<a_n$ and $b_n<L+\varepsilon$. Then $L-\varepsilon<a_n\le c_n\le b_n<L+\varepsilon$, i.e. $|c_n-L|<\varepsilon$.
+</Proof>
+
+## Application: a fundamental limit
+
+<Application>
+$$\lim_{x\to0}\frac{\sin x}{x}=1.$$
+
+For $0<x<\tfrac\pi2$ compare three areas in the unit circle: the triangle $\tfrac12\sin x$, the sector $\tfrac12x$, the larger triangle $\tfrac12\tan x$. Hence $\sin x<x<\tan x$, so $\cos x<\dfrac{\sin x}{x}<1$. Since $\cos x\to1$, the squeeze theorem finishes the job; for $x<0$ use that $\dfrac{\sin x}x$ is even.
+
+This single limit is the entire source of $\sin'x=\cos x$ in [The derivative](/en/concepts/derivative).
+</Application>
+
+<Remark>
+A limit is not "the value finally reached" but "the value that can be approached arbitrarily closely". It does not matter that $a_n$ never equals $1$. For the same reason $0.999\ldots=1$: it is a limit, not a number that is "slightly short".
+</Remark>

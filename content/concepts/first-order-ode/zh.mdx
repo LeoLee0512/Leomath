@@ -1,0 +1,77 @@
+<Observe>
+下面选"Logistic 增长"：$y'=ry\left(1-\dfrac yK\right)$。改变初值 $y(0)$：从下方出发的解向上爬，从上方出发的解向下落，都趋于 $K$；从 $y(0)=0$ 出发则永远是 $0$。所有解曲线互不相交。
+
+<Experiment slug="ode-explorer" preset="logistic" />
+</Observe>
+
+<Conjecture>
+一阶方程 $y'=f(t,y)$ 在每一点 $(t,y)$ 规定了一个斜率。解曲线就是处处与规定斜率相切的曲线。由唯一性（见[ODE 是什么](/zh/concepts/what-is-ode)），过每一点恰好一条解曲线，所以它们不会相交。而如果 $f$ 能分成 $t$ 的函数乘 $y$ 的函数，也许可以把 $y$ 和 $t$ 分到等号两边各自[积分](/zh/concepts/integral)。
+</Conjecture>
+
+## 分离变量
+
+<Proposition title="分离变量法">
+若 $y'=g(t)h(y)$ 且 $h(y)\ne0$，则解满足
+$$\int\frac{dy}{h(y)}=\int g(t)\,dt.$$
+</Proposition>
+
+<Proof>
+设 $H$ 是 $\dfrac1h$ 的一个原函数，$G$ 是 $g$ 的原函数。由链式法则
+$$\frac{d}{dt}H(y(t))=H'(y)\,y'=\frac{y'}{h(y)}=g(t)=G'(t),$$
+所以 $H(y(t))=G(t)+C$。
+</Proof>
+
+写成 $\dfrac{dy}{h(y)}=g(t)\,dt$ 只是记忆法；真正发生的是链式法则倒过来。
+
+<Example title="y′ = y²">
+$\int y^{-2}\,dy=\int dt\Rightarrow-\dfrac1y=t+C$。由 $y(0)=1$ 得 $C=-1$，$y=\dfrac1{1-t}$。解在 $t\to1^-$ 时爆破：一阶方程的解可以在有限时间内跑到无穷。
+</Example>
+
+<Example title="Logistic 方程">
+$\displaystyle\int\frac{dy}{y(1-y/K)}=\int r\,dt$。左边用部分分式 $\dfrac1{y(1-y/K)}=\dfrac1y+\dfrac{1/K}{1-y/K}$，积分得 $\ln|y|-\ln|1-y/K|=rt+C$，解出
+$$y(t)=\frac{K}{1+\left(\frac{K}{y_0}-1\right)e^{-rt}}.$$
+$t\to\infty$ 时 $y\to K$，与实验一致。$y_0=0$ 时分离变量不合法（$h(0)=0$），但 $y\equiv0$ 显然是解，这是**平衡解**；$y\equiv K$ 也是。
+</Example>
+
+## 线性方程与积分因子
+
+<Definition title="一阶线性方程">
+$$y'+p(t)y=q(t).$$
+</Definition>
+
+分离变量不管用，因为右边不能拆成 $g(t)h(y)$。但注意左边"差一点"就是某个乘积的导数。
+
+<Theorem title="积分因子">
+令 $\mu(t)=e^{\int p(t)\,dt}$。则 $y'+p y=q$ 等价于 $(\mu y)'=\mu q$，从而
+$$y=\frac1{\mu(t)}\left(\int\mu(t)q(t)\,dt+C\right).$$
+</Theorem>
+
+<Proof>
+$\mu'=p\mu$（这是 $\mu$ 的选法的全部理由：见[导数](/zh/concepts/derivative)一节 $(e^{u})'=u'e^u$）。于是
+$$(\mu y)'=\mu y'+\mu'y=\mu y'+p\mu y=\mu(y'+py)=\mu q.$$
+两边积分、除以 $\mu$ 即得。
+</Proof>
+
+<Example>
+$y'+2y=e^t$：$\mu=e^{2t}$，$(e^{2t}y)'=e^{3t}$，$e^{2t}y=\tfrac13e^{3t}+C$，$y=\tfrac13e^t+Ce^{-2t}$。
+</Example>
+
+<Theorem title="线性方程解的结构">
+$y'+py=q$ 的通解 $=$ 齐次方程 $y'+py=0$ 的通解 $Ce^{-\int p}$ $+$ 原方程的任意一个特解。
+</Theorem>
+
+<Proof>
+若 $y_1,y_2$ 都是 $y'+py=q$ 的解，则 $(y_1-y_2)'+p(y_1-y_2)=q-q=0$，即 $y_1-y_2$ 是齐次解。反之齐次解加特解仍是解。
+</Proof>
+
+这是**线性**带来的结构：解集是一个"仿射空间"（齐次解空间的平移）。齐次解空间是一维[向量空间](/zh/concepts/vectors)。这个结构在[二阶线性方程](/zh/concepts/second-order-linear-ode)中完全重现，那时齐次解空间变成二维。
+
+## 应用
+
+<Application title="解曲线的几何：方向场">
+不解方程，在每一点画一小段斜率为 $f(t,y)$ 的线段，就得到方向场。解曲线是顺着方向场走出的曲线。实验里相图中的短线段就是方向场（对二维系统）。平衡解是 $f(t,y)=0$ 的水平线；Logistic 方程的 $y=K$ 吸引附近的解，$y=0$ 排斥。
+</Application>
+
+<Remark>
+一阶方程只有少数几类能写出闭式解：可分离、线性、恰当方程和几种换元能化归的类型。大多数方程解不出来，但这不妨碍我们分析它（方向场、平衡点、稳定性）或[数值求解](/zh/concepts/numerical-ode)。
+</Remark>

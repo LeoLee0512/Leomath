@@ -1,0 +1,80 @@
+<Observe>
+看数列 $a_n = \dfrac{n}{n+1}$：$\tfrac12,\ \tfrac23,\ \tfrac34,\ \tfrac45,\ \dots$
+
+它永远到不了 $1$，却离 $1$ 越来越近。我们想说"$a_n$ 趋于 $1$"。但"越来越近"到底是什么意思？$b_n = 1 - \tfrac{1}{n}$ 也越来越近，$c_n = 1 + \tfrac{(-1)^n}{n}$ 忽左忽右也越来越近。这三种"接近"有什么共同点？
+</Observe>
+
+<Conjecture>
+共同点是：**随便给一个多小的误差，从某一项起，所有项与 $1$ 的距离都小于这个误差。**
+
+"随便给"对应一个任意的正数 $\varepsilon$；"从某一项起"对应一个下标 $N$。这就是我们要写成定义的东西。
+</Conjecture>
+
+## 定义
+
+<Definition title="数列极限">
+设 $(a_n)$ 是实数列，$L\in\mathbb R$。若对任意 $\varepsilon>0$，存在 $N\in\mathbb N$，使得当 $n>N$ 时 $|a_n-L|<\varepsilon$，则称 $(a_n)$ **收敛于** $L$，记作 $\lim_{n\to\infty}a_n=L$。
+</Definition>
+
+注意量词的顺序：**先**任意给 $\varepsilon$，**再**找 $N$。$N$ 可以依赖 $\varepsilon$（通常 $\varepsilon$ 越小，$N$ 越大）。把顺序换掉，"存在 $N$ 对任意 $\varepsilon$"，就会要求从某项起 $a_n$ 恒等于 $L$，那是另一件事。
+
+<Definition title="函数极限">
+设 $f$ 在 $x_0$ 的某个去心邻域上有定义。若对任意 $\varepsilon>0$，存在 $\delta>0$，使得当 $0<|x-x_0|<\delta$ 时 $|f(x)-L|<\varepsilon$，则称 $\lim_{x\to x_0}f(x)=L$。
+</Definition>
+
+$\varepsilon$ 控制输出的误差，$\delta$ 控制输入的范围。定义说的是：**想让输出多准，就能找到输入需要多准。**
+
+## 推导：用定义验证一个极限
+
+<Example>
+证明 $\lim_{n\to\infty}\dfrac{n}{n+1}=1$。
+
+给定 $\varepsilon>0$。我们要让 $\left|\dfrac{n}{n+1}-1\right|=\dfrac{1}{n+1}<\varepsilon$。只要 $n+1>\tfrac1\varepsilon$，即 $n>\tfrac1\varepsilon-1$ 即可。取 $N=\left\lceil \tfrac1\varepsilon\right\rceil$，则当 $n>N$ 时 $\tfrac1{n+1}<\tfrac1N\le\varepsilon$。
+</Example>
+
+这类证明的套路是固定的：先把 $|a_n-L|$ 化简成关于 $n$ 的表达式，再反解出 $n$ 需要多大。
+
+## 定理与证明
+
+<Theorem title="极限的唯一性">
+若 $\lim a_n=L$ 且 $\lim a_n=M$，则 $L=M$。
+</Theorem>
+
+<Proof>
+反设 $L\neq M$，令 $\varepsilon=\tfrac{|L-M|}{2}>0$。由定义，存在 $N_1$ 使 $n>N_1$ 时 $|a_n-L|<\varepsilon$；存在 $N_2$ 使 $n>N_2$ 时 $|a_n-M|<\varepsilon$。取 $n>\max(N_1,N_2)$，则
+$$|L-M|\le|L-a_n|+|a_n-M|<2\varepsilon=|L-M|,$$
+矛盾。
+</Proof>
+
+<Theorem title="极限的四则运算">
+若 $a_n\to L$，$b_n\to M$，则 $a_n+b_n\to L+M$，$a_nb_n\to LM$；若 $M\neq0$，则 $a_n/b_n\to L/M$。
+</Theorem>
+
+<Proof>
+只证乘法，这是最有代表性的一条。写
+$$a_nb_n-LM=(a_n-L)b_n+L(b_n-M).$$
+收敛数列有界：存在 $B$ 使 $|b_n|\le B$ 对所有 $n$ 成立。给定 $\varepsilon>0$，取 $N$ 使 $n>N$ 时 $|a_n-L|<\dfrac{\varepsilon}{2B}$ 且 $|b_n-M|<\dfrac{\varepsilon}{2(|L|+1)}$。于是
+$$|a_nb_n-LM|\le|a_n-L|\,B+|L|\,|b_n-M|<\tfrac\varepsilon2+\tfrac\varepsilon2=\varepsilon.$$
+</Proof>
+
+<Theorem title="夹逼定理">
+若 $a_n\le c_n\le b_n$ 对充分大的 $n$ 成立，且 $a_n\to L$，$b_n\to L$，则 $c_n\to L$。
+</Theorem>
+
+<Proof>
+给定 $\varepsilon>0$，取 $N$ 使 $n>N$ 时 $L-\varepsilon<a_n$ 且 $b_n<L+\varepsilon$。于是 $L-\varepsilon<a_n\le c_n\le b_n<L+\varepsilon$，即 $|c_n-L|<\varepsilon$。
+</Proof>
+
+## 应用：一个重要极限
+
+<Application>
+$$\lim_{x\to0}\frac{\sin x}{x}=1.$$
+
+当 $0<x<\tfrac\pi2$ 时，比较单位圆中的三块面积：三角形 $\tfrac12\sin x$、扇形 $\tfrac12x$、大三角形 $\tfrac12\tan x$，得 $\sin x<x<\tan x$，即 $\cos x<\dfrac{\sin x}{x}<1$。$\cos x\to1$，由夹逼定理得结论。$x<0$ 时利用 $\dfrac{\sin x}{x}$ 是偶函数。
+
+这个极限是[导数](/zh/concepts/derivative)一节里 $\sin'x=\cos x$ 的全部来源。
+</Application>
+
+<Remark>
+极限不是"最终到达的值"，而是"可以任意逼近的值"。$a_n$ 永远不等于 $1$ 也没关系。也正因如此，$0.999\dots=1$：这是一个极限，不是一个"差一点"的数。
+</Remark>

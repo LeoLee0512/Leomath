@@ -1,0 +1,80 @@
+<Observe>
+Drag the tips of the two basis vectors $\mathbf e_1$, $\mathbf e_2$ below. **The whole grid** follows: straight lines stay straight, parallel lines stay parallel, the origin stays put, equally spaced grid lines stay equally spaced.
+
+You moved two points and thereby decided where every point of the plane goes. Why?
+
+<Experiment slug="linear-transform" />
+</Observe>
+
+<Conjecture>
+Because every vector in the plane is $v=x\mathbf e_1+y\mathbf e_2$, and if a transformation $T$ "respects" addition and scaling it must send $v$ to $xT(\mathbf e_1)+yT(\mathbf e_2)$. What $T$ does to a basis determines everything.
+</Conjecture>
+
+## Definition
+
+<Definition title="Linear map">
+Let $V,W$ be vector spaces. A map $T:V\to W$ is **linear** if for all $u,v\in V$ and $c\in\mathbb R$,
+$$T(u+v)=T(u)+T(v),\qquad T(cv)=cT(v).$$
+</Definition>
+
+Together these say $T(au+bv)=aT(u)+bT(v)$: linear maps preserve linear combinations.
+
+Note $T(0)=T(0\cdot0)=0\cdot T(0)=0$: a linear map always sends the origin to the origin. So a translation $v\mapsto v+b$ ($b\ne0$) is **not** linear, which is why the origin never moves in the experiment.
+
+## Theorems and proofs
+
+<Theorem title="A linear map is determined by its values on a basis">
+Let $v_1,\dots,v_n$ be a basis of $V$ and $w_1,\dots,w_n\in W$ arbitrary. There is exactly one linear map $T:V\to W$ with $T(v_i)=w_i$.
+</Theorem>
+
+<Proof>
+**Existence.** Each $v\in V$ has unique coordinates $v=\sum c_iv_i$ (see [Vectors](/en/concepts/vectors)). Define $T(v)=\sum c_iw_i$. If $u=\sum d_iv_i$ then $au+bv=\sum(ad_i+bc_i)v_i$, so $T(au+bv)=\sum(ad_i+bc_i)w_i=aT(u)+bT(v)$. Thus $T$ is linear, and clearly $T(v_i)=w_i$.
+
+**Uniqueness.** If $S$ is linear with $S(v_i)=w_i$, then $S(v)=S(\sum c_iv_i)=\sum c_iS(v_i)=\sum c_iw_i=T(v)$.
+</Proof>
+
+This is the theorem behind the experiment: two arrows, $T(\mathbf e_1)$ and $T(\mathbf e_2)$, decide the fate of the whole plane. A linear map of $n$-dimensional space is decided by $n$ vectors.
+
+<Theorem title="Linear maps send lines to lines (or points)">
+If $T$ is linear, the image of the line $\{p+tv:t\in\mathbb R\}$ is $\{T(p)+tT(v)\}$: a line when $T(v)\ne0$, otherwise a point. Parallel lines map to parallel lines (or degenerate together).
+</Theorem>
+
+<Proof>
+$T(p+tv)=T(p)+tT(v)$ by linearity. Lines sharing the direction $v$ have images sharing the direction $T(v)$.
+</Proof>
+
+This explains "lines stay lines, parallels stay parallel". The "Collapse" preset, where everything is squashed onto one line, is the case where $T(\mathbf e_1)$ and $T(\mathbf e_2)$ are collinear and $T(v)=0$ has nonzero solutions.
+
+<Definition title="Kernel and image">
+$\ker T=\{v\in V:T(v)=0\}$ is the **kernel** of $T$; $\operatorname{im}T=\{T(v):v\in V\}$ is its **image**. Both are subspaces.
+</Definition>
+
+<Theorem title="Rank–nullity">
+If $V$ is finite-dimensional, $\dim\ker T+\dim\operatorname{im}T=\dim V$.
+</Theorem>
+
+<Proof>
+Take a basis $u_1,\dots,u_k$ of $\ker T$ and extend it to a basis $u_1,\dots,u_k,v_1,\dots,v_r$ of $V$. We claim $T(v_1),\dots,T(v_r)$ is a basis of $\operatorname{im}T$.
+
+Spanning: any $T(v)$ with $v=\sum a_iu_i+\sum b_jv_j$ equals $\sum b_jT(v_j)$.
+
+Independence: if $\sum b_jT(v_j)=0$ then $T(\sum b_jv_j)=0$, so $\sum b_jv_j\in\ker T$ and equals some $\sum a_iu_i$. Independence of the full basis forces all $b_j=0$.
+
+Hence $\dim\operatorname{im}T=r=\dim V-k$.
+</Proof>
+
+In the experiment: when $T(\mathbf e_1),T(\mathbf e_2)$ are not collinear the kernel is $\{0\}$ and the image is the whole plane ($0+2=2$); when they are collinear and nonzero, kernel and image are each a line ($1+1=2$).
+
+## Applications
+
+<Application title="Rotation, projection and differentiation are linear">
+- Rotation of the plane by $\theta$ about the origin: linear, $\mathbf e_1\mapsto(\cos\theta,\sin\theta)$, $\mathbf e_2\mapsto(-\sin\theta,\cos\theta)$.
+- Projection onto the $x$-axis: linear, kernel the $y$-axis.
+- Differentiation $D:p\mapsto p'$ on polynomials: linear, $D(af+bg)=af'+bg'$, kernel the constants.
+
+The last example is why linear algebra reappears in [Second-order linear equations](/en/concepts/second-order-linear-ode): solving a linear differential equation is finding the kernel of a linear map.
+</Application>
+
+<Remark>
+The next section, [Matrices](/en/concepts/matrices), does one thing only: it writes the coordinates of $T(\mathbf e_1),T(\mathbf e_2)$ as two columns. That is a matrix. A matrix is a notation for a linear map, nothing more.
+</Remark>

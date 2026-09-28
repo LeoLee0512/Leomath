@@ -1,0 +1,77 @@
+<Observe>
+Choose "Logistic growth" below: $y'=ry\left(1-\dfrac yK\right)$. Vary the initial value $y(0)$: solutions starting below climb, solutions starting above fall, all towards $K$; the one starting at $y(0)=0$ stays $0$ forever. No two solution curves ever cross.
+
+<Experiment slug="ode-explorer" preset="logistic" />
+</Observe>
+
+<Conjecture>
+A first-order equation $y'=f(t,y)$ prescribes a slope at every point $(t,y)$. Solution curves are the curves tangent to the prescribed slope everywhere. By uniqueness (see [What is an ODE](/en/concepts/what-is-ode)) exactly one solution passes through each point, so they cannot cross. And if $f$ factors as a function of $t$ times a function of $y$, perhaps we can move $y$ and $t$ to opposite sides and [integrate](/en/concepts/integral) each.
+</Conjecture>
+
+## Separation of variables
+
+<Proposition title="Separable equations">
+If $y'=g(t)h(y)$ with $h(y)\ne0$, solutions satisfy
+$$\int\frac{dy}{h(y)}=\int g(t)\,dt.$$
+</Proposition>
+
+<Proof>
+Let $H$ be an antiderivative of $\dfrac1h$ and $G$ one of $g$. By the chain rule
+$$\frac{d}{dt}H(y(t))=H'(y)\,y'=\frac{y'}{h(y)}=g(t)=G'(t),$$
+so $H(y(t))=G(t)+C$.
+</Proof>
+
+Writing $\dfrac{dy}{h(y)}=g(t)\,dt$ is a mnemonic; what actually happens is the chain rule run backwards.
+
+<Example title="y′ = y²">
+$\int y^{-2}\,dy=\int dt\Rightarrow-\dfrac1y=t+C$. From $y(0)=1$, $C=-1$ and $y=\dfrac1{1-t}$. The solution blows up as $t\to1^-$: first-order solutions can reach infinity in finite time.
+</Example>
+
+<Example title="The logistic equation">
+$\displaystyle\int\frac{dy}{y(1-y/K)}=\int r\,dt$. Partial fractions, $\dfrac1{y(1-y/K)}=\dfrac1y+\dfrac{1/K}{1-y/K}$, give $\ln|y|-\ln|1-y/K|=rt+C$, hence
+$$y(t)=\frac{K}{1+\left(\frac K{y_0}-1\right)e^{-rt}}.$$
+As $t\to\infty$, $y\to K$, matching the experiment. For $y_0=0$ separation is illegal ($h(0)=0$), but $y\equiv0$ is obviously a solution, an **equilibrium**; so is $y\equiv K$.
+</Example>
+
+## Linear equations and integrating factors
+
+<Definition title="First-order linear equation">
+$$y'+p(t)y=q(t).$$
+</Definition>
+
+Separation fails: the right side is not $g(t)h(y)$. But the left side is "almost" the derivative of a product.
+
+<Theorem title="Integrating factor">
+Let $\mu(t)=e^{\int p(t)\,dt}$. Then $y'+py=q$ is equivalent to $(\mu y)'=\mu q$, so
+$$y=\frac1{\mu(t)}\left(\int\mu(t)q(t)\,dt+C\right).$$
+</Theorem>
+
+<Proof>
+$\mu'=p\mu$; that is the entire reason for the choice of $\mu$ (see $(e^u)'=u'e^u$ in [The derivative](/en/concepts/derivative)). Hence
+$$(\mu y)'=\mu y'+\mu'y=\mu y'+p\mu y=\mu(y'+py)=\mu q.$$
+Integrate and divide by $\mu$.
+</Proof>
+
+<Example>
+$y'+2y=e^t$: $\mu=e^{2t}$, $(e^{2t}y)'=e^{3t}$, $e^{2t}y=\tfrac13e^{3t}+C$, $y=\tfrac13e^t+Ce^{-2t}$.
+</Example>
+
+<Theorem title="Structure of solutions of a linear equation">
+The general solution of $y'+py=q$ equals the general solution $Ce^{-\int p}$ of the homogeneous equation $y'+py=0$ plus any one particular solution.
+</Theorem>
+
+<Proof>
+If $y_1,y_2$ both solve $y'+py=q$, then $(y_1-y_2)'+p(y_1-y_2)=q-q=0$, so $y_1-y_2$ is a homogeneous solution. Conversely, homogeneous solution plus particular solution is again a solution.
+</Proof>
+
+This structure comes from **linearity**: the solution set is an affine space, a translate of the homogeneous solution space, which is a one-dimensional [vector space](/en/concepts/vectors). The same structure reappears in [Second-order linear equations](/en/concepts/second-order-linear-ode), where that space becomes two-dimensional.
+
+## Application
+
+<Application title="Geometry of solutions: the direction field">
+Without solving, draw at each point a short segment of slope $f(t,y)$: the direction field. Solution curves are the curves that follow it. The short segments in the experiment's phase portrait are a direction field (for a two-dimensional system). Equilibria are horizontal lines where $f(t,y)=0$; for the logistic equation $y=K$ attracts nearby solutions and $y=0$ repels them.
+</Application>
+
+<Remark>
+Only a few classes of first-order equations have closed-form solutions: separable, linear, exact, and some reducible by substitution. Most cannot be solved in closed form, which does not stop us analysing them (direction fields, equilibria, stability) or [solving them numerically](/en/concepts/numerical-ode).
+</Remark>

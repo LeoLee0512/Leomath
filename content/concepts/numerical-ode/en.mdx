@@ -1,0 +1,83 @@
+<Observe>
+Choose "Pendulum": $\theta''+\gamma\theta'+\frac gL\sin\theta=0$. This equation has no elementary closed-form solution. Yet the experiment draws a curve: it is **computed** step by step. Increase the step $h$: the red Euler curve drifts away from the blue RK4 curve and may even diverge. Switch back to "Exponential growth", which has an exact solution, and watch the end-point errors of the two methods as $h$ changes: halving $h$ roughly halves Euler's error and divides RK4's by about 16.
+
+<Experiment slug="ode-explorer" preset="pendulum" />
+</Observe>
+
+<Conjecture>
+$y'=f(t,y)$ tells us the current slope. From $(t_n,y_n)$, walk a short step $h$ along that slope to get the next approximate point. Smaller steps are more accurate, but how the error shrinks with $h$ depends on how refined our "one step" is, and that should be computable with a [Taylor expansion](/en/concepts/taylor-series).
+</Conjecture>
+
+## Definitions
+
+<Definition title="Euler's method">
+$$y_{n+1}=y_n+h\,f(t_n,y_n),\qquad t_{n+1}=t_n+h.$$
+</Definition>
+
+<Definition title="Local truncation error and global error">
+The **local truncation error** is the difference between one step taken from the exact value $y(t_n)$ and $y(t_{n+1})$. The **global error** is $|y_N-y(T)|$ after $N=T/h$ steps. A method with global error $O(h^p)$ has **order** $p$.
+</Definition>
+
+## Derivation: the order of Euler's method
+
+<Proposition title="Euler's method is first order">
+Local truncation error $O(h^2)$, global error $O(h)$.
+</Proposition>
+
+<Proof>
+Taylor-expand the exact solution: $y(t_n+h)=y(t_n)+hy'(t_n)+\tfrac{h^2}2y''(\xi)=y(t_n)+hf(t_n,y(t_n))+O(h^2)$. An Euler step is exactly the first two terms, so the local error is $O(h^2)$.
+
+Global error: let $e_n=y_n-y(t_n)$, let $f$ be $L$-Lipschitz in $y$, and let the local error be at most $Ch^2$. Then
+$$|e_{n+1}|\le|e_n|+h|f(t_n,y_n)-f(t_n,y(t_n))|+Ch^2\le(1+hL)|e_n|+Ch^2.$$
+Iterating, $|e_N|\le Ch^2\sum_{k=0}^{N-1}(1+hL)^k\le Ch^2\cdot\dfrac{(1+hL)^N-1}{hL}\le\dfrac{Ch}L\bigl(e^{LT}-1\bigr)$, using $(1+hL)^N\le e^{hLN}=e^{LT}$. So the global error is $O(h)$: $N$ steps each committing $O(h^2)$ accumulate to $O(h)$.
+</Proof>
+
+## Higher order: Runge–Kutta
+
+Euler uses only the slope at the left end of each step. Better: sample several slopes inside the step and average them with weights.
+
+<Definition title="Classical fourth-order Runge–Kutta (RK4)">
+$$
+\begin{aligned}
+k_1&=f(t_n,\,y_n),\\
+k_2&=f\!\left(t_n+\tfrac h2,\ y_n+\tfrac h2k_1\right),\\
+k_3&=f\!\left(t_n+\tfrac h2,\ y_n+\tfrac h2k_2\right),\\
+k_4&=f\!\left(t_n+h,\ y_n+hk_3\right),\\
+y_{n+1}&=y_n+\frac h6\,(k_1+2k_2+2k_3+k_4).
+\end{aligned}
+$$
+</Definition>
+
+<Theorem title="RK4 is fourth order">
+Local truncation error $O(h^5)$, global error $O(h^4)$.
+</Theorem>
+
+<Proof>
+The full proof expands $k_1,\dots,k_4$ to order $h^4$ and compares term by term with the expansion of $y(t_n+h)$; it is long. We prove a special case that carries the idea: $f=f(t)$ independent of $y$. Then $k_1=f(t_n)$, $k_2=k_3=f(t_n+\tfrac h2)$, $k_4=f(t_n+h)$, and
+$$y_{n+1}-y_n=\frac h6\Bigl[f(t_n)+4f\bigl(t_n+\tfrac h2\bigr)+f(t_n+h)\Bigr],$$
+which is Simpson's rule, while $y(t_{n+1})-y(t_n)=\int_{t_n}^{t_{n+1}}f$. Simpson's rule is exact for cubics with error $-\frac{h^5}{2880}f^{(4)}(\xi)$, i.e. $O(h^5)$. The general case has the same conclusion with a messier expansion. The global $O(h^4)$ follows from the local error by the same accumulation argument as for Euler.
+</Proof>
+
+This is where "halve $h$, divide the error by 16" comes from: $(h/2)^4=h^4/16$.
+
+## Theorem: why large steps diverge
+
+<Proposition title="Stability of Euler's method">
+For $y'=\lambda y$ with $\lambda<0$, Euler gives $y_n=(1+h\lambda)^ny_0$. The true solution decays to $0$; the numerical one decays iff $|1+h\lambda|<1$, i.e. $h<\dfrac2{|\lambda|}$.
+</Proposition>
+
+<Proof>
+Substitute: $y_{n+1}=y_n+h\lambda y_n=(1+h\lambda)y_n$.
+</Proof>
+
+Beyond $h=2/|\lambda|$ the factor $(1+h\lambda)^n$ oscillates and grows, bearing no relation to the true solution. This explains the divergence of the Euler curve at large steps. Such "stiff" problems call for implicit methods, a topic of [Numerical analysis](/en/concepts/numerical-analysis).
+
+## Application
+
+<Application title="Equations without closed-form solutions">
+The pendulum, the three-body problem, the Lorenz system, almost every realistic physical model: numerical solution is the only option. The pendulum curve in the experiment is RK4 with step $h$ and four function evaluations per step. The number of steps is $N=T/h$; trading accuracy against work is the daily business of scientific computing.
+</Application>
+
+<Remark>
+Numerical methods are not "approximate mathematics". They have theorems of their own: order, convergence and stability are precise, provable statements. Every letter in Euler's global bound $\dfrac{Ch}L(e^{LT}-1)$ has a meaning, and it honestly tells you the error grows exponentially with $T$: the further the forecast, the less reliable.
+</Remark>

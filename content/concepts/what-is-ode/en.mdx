@@ -1,0 +1,78 @@
+<Observe>
+A cup of hot water sits on a table. It does not cool at a constant rate: fast while hot, slowly as it nears room temperature. We do not know the temperature as a function of time, $T(t)$, but we do know **the law of its change**:
+
+$$T'(t)=-k\,\bigl(T(t)-T_{\text{room}}\bigr).$$
+
+In the experiment below choose "Exponential growth", make $k$ negative and vary the initial value. What you see are solutions of this kind of equation.
+
+<Experiment slug="ode-explorer" preset="exponential" />
+</Observe>
+
+<Conjecture>
+Many natural laws do not hand us the quantity itself but **a relation between its rate of change and its value**. Such a relation is an equation containing an unknown function and its derivatives. If we can recover the function from the equation, we can predict the future.
+</Conjecture>
+
+## Definitions
+
+<Definition title="Ordinary differential equation">
+An **ordinary differential equation** (ODE) of **order** $n$ is an equation
+$$F\bigl(t,\,y,\,y',\,y'',\dots,y^{(n)}\bigr)=0$$
+for an unknown function $y=y(t)$ of one variable. The order is the highest derivative that appears. If it can be solved for that derivative, $y^{(n)}=f(t,y,\dots,y^{(n-1)})$, the equation is **explicit**.
+</Definition>
+
+<Definition title="Solution and initial value problem">
+A function $\varphi$ on an interval $I$ is a **solution** if substituting $y=\varphi(t)$ makes the equation hold for every $t\in I$. An **initial value problem** adds $y(t_0)=y_0$ (for order $n$, the values of $y,y',\dots,y^{(n-1)}$ at $t_0$).
+</Definition>
+
+<Definition title="Linear equation">
+If the equation can be written $a_n(t)y^{(n)}+\cdots+a_1(t)y'+a_0(t)y=g(t)$, so that $y$ and its derivatives appear only to the first power and never multiplied together, it is **linear**; if $g\equiv0$ it is **homogeneous**.
+</Definition>
+
+$y'''+y\,y'=\sin t$ is third order and nonlinear (because of $y\,y'$). Order and linearity are independent attributes.
+
+## Derivation: the simplest equation
+
+<Proposition>
+The solutions of $y'=ky$ are exactly $y=Ce^{kt}$, $C\in\mathbb R$.
+</Proposition>
+
+<Proof>
+$Ce^{kt}$ is a solution by direct differentiation. Conversely let $y$ be any solution and set $u(t)=y(t)e^{-kt}$. Then
+$$u'=y'e^{-kt}-ky\,e^{-kt}=(y'-ky)e^{-kt}=0,$$
+so $u$ is a constant $C$ and $y=Ce^{kt}$.
+</Proof>
+
+We used the central fact $(e^{kt})'=ke^{kt}$ from [The derivative](/en/concepts/derivative), and that a function with zero derivative is constant (a corollary of the mean value theorem). The initial condition $y(0)=y_0$ fixes $C=y_0$.
+
+Back to the cooling cup: with $u=T-T_{\text{room}}$, $u'=-ku$, so $u=u_0e^{-kt}$ and
+$$T(t)=T_{\text{room}}+(T_0-T_{\text{room}})e^{-kt}.$$
+
+## Existence and uniqueness
+
+An equation only states a law. Must it have a solution? Is the solution unique? These questions decide whether "predicting the future with a differential equation" is legitimate.
+
+<Theorem title="Picard–Lindelöf">
+Let $f(t,y)$ be continuous on the rectangle $R=\{|t-t_0|\le a,\ |y-y_0|\le b\}$ and Lipschitz in $y$: there is $L$ with $|f(t,y_1)-f(t,y_2)|\le L|y_1-y_2|$. Then the initial value problem $y'=f(t,y),\ y(t_0)=y_0$ has a unique solution on some neighbourhood of $t_0$.
+</Theorem>
+
+<Proof>
+We prove **uniqueness**, which shows what the Lipschitz condition is for. Let $\varphi,\psi$ be solutions and $w(t)=|\varphi(t)-\psi(t)|$. Integrating the equation (see [The integral](/en/concepts/integral)) gives $\varphi(t)=y_0+\int_{t_0}^tf(s,\varphi(s))\,ds$ and likewise for $\psi$, so for $t\ge t_0$
+$$w(t)\le\int_{t_0}^t|f(s,\varphi)-f(s,\psi)|\,ds\le L\int_{t_0}^tw(s)\,ds.$$
+Let $W(t)=\int_{t_0}^tw$. Then $W'\le LW$ and $W(t_0)=0$, so $(We^{-Lt})'=(W'-LW)e^{-Lt}\le0$: $We^{-Lt}$ is non-increasing, starts at $0$ and is non-negative, hence $W\equiv0$ and $w\equiv0$.
+
+Existence is obtained by Picard iteration $\varphi_{n+1}(t)=y_0+\int_{t_0}^tf(s,\varphi_n(s))\,ds$ and a uniform convergence argument; this is one of the roots of [Numerical solutions](/en/concepts/numerical-ode).
+</Proof>
+
+<Example title="Uniqueness fails without Lipschitz">
+$y'=2\sqrt{|y|},\ y(0)=0$. Both $y\equiv0$ and $y=t^2$ (for $t\ge0$) are solutions. $f(y)=2\sqrt{|y|}$ is not Lipschitz near $y=0$.
+</Example>
+
+## Application
+
+<Application title="Solutions need not live forever">
+$y'=y^2,\ y(0)=1$ satisfies the theorem and has the unique local solution $y=\dfrac1{1-t}$, which blows up at $t=1$. The theorem guarantees a **local** solution. This is the first exercise of [First-order equations](/en/concepts/first-order-ode).
+</Application>
+
+<Remark>
+Three levels of working with differential equations: **modelling** (writing the law), **solving** (finding the function), **analysis** (knowing things without solving). Existence and uniqueness belongs to the third level: under broad conditions, the present state completely determines the future. This is the mathematical form of Newtonian determinism.
+</Remark>

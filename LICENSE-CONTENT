@@ -1,0 +1,13 @@
+LeoMath content licence
+
+The mathematical and editorial content of LeoMath — everything under
+content/, the concept titles, summaries and exercises in src/content/,
+and the documentation in README.md — is licensed under the
+Creative Commons Attribution-ShareAlike 4.0 International License
+(CC BY-SA 4.0). https://creativecommons.org/licenses/by-sa/4.0/
+
+Attribution: "LeoMath (leomath.cn) by Leo Lee, CC BY-SA 4.0".
+
+Software source code (TypeScript, React components, styles, scripts,
+configuration, tests, SQL) is licensed separately under the MIT License;
+see LICENSE.

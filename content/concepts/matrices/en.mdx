@@ -1,0 +1,92 @@
+<Observe>
+In the previous experiment you dragged $T(\mathbf e_1)$ and $T(\mathbf e_2)$, and the matrix $A$ below changed with them. Watch how: **the coordinates of $T(\mathbf e_1)$ are the first column, those of $T(\mathbf e_2)$ the second.** A matrix is nothing but the two image vectors written side by side.
+
+<Experiment slug="linear-transform" />
+</Observe>
+
+<Conjecture>
+Since a [linear map](/en/concepts/linear-maps) is determined by the images of a basis, writing those images as columns of a table records the map completely. "Matrix times vector" should be "evaluate the map", and "matrix times matrix" should be "compose the maps". If so, the odd-looking definition of matrix multiplication stops being odd.
+</Conjecture>
+
+## Definitions
+
+<Definition title="Matrix of a linear map">
+Let $T:\mathbb R^n\to\mathbb R^m$ be linear and $\mathbf e_1,\dots,\mathbf e_n$ the standard basis. The **matrix** of $T$ is the $m\times n$ array $A$ whose $j$-th column is the coordinate vector of $T(\mathbf e_j)$:
+$$A=\bigl[\,T(\mathbf e_1)\ \ T(\mathbf e_2)\ \cdots\ T(\mathbf e_n)\,\bigr].$$
+</Definition>
+
+<Definition title="Matrix times vector">
+For $A=[a_{ij}]$ and $x=(x_1,\dots,x_n)$, $Ax$ is the linear combination of the columns of $A$:
+$$Ax=x_1A_{\cdot1}+x_2A_{\cdot2}+\cdots+x_nA_{\cdot n},\qquad\text{i.e.}\ (Ax)_i=\sum_{j=1}^na_{ij}x_j.$$
+</Definition>
+
+<Proposition>
+If $A$ is the matrix of $T$, then $T(x)=Ax$ for all $x$.
+</Proposition>
+
+<Proof>
+$x=\sum x_j\mathbf e_j$, so by linearity $T(x)=\sum x_jT(\mathbf e_j)=\sum x_jA_{\cdot j}=Ax$.
+</Proof>
+
+## Why matrix multiplication is defined this way
+
+<Definition title="Matrix product">
+For $A$ of size $m\times n$ and $B$ of size $n\times p$, $AB$ is the $m\times p$ matrix whose $j$-th column is $A(B_{\cdot j})$, i.e.
+$$(AB)_{ij}=\sum_{k=1}^na_{ik}b_{kj}.$$
+</Definition>
+
+<Theorem title="Matrix product = composition">
+If $S:\mathbb R^p\to\mathbb R^n$ has matrix $B$ and $T:\mathbb R^n\to\mathbb R^m$ has matrix $A$, then $T\circ S$ has matrix $AB$.
+</Theorem>
+
+<Proof>
+$T\circ S$ is linear (check both properties). Its $j$-th column is $(T\circ S)(\mathbf e_j)=T(S(\mathbf e_j))=T(B_{\cdot j})=A(B_{\cdot j})$, the $j$-th column of $AB$.
+</Proof>
+
+That is the whole origin of "row times column". Immediate consequences:
+
+- **Associativity** $(AB)C=A(BC)$, because composition of maps is associative. No sums need expanding.
+- **Non-commutativity** $AB\ne BA$: rotating then stretching differs from stretching then rotating. Try it in the experiment.
+- The **identity matrix** $I$ is the identity map, $AI=IA=A$.
+
+## The determinant
+
+In the experiment the unit square becomes a parallelogram whose area depends on the matrix.
+
+<Definition title="2×2 determinant">
+$$\det\begin{pmatrix}a&b\\c&d\end{pmatrix}=ad-bc.$$
+</Definition>
+
+<Theorem title="The determinant is signed area">
+The signed area of the parallelogram spanned by $T(\mathbf e_1)=(a,c)$ and $T(\mathbf e_2)=(b,d)$ is $ad-bc$. It is negative exactly when $T$ reverses orientation (the turn from $\mathbf e_1$ to $\mathbf e_2$ changes from counter-clockwise to clockwise).
+</Theorem>
+
+<Proof>
+Let $u=(a,c)$, $v=(b,d)$, and $u^\perp=(-c,a)$ the counter-clockwise quarter-turn of $u$. The area is $|u|$ times the signed projection of $v$ onto $u^\perp$: $|u|\cdot\dfrac{v\cdot u^\perp}{|u^\perp|}=v\cdot u^\perp=-bc+ad$. The projection is positive when $v$ lies on the counter-clockwise side of $u$.
+</Proof>
+
+<Theorem title="Multiplicativity">
+$\det(AB)=\det A\cdot\det B$.
+</Theorem>
+
+<Proof>
+Geometrically: $B$ turns the unit square into a parallelogram of area $\det B$, and $A$ multiplies the area of any region by $\det A$ (it sends every small grid cell to the same parallelogram, and any region's area is a limit of sums of cells). So $AB$ multiplies area by $\det A\det B$; orientation signs multiply likewise.
+</Proof>
+
+<Proposition title="Invertibility">
+$A$ is invertible iff $\det A\ne0$, and then $A^{-1}=\dfrac1{ad-bc}\begin{pmatrix}d&-b\\-c&a\end{pmatrix}$.
+</Proposition>
+
+$\det A=0$ is the "Collapse" preset: the plane is flattened onto a line (or a point), information is lost, nothing can be undone.
+
+## Application
+
+<Application title="Rotation matrices">
+Counter-clockwise rotation by $\theta$: $\mathbf e_1\mapsto(\cos\theta,\sin\theta)$, $\mathbf e_2\mapsto(-\sin\theta,\cos\theta)$; as columns,
+$$R_\theta=\begin{pmatrix}\cos\theta&-\sin\theta\\\sin\theta&\cos\theta\end{pmatrix},\qquad\det R_\theta=1.$$
+Expanding $R_\alpha R_\beta=R_{\alpha+\beta}$ yields the angle-addition formulas: matrix multiplication turns them into the triviality "rotate by $\beta$, then by $\alpha$".
+</Application>
+
+<Remark>
+One sentence suffices: **the columns of a matrix are where the basis vectors go.** Every definition and theorem about matrices can be re-derived from that sentence and linearity. The next section, [Eigenvalues](/en/concepts/eigenvalues), asks: is there a vector whose direction the map leaves unchanged?
+</Remark>

@@ -1,0 +1,200 @@
+@import "tailwindcss";
+@import "katex/dist/katex.min.css";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+/*
+  LeoMath design tokens.
+  Light: warm paper white, ink black, a very small amount of Leo blue.
+  Dark: blackboard deep ink blue, cream formulas, restrained cyan-blue highlight.
+*/
+:root {
+  --paper: #faf8f3;
+  --paper-2: #f2efe8;
+  --ink: #17191e;
+  --ink-2: #3a3d44;
+  --muted: #6c7079;
+  --rule: #e3dfd5;
+  --rule-2: #cfc9bc;
+  --leo: #1f5cb8;
+  --leo-soft: #dfe8f7;
+  --grid: #d9d3c6;
+  --grid-strong: #b9b2a3;
+  --e1: #c2452d;
+  --e2: #1f7a4d;
+  --accent-2: #b8862a;
+  --font-ui: ui-sans-serif, system-ui, -apple-system, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Noto Sans CJK SC", sans-serif;
+  --font-serif: "Iowan Old Style", "Palatino Linotype", "Source Serif 4", Georgia, "Songti SC", "Noto Serif CJK SC", "Noto Serif SC", serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+  color-scheme: light;
+}
+
+.dark {
+  --paper: #0d1526;
+  --paper-2: #121c31;
+  --ink: #efe9dc;
+  --ink-2: #d5cfc2;
+  --muted: #8f97a8;
+  --rule: #223049;
+  --rule-2: #2f405e;
+  --leo: #6fb7d9;
+  --leo-soft: #16304a;
+  --grid: #223049;
+  --grid-strong: #34486a;
+  --e1: #e2735c;
+  --e2: #5fc493;
+  --accent-2: #d3a955;
+  color-scheme: dark;
+}
+
+@theme inline {
+  --color-paper: var(--paper);
+  --color-paper-2: var(--paper-2);
+  --color-ink: var(--ink);
+  --color-ink-2: var(--ink-2);
+  --color-muted: var(--muted);
+  --color-rule: var(--rule);
+  --color-rule-2: var(--rule-2);
+  --color-leo: var(--leo);
+  --color-leo-soft: var(--leo-soft);
+  --color-e1: var(--e1);
+  --color-e2: var(--e2);
+  --color-accent-2: var(--accent-2);
+  --font-sans: var(--font-ui);
+  --font-serif: var(--font-serif);
+  --font-mono: var(--font-mono);
+}
+
+html {
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-ui);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--paper);
+  color: var(--ink);
+  min-height: 100dvh;
+}
+
+::selection {
+  background: var(--leo-soft);
+}
+
+a {
+  color: inherit;
+}
+
+button, input {
+  font: inherit;
+}
+
+/* Math typography: like a well-set modern mathematics book. */
+.prose-math {
+  font-family: var(--font-serif);
+  font-size: 1.0625rem;
+  line-height: 1.85;
+  color: var(--ink);
+  max-width: 44rem;
+}
+.prose-math > * + * { margin-top: 1.1em; }
+.prose-math h1 { font-size: 2rem; line-height: 1.25; font-weight: 600; letter-spacing: -0.01em; margin-top: 0; }
+.prose-math h2 { font-size: 1.45rem; line-height: 1.3; font-weight: 600; margin-top: 2.6em; padding-top: 0.8em; border-top: 1px solid var(--rule); }
+.prose-math h3 { font-size: 1.15rem; font-weight: 600; margin-top: 2em; }
+.prose-math h2 + *, .prose-math h3 + * { margin-top: 0.8em; }
+.prose-math p { text-wrap: pretty; }
+.prose-math strong { font-weight: 600; }
+.prose-math em { font-style: italic; }
+.prose-math ul, .prose-math ol { padding-left: 1.4em; }
+.prose-math li + li { margin-top: 0.35em; }
+.prose-math ul { list-style: disc; }
+.prose-math ol { list-style: decimal; }
+.prose-math a { color: var(--leo); text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 3px; }
+.prose-math blockquote { border-left: 2px solid var(--rule-2); padding-left: 1.1em; color: var(--ink-2); }
+.prose-math code { font-family: var(--font-mono); font-size: 0.9em; background: var(--paper-2); padding: 0.1em 0.35em; border-radius: 3px; }
+.prose-math pre { background: var(--paper-2); padding: 1em 1.2em; overflow-x: auto; border-radius: 4px; font-size: 0.9rem; line-height: 1.6; }
+.prose-math pre code { background: none; padding: 0; }
+.prose-math table { border-collapse: collapse; width: 100%; font-size: 0.95em; }
+.prose-math th, .prose-math td { border-bottom: 1px solid var(--rule); padding: 0.45em 0.6em; text-align: left; }
+.prose-math hr { border: 0; border-top: 1px solid var(--rule); margin: 2.5em 0; }
+
+/* Formulas must never be cramped. */
+.prose-math .katex-display { margin: 1.6em 0; overflow-x: auto; overflow-y: hidden; padding: 0.2em 0; }
+.prose-math .katex { font-size: 1.08em; }
+.katex-display > .katex { white-space: normal; }
+
+/* Structural blocks used inside MDX: definition, theorem, proof, observation, remark. */
+.mblock {
+  margin: 1.8em 0;
+  padding: 1em 1.25em;
+  border-left: 2px solid var(--rule-2);
+  background: var(--paper-2);
+  border-radius: 0 4px 4px 0;
+}
+.mblock-head {
+  font-family: var(--font-ui);
+  font-size: 0.8rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 0.5em;
+}
+.mblock-head b { color: var(--ink); font-weight: 600; }
+.mblock > * + * { margin-top: 0.8em; }
+.mblock-definition { border-left-color: var(--leo); }
+.mblock-theorem { border-left-color: var(--ink); }
+.mblock-proof { background: transparent; border-left-color: var(--rule); }
+.mblock-observe { border-left-color: var(--accent-2); }
+.mblock-proof-end { text-align: right; }
+.mblock-proof-end::after { content: "□"; }
+
+/* Experiments */
+.exp-frame {
+  border: 1px solid var(--rule);
+  background: var(--paper);
+  border-radius: 6px;
+  overflow: hidden;
+}
+.exp-canvas { display: block; width: 100%; height: auto; touch-action: none; user-select: none; }
+.exp-control { font-family: var(--font-ui); font-size: 0.85rem; color: var(--ink-2); }
+input[type="range"] { accent-color: var(--leo); width: 100%; }
+input[type="range"].e1 { accent-color: var(--e1); }
+input[type="range"].e2 { accent-color: var(--e2); }
+
+/* Buttons */
+.btn {
+  display: inline-flex; align-items: center; gap: 0.4em;
+  padding: 0.7em 1.25em; border-radius: 4px;
+  font-family: var(--font-ui); font-size: 0.95rem; font-weight: 500;
+  border: 1px solid transparent; transition: background-color 120ms, color 120ms, border-color 120ms;
+  text-decoration: none; cursor: pointer;
+}
+.btn-primary { background: var(--ink); color: var(--paper); }
+.btn-primary:hover { background: var(--leo); }
+.dark .btn-primary { background: var(--ink); color: var(--paper); }
+.dark .btn-primary:hover { background: var(--leo); color: var(--paper); }
+.btn-ghost { border-color: var(--rule-2); color: var(--ink); background: transparent; }
+.btn-ghost:hover { border-color: var(--ink); }
+.btn-small { padding: 0.45em 0.9em; font-size: 0.85rem; }
+.btn:disabled { opacity: 0.5; cursor: default; }
+
+.field {
+  width: 100%; padding: 0.65em 0.8em; border: 1px solid var(--rule-2); border-radius: 4px;
+  background: var(--paper); color: var(--ink);
+}
+.field:focus { outline: 2px solid var(--leo); outline-offset: 1px; border-color: var(--leo); }
+
+.hairline { border-top: 1px solid var(--rule); }
+.section { padding-block: clamp(4rem, 10vw, 8rem); }
+.container { width: 100%; max-width: 72rem; margin-inline: auto; padding-inline: clamp(1rem, 4vw, 2.5rem); }
+.display { font-family: var(--font-serif); letter-spacing: -0.015em; text-wrap: balance; }
+.eyebrow { font-family: var(--font-ui); font-size: 0.78rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); }
+.mono { font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  * { transition-duration: 0ms !important; }
+}

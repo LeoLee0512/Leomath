@@ -1,0 +1,80 @@
+<Observe>
+拖动下面两个基向量 $\mathbf e_1$、$\mathbf e_2$ 的箭头端点。**整个网格**跟着变：所有直线仍然是直线，所有平行线仍然平行，原点不动，等距的格线仍然等距。
+
+你只动了两个点，却决定了平面上每一个点去哪里。为什么？
+
+<Experiment slug="linear-transform" />
+</Observe>
+
+<Conjecture>
+因为平面上任何向量都是 $v=x\mathbf e_1+y\mathbf e_2$，如果一个变换 $T$ "尊重"加法和数乘，那它必须把 $v$ 送到 $xT(\mathbf e_1)+yT(\mathbf e_2)$。$T$ 对基的作用决定了一切。
+</Conjecture>
+
+## 定义
+
+<Definition title="线性映射">
+设 $V,W$ 是向量空间。映射 $T:V\to W$ 称为**线性的**，若对所有 $u,v\in V$、$c\in\mathbb R$，
+$$T(u+v)=T(u)+T(v),\qquad T(cv)=cT(v).$$
+</Definition>
+
+两条合起来等价于 $T(au+bv)=aT(u)+bT(v)$：线性映射保持线性组合。
+
+注意 $T(0)=T(0\cdot0)=0\cdot T(0)=0$：线性映射一定把原点送到原点。所以平移 $v\mapsto v+b$（$b\ne0$）**不是**线性的，实验里原点永远不动就是这个原因。
+
+## 定理与证明
+
+<Theorem title="线性映射由基上的值唯一决定">
+设 $v_1,\dots,v_n$ 是 $V$ 的基，$w_1,\dots,w_n\in W$ 任意。则存在唯一的线性映射 $T:V\to W$ 使 $T(v_i)=w_i$。
+</Theorem>
+
+<Proof>
+**存在性。** 任意 $v\in V$ 有唯一坐标 $v=\sum c_iv_i$（见[向量](/zh/concepts/vectors)）。定义 $T(v)=\sum c_iw_i$。若 $u=\sum d_iv_i$，则 $au+bv=\sum(ad_i+bc_i)v_i$，于是 $T(au+bv)=\sum(ad_i+bc_i)w_i=aT(u)+bT(v)$。所以 $T$ 线性，且显然 $T(v_i)=w_i$。
+
+**唯一性。** 若 $S$ 也线性且 $S(v_i)=w_i$，则 $S(v)=S(\sum c_iv_i)=\sum c_iS(v_i)=\sum c_iw_i=T(v)$。
+</Proof>
+
+这就是实验背后的定理：两个箭头（$T(\mathbf e_1)$ 和 $T(\mathbf e_2)$）决定了整个平面的去向。$n$ 维空间的线性映射，由 $n$ 个向量决定。
+
+<Theorem title="线性映射把直线映成直线（或点）">
+若 $T$ 线性，则直线 $\{p+tv:t\in\mathbb R\}$ 的像是 $\{T(p)+tT(v)\}$：当 $T(v)\ne0$ 时是直线，否则是一个点。平行直线的像仍平行（或退化）。
+</Theorem>
+
+<Proof>
+$T(p+tv)=T(p)+tT(v)$，直接由线性性得到。方向向量 $v$ 相同的直线，像的方向向量都是 $T(v)$。
+</Proof>
+
+这解释了实验里"直线仍是直线、平行仍平行"。而"压扁"预设中所有点被压到一条直线上，就是 $T(\mathbf e_1)$ 与 $T(\mathbf e_2)$ 共线、$T(v)=0$ 有非零解的情形。
+
+<Definition title="核与像">
+$\ker T=\{v\in V:T(v)=0\}$ 称为 $T$ 的**核**；$\operatorname{im}T=\{T(v):v\in V\}$ 称为 $T$ 的**像**。两者都是子空间。
+</Definition>
+
+<Theorem title="秩–零化度定理">
+若 $V$ 有限维，则 $\dim\ker T+\dim\operatorname{im}T=\dim V$。
+</Theorem>
+
+<Proof>
+取 $\ker T$ 的基 $u_1,\dots,u_k$，扩充为 $V$ 的基 $u_1,\dots,u_k,v_1,\dots,v_r$。断言 $T(v_1),\dots,T(v_r)$ 是 $\operatorname{im}T$ 的基。
+
+张成：任意 $T(v)$，$v=\sum a_iu_i+\sum b_jv_j$，故 $T(v)=\sum b_jT(v_j)$。
+
+无关：若 $\sum b_jT(v_j)=0$，则 $T(\sum b_jv_j)=0$，所以 $\sum b_jv_j\in\ker T$，可写成 $\sum a_iu_i$。由 $u,v$ 全体线性无关得所有 $b_j=0$。
+
+于是 $\dim\operatorname{im}T=r=\dim V-k$。
+</Proof>
+
+在实验里：$T(\mathbf e_1),T(\mathbf e_2)$ 不共线时核是 $\{0\}$，像是整个平面（$0+2=2$）；共线且非零时核是一条直线，像也是一条直线（$1+1=2$）。
+
+## 应用
+
+<Application title="旋转、投影、微分都是线性映射">
+- 平面绕原点旋转 $\theta$：线性。$\mathbf e_1\mapsto(\cos\theta,\sin\theta)$，$\mathbf e_2\mapsto(-\sin\theta,\cos\theta)$。
+- 到 $x$ 轴的投影：线性，核是 $y$ 轴。
+- 微分 $D:p\mapsto p'$ 在多项式空间上：线性，$D(af+bg)=af'+bg'$。核是常数多项式。
+
+最后一个例子说明为什么线性代数会在[二阶线性方程](/zh/concepts/second-order-linear-ode)里出现：解微分方程就是求一个线性映射的核。
+</Application>
+
+<Remark>
+下一节[矩阵](/zh/concepts/matrices)要做的事只有一件：把 $T(\mathbf e_1),T(\mathbf e_2)$ 的坐标写成两列，这就是矩阵。矩阵是线性映射的记法，不是别的什么东西。
+</Remark>

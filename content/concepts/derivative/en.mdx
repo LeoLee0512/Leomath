@@ -1,0 +1,85 @@
+<Observe>
+Play first, read later. Below are $f(x)=a^x$ and its **difference quotient**
+$$\frac{f(x+h)-f(x)}{h}.$$
+Drag the base $a$ and make the step $h$ small. The difference-quotient curve always looks like $a^x$ itself, just taller or shorter. **Is there a base $a$ for which the two curves coincide exactly?**
+
+<Experiment slug="exponential-derivative" />
+</Observe>
+
+<Conjecture>
+The difference-quotient curve is a constant multiple of $a^x$; the constant $\dfrac{a^h-1}{h}$ depends only on $a$ and $h$. As $h\to0$ it tends to some number $c(a)$ depending only on $a$. $c(a)$ increases with $a$: about $0.69$ at $a=2$, about $1.10$ at $a=3$. So between $2$ and $3$ there should be a unique $a$ with $c(a)=1$. We call it $e$.
+</Conjecture>
+
+## Definition
+
+<Definition title="Derivative">
+Let $f$ be defined on a neighbourhood of $x_0$. If the limit
+$$f'(x_0)=\lim_{h\to0}\frac{f(x_0+h)-f(x_0)}{h}$$
+exists, $f$ is **differentiable** at $x_0$ and $f'(x_0)$ is its **derivative** there.
+</Definition>
+
+Geometrically the difference quotient is the slope of a secant and the derivative the slope of the tangent. Physically, average velocity and instantaneous velocity. The definition contains one [limit](/en/concepts/limit) and nothing else.
+
+<Definition title="The number e">
+$e$ is the unique positive real number with $\displaystyle\lim_{h\to0}\frac{e^h-1}{h}=1$.
+</Definition>
+
+This looks engineered to make $(e^x)'=e^x$ true, and that is exactly what it is. We now show such a number exists, is unique, and identify it.
+
+## Derivation
+
+<Proposition title="Derivative of a^x">
+For $a>0$,
+$$\frac{d}{dx}a^x=a^x\cdot\lim_{h\to0}\frac{a^h-1}{h}=a^x\ln a.$$
+</Proposition>
+
+<Proof>
+The first equality is the factorisation seen in the experiment: $a^{x+h}-a^x=a^x(a^h-1)$.
+
+For the second we need $\lim_{h\to0}\frac{a^h-1}h=\ln a$. Put $u=a^h-1$, so $h=\log_a(1+u)=\dfrac{\ln(1+u)}{\ln a}$ and $u\to0$ as $h\to0$. Then
+$$\frac{a^h-1}{h}=\frac{u\ln a}{\ln(1+u)}=\ln a\cdot\frac1{\frac{\ln(1+u)}u}\to\ln a,$$
+using $\lim_{u\to0}\frac{\ln(1+u)}u=1$, which is equivalent to $\lim_{u\to0}(1+u)^{1/u}=e$, the other common definition $e=\lim_{n\to\infty}(1+\tfrac1n)^n$.
+</Proof>
+
+So $c(a)=\ln a$, and $c(a)=1\iff a=e$. The "coincidence" you saw in the experiment is $\ln e=1$.
+
+## Basic rules and their proofs
+
+<Theorem title="Rules of differentiation">
+Let $f,g$ be differentiable at $x$. Then
+1. $(f+g)'=f'+g'$;
+2. $(fg)'=f'g+fg'$;
+3. if $g(x)\ne0$, $\left(\dfrac fg\right)'=\dfrac{f'g-fg'}{g^2}$;
+4. (chain rule) if $g$ is differentiable at $x$ and $f$ at $g(x)$, then $(f\circ g)'(x)=f'(g(x))\,g'(x)$.
+</Theorem>
+
+<Proof>
+We prove the product rule; the method is the same add-and-subtract trick as for products of limits.
+$$\frac{f(x+h)g(x+h)-f(x)g(x)}{h}=\frac{f(x+h)-f(x)}{h}\,g(x+h)+f(x)\,\frac{g(x+h)-g(x)}{h}.$$
+As $h\to0$ the first term tends to $f'(x)g(x)$ (differentiability of $g$ implies continuity, so $g(x+h)\to g(x)$) and the second to $f(x)g'(x)$.
+</Proof>
+
+<Theorem title="Differentiable implies continuous">
+If $f$ is differentiable at $x_0$, then $f$ is continuous at $x_0$.
+</Theorem>
+
+<Proof>
+$f(x_0+h)-f(x_0)=\dfrac{f(x_0+h)-f(x_0)}h\cdot h\to f'(x_0)\cdot0=0$.
+</Proof>
+
+The converse fails: $|x|$ is continuous at $0$ but not differentiable; the one-sided difference quotients tend to $-1$ and $1$.
+
+## Applications
+
+<Application title="Why e appears everywhere">
+$(e^x)'=e^x$ says: **the rate of change is proportional to the current value, with constant 1**. Any process whose growth rate is proportional to its size (compound interest, populations, radioactive decay, a discharging capacitor) is solved by $Ce^{kt}$. This is the first equation, $y'=ky$, in [What is an ODE](/en/concepts/what-is-ode).
+</Application>
+
+<Application title="Trigonometric functions">
+From $\lim_{x\to0}\frac{\sin x}x=1$ and $\lim_{x\to0}\frac{\cos x-1}x=0$,
+$$\frac{\sin(x+h)-\sin x}h=\sin x\,\frac{\cos h-1}h+\cos x\,\frac{\sin h}h\to\cos x.$$
+</Application>
+
+<Remark>
+Observe → conjecture → define → derive → prove → apply. We did not start from "$e\approx2.718$". We first saw that a special base exists, then defined it, then proved it is the base of $\ln$. **A definition is the tidying-up of a conclusion, not something handed down from above.**
+</Remark>

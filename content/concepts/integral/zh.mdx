@@ -1,0 +1,70 @@
+<Observe>
+曲线 $y=x^2$ 下方、$0\le x\le1$ 之间的面积是多少？它不是任何我们会算的图形。但我们可以把 $[0,1]$ 切成 $n$ 段，每段上用一个矩形代替：矩形面积之和
+$$S_n=\sum_{i=1}^n\left(\frac in\right)^2\frac1n=\frac{1}{n^3}\cdot\frac{n(n+1)(2n+1)}{6}$$
+随 $n$ 增大而趋于 $\dfrac13$。
+</Observe>
+
+<Conjecture>
+"曲线下的面积"应该定义为矩形和的[极限](/zh/concepts/limit)。而且极限值不应依赖于我们怎么切、在每段上取哪个点：只要切得足够细，结果都一样。
+</Conjecture>
+
+## 定义
+
+<Definition title="Riemann 和与定积分">
+设 $f$ 在 $[a,b]$ 上有界。取分割 $P:a=x_0<x_1<\cdots<x_n=b$，记 $\Delta x_i=x_i-x_{i-1}$，$\|P\|=\max\Delta x_i$。任取 $\xi_i\in[x_{i-1},x_i]$，和式
+$$\sum_{i=1}^nf(\xi_i)\,\Delta x_i$$
+称为 **Riemann 和**。若存在数 $I$，使得对任意 $\varepsilon>0$ 存在 $\delta>0$，只要 $\|P\|<\delta$，无论 $\xi_i$ 如何选取，都有 $\left|\sum f(\xi_i)\Delta x_i-I\right|<\varepsilon$，则称 $f$ 在 $[a,b]$ 上**可积**，记 $\displaystyle\int_a^bf(x)\,dx=I$。
+</Definition>
+
+这和极限定义是同一种句式："想多准就能多准"。区别是这里的"接近"要对所有分割方式和取点方式一致成立。
+
+<Theorem title="连续函数可积">
+若 $f$ 在 $[a,b]$ 上连续，则 $f$ 可积。
+</Theorem>
+
+<Proof>
+闭区间上连续函数一致连续：对任意 $\varepsilon>0$ 存在 $\delta$，$|x-y|<\delta\Rightarrow|f(x)-f(y)|<\frac{\varepsilon}{b-a}$。当 $\|P\|<\delta$ 时，每个小区间上 $f$ 的最大值 $M_i$ 与最小值 $m_i$ 之差小于 $\frac\varepsilon{b-a}$，所以上和减下和
+$$\sum(M_i-m_i)\Delta x_i<\varepsilon.$$
+任何 Riemann 和都夹在上和与下和之间，而加细分割时下和增、上和减，两者的公共极限就是 $I$。
+</Proof>
+
+## 微积分基本定理
+
+到此为止积分和[导数](/zh/concepts/derivative)毫无关系：一个是面积，一个是斜率。下面的定理是整个微积分的核心。
+
+<Theorem title="微积分基本定理（第一部分）">
+设 $f$ 在 $[a,b]$ 连续，$F(x)=\displaystyle\int_a^xf(t)\,dt$。则 $F$ 在 $[a,b]$ 可导且 $F'(x)=f(x)$。
+</Theorem>
+
+<Proof>
+$$\frac{F(x+h)-F(x)}{h}=\frac1h\int_x^{x+h}f(t)\,dt.$$
+$f$ 连续，故在 $[x,x+h]$ 上有 $\min f\le\dfrac1h\int_x^{x+h}f\le\max f$（积分的单调性）。$h\to0$ 时，$\min f$ 与 $\max f$ 都趋于 $f(x)$（连续性），由夹逼定理得 $F'(x)=f(x)$。
+</Proof>
+
+面积函数的变化率就是被积函数的高度：面积增加得快慢，正比于此处曲线有多高。
+
+<Theorem title="微积分基本定理（第二部分）">
+若 $F'=f$ 在 $[a,b]$ 上成立且 $f$ 连续，则 $\displaystyle\int_a^bf(x)\,dx=F(b)-F(a)$。
+</Theorem>
+
+<Proof>
+令 $G(x)=\int_a^xf$。由第一部分 $G'=f=F'$，故 $(G-F)'=0$，$G-F$ 是常数。$G(a)=0$ 给出常数为 $-F(a)$，所以 $G(b)=F(b)-F(a)$。
+</Proof>
+
+于是 $\int_0^1x^2\,dx=\left[\frac{x^3}3\right]_0^1=\frac13$：开头那个极限一秒钟算出。
+
+## 应用
+
+<Application title="把方程变成积分方程">
+对 $y'=f(t,y)$ 两边从 $t_0$ 积到 $t$：
+$$y(t)=y_0+\int_{t_0}^tf(s,y(s))\,ds.$$
+这个形式是[ODE 是什么](/zh/concepts/what-is-ode)里存在唯一性证明的出发点，也是 Picard 迭代和数值方法的出发点。
+</Application>
+
+<Application title="分部积分与换元">
+乘法法则 $(uv)'=u'v+uv'$ 两边积分得 $\int u'v=uv-\int uv'$；链式法则积分得换元公式 $\int_a^bf(g(x))g'(x)\,dx=\int_{g(a)}^{g(b)}f(u)\,du$。每一条积分技巧都是一条求导法则倒过来。
+</Application>
+
+<Remark>
+$\int$ 是拉长的 S，代表 sum。定义里只有求和与极限。微积分基本定理才把它和导数连起来，而这个连接是需要证明的定理，不是记号上的巧合。
+</Remark>

@@ -1,0 +1,80 @@
+<Observe>
+Tick "Show eigenvectors", then press "Stretch": two dashed lines appear, one horizontal, one vertical. Vectors along these directions keep their **direction** after the transformation; only their length is scaled. Press "Shear": only one dashed line remains, the horizontal one. Press "Rotate": the lines vanish.
+
+<Experiment slug="linear-transform" />
+</Observe>
+
+<Conjecture>
+Every linear map may have some "special directions" along which it merely stretches. If enough such directions exist, taking them as a new basis makes the map act by scaling each coordinate separately: the simplest kind of matrix, a diagonal one. Rotation has no real such direction; shear has only one.
+</Conjecture>
+
+## Definition
+
+<Definition title="Eigenvalues and eigenvectors">
+Let $A$ be an $n\times n$ matrix. If there are a **nonzero** vector $v$ and a number $\lambda$ with
+$$Av=\lambda v,$$
+then $\lambda$ is an **eigenvalue** of $A$ and $v$ an **eigenvector** for $\lambda$.
+</Definition>
+
+"Nonzero" is essential: $A0=\lambda0$ holds for every $\lambda$ and carries no information.
+
+## Derivation: how to find them
+
+$Av=\lambda v\iff(A-\lambda I)v=0$. For a nonzero solution $v$ to exist, $A-\lambda I$ must be non-invertible, i.e. (see [Matrices](/en/concepts/matrices))
+$$\det(A-\lambda I)=0.$$
+
+<Definition title="Characteristic polynomial">
+$p_A(\lambda)=\det(A-\lambda I)$ is the **characteristic polynomial** of $A$. For a $2\times2$ matrix,
+$$p_A(\lambda)=\lambda^2-(\operatorname{tr}A)\lambda+\det A,\qquad\operatorname{tr}A=a+d.$$
+</Definition>
+
+<Proof>
+$\det\begin{pmatrix}a-\lambda&b\\c&d-\lambda\end{pmatrix}=(a-\lambda)(d-\lambda)-bc=\lambda^2-(a+d)\lambda+(ad-bc)$.
+</Proof>
+
+Eigenvalues are the roots of the characteristic polynomial. Having found $\lambda$, solve $(A-\lambda I)v=0$ for the eigenvectors.
+
+<Example title="Three typical cases">
+- **Stretch** $\begin{pmatrix}1.6&0\\0&0.7\end{pmatrix}$: $p=(\lambda-1.6)(\lambda-0.7)$, eigenvalues $1.6,0.7$, eigenvectors $\mathbf e_1,\mathbf e_2$. Two independent directions.
+- **Shear** $\begin{pmatrix}1&1\\0&1\end{pmatrix}$: $p=(\lambda-1)^2$, only $\lambda=1$. $(A-I)v=0$ forces $v_2=0$, so the eigenvectors are the multiples of $\mathbf e_1$ only. **A double root gave only one direction.**
+- **Rotation** $\begin{pmatrix}0&-1\\1&0\end{pmatrix}$: $p=\lambda^2+1$, no real roots. No real eigen-direction; the eigenvalues are $\pm i$.
+</Example>
+
+The sign of the discriminant $(\operatorname{tr}A)^2-4\det A$ decides which case you are in. The "complex" readout in the experiment means the discriminant is negative.
+
+## Theorems and proofs
+
+<Theorem title="Eigenvectors for distinct eigenvalues are independent">
+If $v_1,\dots,v_k$ are eigenvectors for pairwise distinct eigenvalues $\lambda_1,\dots,\lambda_k$, they are linearly independent.
+</Theorem>
+
+<Proof>
+Induction on $k$; $k=1$ is clear since $v_1\ne0$. Assume the statement for $k-1$. If $c_1v_1+\cdots+c_kv_k=0$, applying $A$ gives $c_1\lambda_1v_1+\cdots+c_k\lambda_kv_k=0$; subtracting $\lambda_k$ times the original relation,
+$$c_1(\lambda_1-\lambda_k)v_1+\cdots+c_{k-1}(\lambda_{k-1}-\lambda_k)v_{k-1}=0.$$
+By induction all coefficients vanish, and since $\lambda_i\ne\lambda_k$, $c_1=\cdots=c_{k-1}=0$; then $c_kv_k=0$ gives $c_k=0$.
+</Proof>
+
+<Theorem title="Diagonalisation">
+If an $n\times n$ matrix $A$ has $n$ independent eigenvectors $v_1,\dots,v_n$, let $P=[v_1\cdots v_n]$ and $D=\operatorname{diag}(\lambda_1,\dots,\lambda_n)$. Then
+$$A=PDP^{-1}.$$
+</Theorem>
+
+<Proof>
+The $j$-th column of $AP$ is $Av_j=\lambda_jv_j$; the $j$-th column of $PD$ is the $j$-th column of $P$ times $\lambda_j$, also $\lambda_jv_j$. So $AP=PD$, and $P$ is invertible because its columns are independent.
+</Proof>
+
+Meaning: in coordinates built from eigenvectors, $A$ is the diagonal matrix $D$. The intuition "it only stretches along special directions" has become an exact identity. Shear cannot be diagonalised because it lacks a second independent direction.
+
+## Applications
+
+<Application title="Powers of a matrix">
+$A^k=PD^kP^{-1}$ with $D^k=\operatorname{diag}(\lambda_1^k,\dots,\lambda_n^k)$. The Fibonacci recursion $F_{n+1}=F_n+F_{n-1}$ is $\begin{pmatrix}F_{n+1}\\F_n\end{pmatrix}=\begin{pmatrix}1&1\\1&0\end{pmatrix}\begin{pmatrix}F_n\\F_{n-1}\end{pmatrix}$, with eigenvalues $\frac{1\pm\sqrt5}2$; Binet's formula follows.
+</Application>
+
+<Application title="Second-order linear differential equations">
+$y''+py'+qy=0$ becomes the first-order system $\begin{pmatrix}y\\y'\end{pmatrix}'=\begin{pmatrix}0&1\\-q&-p\end{pmatrix}\begin{pmatrix}y\\y'\end{pmatrix}$, whose characteristic polynomial is $\lambda^2+p\lambda+q$: **exactly** the textbook "characteristic equation". That is the subject of [Second-order linear equations](/en/concepts/second-order-linear-ode).
+</Application>
+
+<Remark>
+Eigenvalues answer the question "in which directions is this map simplest?" Symmetric matrices always have a full orthogonal set of eigen-directions (the spectral theorem), the shared mathematical basis of principal component analysis, vibration modes and observables in quantum mechanics.
+</Remark>

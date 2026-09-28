@@ -1,0 +1,79 @@
+<Observe>
+Choose "Damped oscillator": $x''+2\gamma x'+\omega^2x=0$. With $\gamma=0$ the solution is an undying sine wave; for small $\gamma>0$ the oscillation decays; once $\gamma$ exceeds $\omega$ it stops oscillating and simply slides back to zero. In the phase portrait these are an ellipse, an inward spiral, and a curve heading straight for the origin.
+
+<Experiment slug="ode-explorer" preset="harmonic" />
+</Observe>
+
+<Conjecture>
+The shape of the solution (oscillating or not) depends on how $\gamma$ compares with $\omega$, like the sign of a discriminant of some quadratic. And solutions are always exponentials or exponentials times trigonometric functions, all relatives of $e^{rt}$. Perhaps substituting $y=e^{rt}$ turns the differential equation into an algebraic one.
+</Conjecture>
+
+## Definition
+
+<Definition title="Second-order linear homogeneous equation with constant coefficients">
+$$y''+py'+qy=0,\qquad p,q\in\mathbb R.$$
+</Definition>
+
+## Derivation: the characteristic equation
+
+Substitute $y=e^{rt}$: $y'=re^{rt}$, $y''=r^2e^{rt}$, so
+$$(r^2+pr+q)e^{rt}=0\iff r^2+pr+q=0.$$
+
+<Definition title="Characteristic equation">
+$r^2+pr+q=0$ is the **characteristic equation** of the ODE.
+</Definition>
+
+**Why "characteristic"?** Let $v=\begin{pmatrix}y\\y'\end{pmatrix}$. Then $v'=\begin{pmatrix}y'\\y''\end{pmatrix}=\begin{pmatrix}0&1\\-q&-p\end{pmatrix}v=:Av$. The [characteristic polynomial](/en/concepts/eigenvalues) of $A$ is
+$$\det(A-\lambda I)=\lambda^2+p\lambda+q.$$
+The characteristic equation of the ODE is literally the characteristic equation of $A$. And the eigenvector $v=(1,\lambda)$ of $Av=\lambda v$ corresponds exactly to the solution $y=e^{\lambda t}$ (for which $y'=\lambda y$). **Solving a second-order linear ODE is finding the eigenvalues of a $2\times2$ matrix.**
+
+## Theorems and proofs
+
+<Theorem title="The solution space is a 2-dimensional vector space">
+The solutions of $y''+py'+qy=0$ form a two-dimensional real [vector space](/en/concepts/vectors).
+</Theorem>
+
+<Proof>
+Linearity: if $y_1,y_2$ are solutions, $(ay_1+by_2)''+p(ay_1+by_2)'+q(ay_1+by_2)=a(\cdots)+b(\cdots)=0$, so the solution set is a subspace of the space of functions.
+
+Dimension: by existence and uniqueness (for the system $v'=Av$), the map $y\mapsto(y(0),y'(0))\in\mathbb R^2$ is a linear bijection from the solution space onto $\mathbb R^2$: injective because equal initial data give equal solutions, surjective because every initial datum has a solution. So the solution space is isomorphic to $\mathbb R^2$.
+</Proof>
+
+Hence it suffices to find **two independent solutions** $y_1,y_2$; the general solution is $C_1y_1+C_2y_2$.
+
+<Theorem title="General solution in three cases">
+Let the characteristic roots be $r_1,r_2$ and $\Delta=p^2-4q$.
+1. $\Delta>0$, distinct real $r_1\ne r_2$: $y=C_1e^{r_1t}+C_2e^{r_2t}$.
+2. $\Delta=0$, $r_1=r_2=r$: $y=(C_1+C_2t)e^{rt}$.
+3. $\Delta<0$, $r=\alpha\pm i\beta$: $y=e^{\alpha t}(C_1\cos\beta t+C_2\sin\beta t)$.
+</Theorem>
+
+<Proof>
+**Case 1.** $e^{r_1t},e^{r_2t}$ are solutions. Independence: if $ae^{r_1t}+be^{r_2t}\equiv0$, divide by $e^{r_1t}$ to get $a+be^{(r_2-r_1)t}\equiv0$; differentiating gives $b(r_2-r_1)e^{(r_2-r_1)t}\equiv0$, so $b=0$ and then $a=0$.
+
+**Case 2.** $r=-p/2$ and $q=r^2$. Check $te^{rt}$: $(te^{rt})'=(1+rt)e^{rt}$, $(te^{rt})''=(2r+r^2t)e^{rt}$; substituting, $e^{rt}\bigl[(2r+p)+(r^2+pr+q)t\bigr]=0$ since $2r+p=0$ and $r$ is a root. $e^{rt}$ and $te^{rt}$ are clearly independent. This is the case where $A$ has only one eigen-direction (like a shear): the missing second solution is supplied by the factor $t$.
+
+**Case 3.** $e^{(\alpha+i\beta)t}=e^{\alpha t}(\cos\beta t+i\sin\beta t)$ (Euler's formula, see [Taylor expansion](/en/concepts/taylor-series)) is a complex solution. The coefficients are real, so its real and imaginary parts are real solutions: $e^{\alpha t}\cos\beta t$ and $e^{\alpha t}\sin\beta t$. They are independent since $\cos\beta t,\sin\beta t$ are ($\beta\ne0$).
+</Proof>
+
+For the damped oscillator $p=2\gamma$, $q=\omega^2$, $\Delta=4(\gamma^2-\omega^2)$: $\gamma<\omega$ underdamped (decaying oscillation), $\gamma=\omega$ critical, $\gamma>\omega$ overdamped. Exactly the three behaviours in the experiment.
+
+<Example>
+$y''+4y=0$: $r^2+4=0$, $r=\pm2i$, $y=C_1\cos2t+C_2\sin2t$.
+
+$y''-3y'+2y=0$: $r^2-3r+2=(r-1)(r-2)$, $y=C_1e^t+C_2e^{2t}$.
+</Example>
+
+## Applications
+
+<Application title="Inhomogeneous equations">
+The general solution of $y''+py'+qy=g(t)$ is the homogeneous general solution plus one particular solution; the proof is identical to the [first-order](/en/concepts/first-order-ode) case. For forced vibration $x''+\omega^2x=F\cos\Omega t$ the particular solution's amplitude blows up as $\Omega\to\omega$: **resonance**.
+</Application>
+
+<Application title="Why linear algebra reaches so far">
+An $n$-th order constant-coefficient linear ODE $\iff$ an eigenvalue problem for an $n\times n$ matrix; the solution space is an $n$-dimensional vector space; inhomogeneous solutions form its translate. Vibration modes in mechanics and RLC responses in circuits are diagonalisation in disguise.
+</Application>
+
+<Remark>
+Textbooks usually give the name "characteristic equation" first and then ask you to memorise three cases. Here the order is reversed: first see the three behaviours, then guess $e^{rt}$, then discover that the "characteristic equation" really is the characteristic equation of a matrix. The name is no coincidence; it is one mathematical object seen from two fields.
+</Remark>

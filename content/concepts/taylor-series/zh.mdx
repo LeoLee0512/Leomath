@@ -1,0 +1,70 @@
+<Observe>
+计算器怎么算 $\sin(0.3)$？它只会加减乘除。但注意在 $0$ 附近：
+$$\sin x\approx x,\qquad\sin x\approx x-\frac{x^3}6,\qquad\sin x\approx x-\frac{x^3}6+\frac{x^5}{120}.$$
+$x=0.3$ 时这三个近似分别是 $0.3$、$0.2955$、$0.295520$，而真值是 $0.295520\ldots$。多项式越长，逼近得越好。
+</Observe>
+
+<Conjecture>
+如果一个多项式 $p$ 要在 $x_0$ 附近"长得像" $f$，最自然的要求是它在 $x_0$ 处的值、斜率、弯曲程度……都和 $f$ 相同：$p^{(k)}(x_0)=f^{(k)}(x_0)$，$k=0,1,\dots,n$。这样的多项式是唯一的，而且误差应该随 $n$ 增大而缩小。
+</Conjecture>
+
+## 定义
+
+<Definition title="Taylor 多项式">
+设 $f$ 在 $x_0$ 处有 $n$ 阶[导数](/zh/concepts/derivative)。
+$$P_n(x)=\sum_{k=0}^n\frac{f^{(k)}(x_0)}{k!}(x-x_0)^k$$
+称为 $f$ 在 $x_0$ 处的 $n$ 阶 **Taylor 多项式**。$R_n(x)=f(x)-P_n(x)$ 称为**余项**。
+</Definition>
+
+系数为什么是 $\dfrac{f^{(k)}(x_0)}{k!}$？对 $P_n$ 求 $k$ 阶导再代入 $x=x_0$：$(x-x_0)^j$ 的 $k$ 阶导在 $x_0$ 处只有 $j=k$ 时非零，等于 $k!$。所以 $P_n^{(k)}(x_0)=f^{(k)}(x_0)$，正是猜想中的要求。
+
+## 定理与证明
+
+多项式好算，但如果不知道误差多大，近似就没有意义。下面的定理给出误差的精确形式。
+
+<Theorem title="Taylor 定理（Lagrange 余项）">
+设 $f$ 在含 $x_0,x$ 的区间上有 $n+1$ 阶导数。则存在介于 $x_0$ 与 $x$ 之间的 $\xi$，使
+$$R_n(x)=\frac{f^{(n+1)}(\xi)}{(n+1)!}(x-x_0)^{n+1}.$$
+</Theorem>
+
+<Proof>
+固定 $x\ne x_0$，令 $M$ 满足 $f(x)-P_n(x)=M(x-x_0)^{n+1}$。定义
+$$g(t)=f(t)-P_n(t)-M(t-x_0)^{n+1}.$$
+则 $g(x_0)=g'(x_0)=\cdots=g^{(n)}(x_0)=0$（因 $P_n$ 与 $f$ 在 $x_0$ 处前 $n$ 阶导数相同，而 $(t-x_0)^{n+1}$ 的前 $n$ 阶导在 $x_0$ 为零），且 $g(x)=0$。
+
+由 Rolle 定理，$g$ 在 $x_0,x$ 间有零点 $\xi_1$，故 $g'$ 在 $x_0,\xi_1$ 处为零，又有零点 $\xi_2$；如此 $n+1$ 次，得 $g^{(n+1)}(\xi_{n+1})=0$。而 $P_n^{(n+1)}\equiv0$，$\bigl((t-x_0)^{n+1}\bigr)^{(n+1)}=(n+1)!$，所以
+$$g^{(n+1)}(\xi)=f^{(n+1)}(\xi)-M(n+1)!=0\ \Rightarrow\ M=\frac{f^{(n+1)}(\xi)}{(n+1)!}.$$
+</Proof>
+
+<Example title="用余项给误差上界">
+用 $1-\frac{x^2}2$ 近似 $\cos x$，$|x|\le0.5$。这个多项式其实是 $P_3$（$x^3$ 系数为零），所以
+$$|R_3(x)|=\left|\frac{\cos^{(4)}(\xi)}{4!}x^4\right|\le\frac{0.5^4}{24}\approx0.0026.$$
+</Example>
+
+<Definition title="Taylor 级数">
+若 $f$ 在 $x_0$ 处无穷次可导，$\displaystyle\sum_{k=0}^\infty\frac{f^{(k)}(x_0)}{k!}(x-x_0)^k$ 称为 $f$ 的 **Taylor 级数**。级数收敛到 $f(x)$ 当且仅当 $R_n(x)\to0$。
+</Definition>
+
+<Proposition title="e^x、sin、cos 的级数处处收敛到自身">
+$$e^x=\sum_{k=0}^\infty\frac{x^k}{k!},\qquad\sin x=\sum_{k=0}^\infty\frac{(-1)^kx^{2k+1}}{(2k+1)!},\qquad\cos x=\sum_{k=0}^\infty\frac{(-1)^kx^{2k}}{(2k)!}.$$
+</Proposition>
+
+<Proof>
+三个函数的各阶导数在任何有界区间上一致有界（$e^x$ 的导数是自身，$\sin,\cos$ 的导数绝对值不超过 1）。固定 $x$，记 $C=\max_{|\xi|\le|x|}|f^{(n+1)}(\xi)|$（对 $e^x$ 是 $e^{|x|}$，对 $\sin,\cos$ 是 $1$），则
+$$|R_n(x)|\le C\frac{|x|^{n+1}}{(n+1)!}\to0,$$
+因为 $\dfrac{|x|^{n}}{n!}\to0$（从某项起每一项都乘以小于 $\tfrac12$ 的因子）。
+</Proof>
+
+<Remark>
+不是所有函数的 Taylor 级数都收敛到自身。$f(x)=e^{-1/x^2}$（$f(0)=0$）在 $0$ 处所有阶导数都是 $0$，Taylor 级数恒为 $0$，但 $f$ 不恒为 $0$。余项 $R_n(x)=f(x)$ 永远不趋于 $0$。定义里"当且仅当 $R_n\to0$"这个条件不是废话。
+</Remark>
+
+## 应用
+
+<Application title="数值方法的误差从哪里来">
+[数值解](/zh/concepts/numerical-ode)一节里，Euler 法每步的误差是 $O(h^2)$、RK4 是 $O(h^5)$，这些结论全部来自把真解 $y(t+h)$ 按 Taylor 展开、再与数值格式逐项比较。
+</Application>
+
+<Application title="Euler 公式">
+把 $e^{i\theta}$ 的级数按实部虚部分开，就得到 $e^{i\theta}=\cos\theta+i\sin\theta$。这是[二阶线性方程](/zh/concepts/second-order-linear-ode)中复特征根给出三角函数解的原因。
+</Application>

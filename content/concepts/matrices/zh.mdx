@@ -1,0 +1,92 @@
+<Observe>
+上一节实验里，你拖动 $T(\mathbf e_1)$ 和 $T(\mathbf e_2)$，下方的矩阵 $A$ 跟着变。留意它怎么变：**$T(\mathbf e_1)$ 的坐标是第一列，$T(\mathbf e_2)$ 的坐标是第二列。** 矩阵不是别的，就是把两个像向量并排写下来。
+
+<Experiment slug="linear-transform" />
+</Observe>
+
+<Conjecture>
+既然[线性映射](/zh/concepts/linear-maps)由基的像唯一决定，那么把基的像的坐标按列排成一个数表，这个数表就完整记录了这个映射。"矩阵乘向量"应该就是"求映射的值"，"矩阵乘矩阵"应该就是"映射的复合"。如果这个猜想对，矩阵乘法那个古怪的定义就不再古怪。
+</Conjecture>
+
+## 定义
+
+<Definition title="线性映射的矩阵">
+设 $T:\mathbb R^n\to\mathbb R^m$ 线性，$\mathbf e_1,\dots,\mathbf e_n$ 是标准基。$T$ 的**矩阵**是 $m\times n$ 数表 $A$，其第 $j$ 列是 $T(\mathbf e_j)$ 的坐标：
+$$A=\bigl[\,T(\mathbf e_1)\ \ T(\mathbf e_2)\ \cdots\ T(\mathbf e_n)\,\bigr].$$
+</Definition>
+
+<Definition title="矩阵乘向量">
+对 $A=[a_{ij}]$ 和 $x=(x_1,\dots,x_n)$，定义 $Ax$ 为 $A$ 各列的线性组合：
+$$Ax=x_1A_{\cdot1}+x_2A_{\cdot2}+\cdots+x_nA_{\cdot n},\qquad\text{即}\ (Ax)_i=\sum_{j=1}^na_{ij}x_j.$$
+</Definition>
+
+<Proposition>
+若 $A$ 是 $T$ 的矩阵，则对所有 $x$，$T(x)=Ax$。
+</Proposition>
+
+<Proof>
+$x=\sum x_j\mathbf e_j$，由线性性 $T(x)=\sum x_jT(\mathbf e_j)=\sum x_jA_{\cdot j}=Ax$。
+</Proof>
+
+## 矩阵乘法为什么这样定义
+
+<Definition title="矩阵乘法">
+设 $A$ 是 $m\times n$、$B$ 是 $n\times p$ 矩阵。$AB$ 是 $m\times p$ 矩阵，第 $j$ 列为 $A(B_{\cdot j})$，即
+$$(AB)_{ij}=\sum_{k=1}^na_{ik}b_{kj}.$$
+</Definition>
+
+<Theorem title="矩阵乘法 = 映射复合">
+若 $S:\mathbb R^p\to\mathbb R^n$ 的矩阵是 $B$，$T:\mathbb R^n\to\mathbb R^m$ 的矩阵是 $A$，则 $T\circ S$ 的矩阵是 $AB$。
+</Theorem>
+
+<Proof>
+$T\circ S$ 是线性的（两条线性性质逐一验证）。其矩阵第 $j$ 列是 $(T\circ S)(\mathbf e_j)=T(S(\mathbf e_j))=T(B_{\cdot j})=A(B_{\cdot j})$，正是 $AB$ 的第 $j$ 列。
+</Proof>
+
+这就是"行乘列"的全部来历。由此立刻得到：
+
+- **结合律** $(AB)C=A(BC)$：因为映射复合天然结合。不用展开求和证明。
+- **不交换** $AB\ne BA$：先旋转再拉伸，和先拉伸再旋转，一般不一样。在实验里可以体会。
+- **单位矩阵** $I$ 对应恒等映射，$AI=IA=A$。
+
+## 行列式
+
+实验中单位正方形被映成一个平行四边形，其面积随矩阵变化。
+
+<Definition title="2×2 行列式">
+$$\det\begin{pmatrix}a&b\\c&d\end{pmatrix}=ad-bc.$$
+</Definition>
+
+<Theorem title="行列式是有向面积">
+以 $T(\mathbf e_1)=(a,c)$、$T(\mathbf e_2)=(b,d)$ 为邻边的平行四边形的有向面积等于 $ad-bc$。符号为负当且仅当 $T$ 翻转了定向（$\mathbf e_1$ 到 $\mathbf e_2$ 从逆时针变成顺时针）。
+</Theorem>
+
+<Proof>
+记 $u=(a,c)$，$v=(b,d)$。把 $u$ 逆时针旋转 $90^\circ$ 得 $u^\perp=(-c,a)$。平行四边形面积 $=|u|\cdot$（$v$ 在 $u^\perp$ 方向上的投影长度）$=|u|\cdot\dfrac{v\cdot u^\perp}{|u^\perp|}=v\cdot u^\perp=-bc+ad$。投影带符号：$v$ 在 $u$ 的逆时针一侧时为正。
+</Proof>
+
+<Theorem title="行列式的乘法性">
+$\det(AB)=\det A\cdot\det B$。
+</Theorem>
+
+<Proof>
+几何证明：$B$ 把单位正方形变成面积 $\det B$ 的平行四边形，$A$ 再把任何图形的面积乘以 $\det A$（因为 $A$ 把小方格都变成同样的平行四边形，任意图形的面积是小方格面积的极限和）。所以 $AB$ 把面积乘以 $\det A\det B$。定向的符号同样相乘。
+</Proof>
+
+<Proposition title="可逆性">
+$A$ 可逆当且仅当 $\det A\ne0$；此时 $A^{-1}=\dfrac1{ad-bc}\begin{pmatrix}d&-b\\-c&a\end{pmatrix}$。
+</Proposition>
+
+$\det A=0$ 就是实验中的"压扁"：平面被压到一条直线（或一个点），信息丢失，无法还原。
+
+## 应用
+
+<Application title="旋转矩阵">
+逆时针旋转 $\theta$：$\mathbf e_1\mapsto(\cos\theta,\sin\theta)$，$\mathbf e_2\mapsto(-\sin\theta,\cos\theta)$，按列写下来
+$$R_\theta=\begin{pmatrix}\cos\theta&-\sin\theta\\\sin\theta&\cos\theta\end{pmatrix},\qquad\det R_\theta=1.$$
+$R_\alpha R_\beta=R_{\alpha+\beta}$ 展开就是三角函数的和角公式：矩阵乘法把和角公式变成了"先转 $\beta$ 再转 $\alpha$"这句废话。
+</Application>
+
+<Remark>
+记住一句话就够了：**矩阵的列是基向量的去处。** 所有关于矩阵的定义和定理，都可以从这句话和线性性重新推出来。下一节[特征值](/zh/concepts/eigenvalues)问的是：有没有向量在变换后方向不变？
+</Remark>

@@ -1,0 +1,79 @@
+<Observe>
+选"阻尼振子"：$x''+2\gamma x'+\omega^2x=0$。$\gamma=0$ 时是永不衰减的正弦；$\gamma$ 略大于 $0$ 时振荡逐渐衰减；$\gamma$ 超过 $\omega$ 后不再振荡，直接滑回零。相图上，前两种是椭圆和向内的螺旋，第三种是直接奔向原点的曲线。
+
+<Experiment slug="ode-explorer" preset="harmonic" />
+</Observe>
+
+<Conjecture>
+解的形状（振荡还是不振荡）由 $\gamma$ 与 $\omega$ 的关系决定，像是某个二次方程判别式的正负。而且解总是某种指数或指数乘三角函数——都是 $e^{rt}$ 的亲戚。也许试着代 $y=e^{rt}$ 进去，就能把微分方程变成代数方程。
+</Conjecture>
+
+## 定义
+
+<Definition title="二阶常系数线性齐次方程">
+$$y''+py'+qy=0,\qquad p,q\in\mathbb R.$$
+</Definition>
+
+## 推导：特征方程
+
+代入 $y=e^{rt}$：$y'=re^{rt}$，$y''=r^2e^{rt}$，得
+$$(r^2+pr+q)e^{rt}=0\iff r^2+pr+q=0.$$
+
+<Definition title="特征方程">
+$r^2+pr+q=0$ 称为方程的**特征方程**。
+</Definition>
+
+**为什么叫"特征"方程？** 令 $v=\begin{pmatrix}y\\y'\end{pmatrix}$，则 $v'=\begin{pmatrix}y'\\y''\end{pmatrix}=\begin{pmatrix}0&1\\-q&-p\end{pmatrix}v=:Av$。矩阵 $A$ 的[特征多项式](/zh/concepts/eigenvalues)是
+$$\det(A-\lambda I)=\lambda^2+p\lambda+q.$$
+特征方程就是 $A$ 的特征方程，字面意义上的。而 $Av=\lambda v$ 的特征向量 $v=(1,\lambda)$ 恰对应解 $y=e^{\lambda t}$（此时 $y'=\lambda y$）。**求解二阶线性方程 = 求一个 $2\times2$ 矩阵的特征值。**
+
+## 定理与证明
+
+<Theorem title="解空间是二维向量空间">
+$y''+py'+qy=0$ 的解构成一个二维实[向量空间](/zh/concepts/vectors)。
+</Theorem>
+
+<Proof>
+线性性：若 $y_1,y_2$ 是解，$(ay_1+by_2)''+p(ay_1+by_2)'+q(ay_1+by_2)=a(\cdots)+b(\cdots)=0$。所以解集是函数空间的子空间。
+
+维数：由存在唯一性定理（对系统 $v'=Av$），映射 $y\mapsto(y(0),y'(0))\in\mathbb R^2$ 是解空间到 $\mathbb R^2$ 的线性双射：单射因为初值相同的解相同，满射因为任何初值都有解。所以解空间同构于 $\mathbb R^2$。
+</Proof>
+
+因此只要找到**两个线性无关的解** $y_1,y_2$，通解就是 $C_1y_1+C_2y_2$。
+
+<Theorem title="通解的三种情形">
+设特征方程的根为 $r_1,r_2$，判别式 $\Delta=p^2-4q$。
+1. $\Delta>0$，$r_1\ne r_2$ 实：$y=C_1e^{r_1t}+C_2e^{r_2t}$。
+2. $\Delta=0$，$r_1=r_2=r$：$y=(C_1+C_2t)e^{rt}$。
+3. $\Delta<0$，$r=\alpha\pm i\beta$：$y=e^{\alpha t}(C_1\cos\beta t+C_2\sin\beta t)$。
+</Theorem>
+
+<Proof>
+**情形 1.** $e^{r_1t},e^{r_2t}$ 都是解。线性无关：若 $ae^{r_1t}+be^{r_2t}\equiv0$，除以 $e^{r_1t}$ 得 $a+be^{(r_2-r_1)t}\equiv0$，求导得 $b(r_2-r_1)e^{(r_2-r_1)t}\equiv0$，故 $b=0$，进而 $a=0$。
+
+**情形 2.** $r=-p/2$ 且 $q=r^2$。验证 $te^{rt}$：$(te^{rt})'=(1+rt)e^{rt}$，$(te^{rt})''=(2r+r^2t)e^{rt}$，代入得 $e^{rt}\bigl[2r+r^2t+p(1+rt)+qt\bigr]=e^{rt}\bigl[(2r+p)+(r^2+pr+q)t\bigr]=0$，因为 $2r+p=0$ 且 $r$ 是特征根。$e^{rt}$ 与 $te^{rt}$ 显然无关。这是 $A$ 只有一个特征方向（如剪切）的情形：缺少的第二个解由 $t$ 补上。
+
+**情形 3.** $e^{(\alpha+i\beta)t}=e^{\alpha t}(\cos\beta t+i\sin\beta t)$（Euler 公式，见 [Taylor 展开](/zh/concepts/taylor-series)）是复解。方程系数为实，所以复解的实部与虚部各自是实解：$e^{\alpha t}\cos\beta t$ 与 $e^{\alpha t}\sin\beta t$。它们无关，因为 $\cos\beta t$ 与 $\sin\beta t$ 无关（$\beta\ne0$）。
+</Proof>
+
+对阻尼振子 $p=2\gamma$，$q=\omega^2$，$\Delta=4(\gamma^2-\omega^2)$：$\gamma<\omega$ 欠阻尼（振荡衰减），$\gamma=\omega$ 临界，$\gamma>\omega$ 过阻尼。正是实验里看到的三种行为。
+
+<Example>
+$y''+4y=0$：$r^2+4=0$，$r=\pm2i$，$y=C_1\cos2t+C_2\sin2t$。
+
+$y''-3y'+2y=0$：$r^2-3r+2=(r-1)(r-2)$，$y=C_1e^t+C_2e^{2t}$。
+</Example>
+
+## 应用
+
+<Application title="非齐次方程">
+$y''+py'+qy=g(t)$ 的通解 $=$ 齐次通解 $+$ 一个特解，证明与[一阶线性方程](/zh/concepts/first-order-ode)完全相同。受迫振动 $x''+\omega^2x=F\cos\Omega t$ 在 $\Omega\to\omega$ 时特解振幅趋于无穷：**共振**。
+</Application>
+
+<Application title="为什么线性代数管这么宽">
+$n$ 阶常系数线性方程 $\iff$ $n\times n$ 矩阵的特征值问题；解空间是 $n$ 维向量空间；非齐次解集是它的平移。物理里的振动模态、电路里的 RLC 响应，本质上都是在做对角化。
+</Application>
+
+<Remark>
+教科书通常先给"特征方程"这个名字，再让你背三种情形。这里的顺序反过来：先看到三种行为，再猜 $e^{rt}$，再发现"特征方程"真的是矩阵的特征方程。名字不是巧合，而是同一个数学对象在两个领域的两副面孔。
+</Remark>

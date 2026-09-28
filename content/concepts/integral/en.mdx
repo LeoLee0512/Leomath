@@ -1,0 +1,70 @@
+<Observe>
+What is the area under $y=x^2$ for $0\le x\le1$? It is not a shape we know how to measure. But we can cut $[0,1]$ into $n$ pieces and replace each by a rectangle; the total
+$$S_n=\sum_{i=1}^n\left(\frac in\right)^2\frac1n=\frac1{n^3}\cdot\frac{n(n+1)(2n+1)}6$$
+tends to $\dfrac13$ as $n$ grows.
+</Observe>
+
+<Conjecture>
+"Area under a curve" should be defined as a [limit](/en/concepts/limit) of rectangle sums. And the value should not depend on how we cut or which point we sample in each piece: once the cut is fine enough, every choice gives the same answer.
+</Conjecture>
+
+## Definition
+
+<Definition title="Riemann sums and the definite integral">
+Let $f$ be bounded on $[a,b]$. Take a partition $P:a=x_0<x_1<\cdots<x_n=b$, write $\Delta x_i=x_i-x_{i-1}$ and $\|P\|=\max\Delta x_i$. For any choice $\xi_i\in[x_{i-1},x_i]$, the sum
+$$\sum_{i=1}^nf(\xi_i)\,\Delta x_i$$
+is a **Riemann sum**. If there is a number $I$ such that for every $\varepsilon>0$ there is $\delta>0$ with $\left|\sum f(\xi_i)\Delta x_i-I\right|<\varepsilon$ whenever $\|P\|<\delta$, regardless of the $\xi_i$, then $f$ is **integrable** on $[a,b]$ and $\displaystyle\int_a^bf(x)\,dx=I$.
+</Definition>
+
+This is the same sentence pattern as the definition of a limit: "as accurate as you like". The difference is that closeness must hold uniformly over all partitions and all sample points.
+
+<Theorem title="Continuous functions are integrable">
+If $f$ is continuous on $[a,b]$, it is integrable.
+</Theorem>
+
+<Proof>
+A continuous function on a closed interval is uniformly continuous: for every $\varepsilon>0$ there is $\delta$ with $|x-y|<\delta\Rightarrow|f(x)-f(y)|<\frac\varepsilon{b-a}$. When $\|P\|<\delta$, on each piece the maximum $M_i$ and minimum $m_i$ of $f$ differ by less than $\frac\varepsilon{b-a}$, so the upper sum minus the lower sum satisfies
+$$\sum(M_i-m_i)\Delta x_i<\varepsilon.$$
+Every Riemann sum lies between the lower and upper sums; refining the partition raises lower sums and lowers upper sums, and their common limit is $I$.
+</Proof>
+
+## The fundamental theorem of calculus
+
+So far integrals have nothing to do with [derivatives](/en/concepts/derivative): one is an area, the other a slope. The following theorem is the heart of calculus.
+
+<Theorem title="Fundamental theorem, part I">
+Let $f$ be continuous on $[a,b]$ and $F(x)=\displaystyle\int_a^xf(t)\,dt$. Then $F$ is differentiable on $[a,b]$ and $F'(x)=f(x)$.
+</Theorem>
+
+<Proof>
+$$\frac{F(x+h)-F(x)}h=\frac1h\int_x^{x+h}f(t)\,dt.$$
+By continuity, on $[x,x+h]$ we have $\min f\le\dfrac1h\int_x^{x+h}f\le\max f$ (monotonicity of the integral). As $h\to0$ both $\min f$ and $\max f$ tend to $f(x)$, so the squeeze theorem gives $F'(x)=f(x)$.
+</Proof>
+
+The rate at which the area grows is the height of the curve: area accumulates faster exactly where the curve is higher.
+
+<Theorem title="Fundamental theorem, part II">
+If $F'=f$ on $[a,b]$ with $f$ continuous, then $\displaystyle\int_a^bf(x)\,dx=F(b)-F(a)$.
+</Theorem>
+
+<Proof>
+Let $G(x)=\int_a^xf$. By part I, $G'=f=F'$, so $(G-F)'=0$ and $G-F$ is constant. $G(a)=0$ makes the constant $-F(a)$, hence $G(b)=F(b)-F(a)$.
+</Proof>
+
+Thus $\int_0^1x^2\,dx=\left[\frac{x^3}3\right]_0^1=\frac13$: the opening limit, computed in one line.
+
+## Applications
+
+<Application title="Turning an ODE into an integral equation">
+Integrating $y'=f(t,y)$ from $t_0$ to $t$:
+$$y(t)=y_0+\int_{t_0}^tf(s,y(s))\,ds.$$
+This form is the starting point of the uniqueness proof in [What is an ODE](/en/concepts/what-is-ode), of Picard iteration, and of numerical methods.
+</Application>
+
+<Application title="Integration by parts and substitution">
+Integrating the product rule $(uv)'=u'v+uv'$ gives $\int u'v=uv-\int uv'$; integrating the chain rule gives substitution, $\int_a^bf(g(x))g'(x)\,dx=\int_{g(a)}^{g(b)}f(u)\,du$. Every integration technique is a differentiation rule read backwards.
+</Application>
+
+<Remark>
+$\int$ is an elongated S, for sum. The definition contains only sums and a limit. It is the fundamental theorem that connects it to derivatives, and that connection is a theorem requiring proof, not a coincidence of notation.
+</Remark>

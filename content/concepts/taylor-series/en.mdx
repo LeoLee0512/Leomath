@@ -1,0 +1,70 @@
+<Observe>
+How does a calculator compute $\sin(0.3)$? It can only add, subtract, multiply and divide. But near $0$:
+$$\sin x\approx x,\qquad\sin x\approx x-\frac{x^3}6,\qquad\sin x\approx x-\frac{x^3}6+\frac{x^5}{120}.$$
+At $x=0.3$ these give $0.3$, $0.2955$, $0.295520$, while the true value is $0.295520\ldots$. The longer the polynomial, the better the approximation.
+</Observe>
+
+<Conjecture>
+If a polynomial $p$ is to "look like" $f$ near $x_0$, the natural demand is that its value, slope, curvature, … at $x_0$ all agree with those of $f$: $p^{(k)}(x_0)=f^{(k)}(x_0)$ for $k=0,1,\dots,n$. Such a polynomial is unique, and the error should shrink as $n$ grows.
+</Conjecture>
+
+## Definition
+
+<Definition title="Taylor polynomial">
+Let $f$ have $n$ [derivatives](/en/concepts/derivative) at $x_0$. The polynomial
+$$P_n(x)=\sum_{k=0}^n\frac{f^{(k)}(x_0)}{k!}(x-x_0)^k$$
+is the $n$-th **Taylor polynomial** of $f$ at $x_0$, and $R_n(x)=f(x)-P_n(x)$ is the **remainder**.
+</Definition>
+
+Why $\dfrac{f^{(k)}(x_0)}{k!}$? Differentiate $P_n$ $k$ times and set $x=x_0$: of the terms $(x-x_0)^j$, only $j=k$ survives, contributing $k!$. So $P_n^{(k)}(x_0)=f^{(k)}(x_0)$, exactly the demand in the conjecture.
+
+## Theorem and proof
+
+Polynomials are easy to evaluate, but an approximation without an error bound is meaningless. The theorem gives the error exactly.
+
+<Theorem title="Taylor's theorem (Lagrange remainder)">
+Let $f$ have $n+1$ derivatives on an interval containing $x_0$ and $x$. Then there is $\xi$ between $x_0$ and $x$ with
+$$R_n(x)=\frac{f^{(n+1)}(\xi)}{(n+1)!}(x-x_0)^{n+1}.$$
+</Theorem>
+
+<Proof>
+Fix $x\ne x_0$ and choose $M$ with $f(x)-P_n(x)=M(x-x_0)^{n+1}$. Define
+$$g(t)=f(t)-P_n(t)-M(t-x_0)^{n+1}.$$
+Then $g(x_0)=g'(x_0)=\cdots=g^{(n)}(x_0)=0$ (since $P_n$ matches $f$ to order $n$ at $x_0$ and the first $n$ derivatives of $(t-x_0)^{n+1}$ vanish there) and $g(x)=0$.
+
+By Rolle's theorem $g$ has a zero $\xi_1$ between $x_0$ and $x$; then $g'$ vanishes at $x_0$ and $\xi_1$, so has a zero $\xi_2$; after $n+1$ steps, $g^{(n+1)}(\xi_{n+1})=0$. Since $P_n^{(n+1)}\equiv0$ and $\bigl((t-x_0)^{n+1}\bigr)^{(n+1)}=(n+1)!$,
+$$g^{(n+1)}(\xi)=f^{(n+1)}(\xi)-M(n+1)!=0\ \Rightarrow\ M=\frac{f^{(n+1)}(\xi)}{(n+1)!}.$$
+</Proof>
+
+<Example title="Bounding an error with the remainder">
+Approximate $\cos x$ by $1-\frac{x^2}2$ for $|x|\le0.5$. This polynomial is in fact $P_3$ (the $x^3$ coefficient is zero), so
+$$|R_3(x)|=\left|\frac{\cos^{(4)}(\xi)}{4!}x^4\right|\le\frac{0.5^4}{24}\approx0.0026.$$
+</Example>
+
+<Definition title="Taylor series">
+If $f$ is infinitely differentiable at $x_0$, $\displaystyle\sum_{k=0}^\infty\frac{f^{(k)}(x_0)}{k!}(x-x_0)^k$ is its **Taylor series**. The series converges to $f(x)$ if and only if $R_n(x)\to0$.
+</Definition>
+
+<Proposition title="The series of e^x, sin, cos converge to them everywhere">
+$$e^x=\sum_{k=0}^\infty\frac{x^k}{k!},\qquad\sin x=\sum_{k=0}^\infty\frac{(-1)^kx^{2k+1}}{(2k+1)!},\qquad\cos x=\sum_{k=0}^\infty\frac{(-1)^kx^{2k}}{(2k)!}.$$
+</Proposition>
+
+<Proof>
+All derivatives of these functions are uniformly bounded on any bounded interval (the derivative of $e^x$ is itself; those of $\sin,\cos$ have absolute value at most 1). Fix $x$ and let $C=\max_{|\xi|\le|x|}|f^{(n+1)}(\xi)|$ ($e^{|x|}$ for $e^x$, $1$ for $\sin,\cos$). Then
+$$|R_n(x)|\le C\frac{|x|^{n+1}}{(n+1)!}\to0,$$
+because $\dfrac{|x|^n}{n!}\to0$ (from some point on each term is multiplied by a factor below $\tfrac12$).
+</Proof>
+
+<Remark>
+Not every Taylor series converges to its function. $f(x)=e^{-1/x^2}$ with $f(0)=0$ has all derivatives equal to $0$ at $0$; its Taylor series is identically $0$, yet $f$ is not. The remainder $R_n(x)=f(x)$ never tends to $0$. The clause "if and only if $R_n\to0$" in the definition is not decoration.
+</Remark>
+
+## Applications
+
+<Application title="Where numerical error comes from">
+In [Numerical solutions](/en/concepts/numerical-ode), Euler's method has local error $O(h^2)$ and RK4 has $O(h^5)$. All such statements come from expanding the true solution $y(t+h)$ in a Taylor series and comparing it term by term with the numerical scheme.
+</Application>
+
+<Application title="Euler's formula">
+Splitting the series of $e^{i\theta}$ into real and imaginary parts gives $e^{i\theta}=\cos\theta+i\sin\theta$. This is why complex characteristic roots produce trigonometric solutions in [Second-order linear equations](/en/concepts/second-order-linear-ode).
+</Application>

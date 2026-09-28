@@ -1,0 +1,85 @@
+<Observe>
+先玩再读。下面是 $f(x)=a^x$ 和它的**差商**
+$$\frac{f(x+h)-f(x)}{h}$$
+两条曲线。拖动底数 $a$，把步长 $h$ 调小。差商曲线始终长得像 $a^x$ 本身，只是高矮不同。**是否存在某个 $a$，让两条曲线完全重合？**
+
+<Experiment slug="exponential-derivative" />
+</Observe>
+
+<Conjecture>
+差商曲线是 $a^x$ 的常数倍，这个常数 $\dfrac{a^h-1}{h}$ 只和 $a,h$ 有关。$h\to0$ 时它趋于某个只依赖 $a$ 的数 $c(a)$。$c(a)$ 随 $a$ 单调增加，在 $a=2$ 时约为 $0.69$，$a=3$ 时约为 $1.10$。所以介于 $2$ 和 $3$ 之间应该有唯一的 $a$ 使 $c(a)=1$：这个数我们叫它 $e$。
+</Conjecture>
+
+## 定义
+
+<Definition title="导数">
+设 $f$ 在 $x_0$ 的邻域上有定义。若极限
+$$f'(x_0)=\lim_{h\to0}\frac{f(x_0+h)-f(x_0)}{h}$$
+存在，则称 $f$ 在 $x_0$ **可导**，$f'(x_0)$ 称为 $f$ 在 $x_0$ 的**导数**。
+</Definition>
+
+几何上，差商是割线斜率，导数是切线斜率。物理上，差商是平均速度，导数是瞬时速度。定义里只有一个[极限](/zh/concepts/limit)，没有别的东西。
+
+<Definition title="自然常数 e">
+$e$ 是使 $\displaystyle\lim_{h\to0}\frac{e^h-1}{h}=1$ 成立的唯一正实数。
+</Definition>
+
+这个定义看起来像是为了让 $(e^x)'=e^x$ 而"凑"出来的，事实正是如此。下面我们证明这样的数存在且唯一，并算出它是多少。
+
+## 推导
+
+<Proposition title="a^x 的导数">
+对 $a>0$，
+$$\frac{d}{dx}a^x=a^x\cdot\lim_{h\to0}\frac{a^h-1}{h}=a^x\ln a.$$
+</Proposition>
+
+<Proof>
+第一个等号就是实验里看到的因式分解：$a^{x+h}-a^x=a^x(a^h-1)$。
+
+第二个等号需要知道 $\lim_{h\to0}\frac{a^h-1}{h}=\ln a$。令 $u=a^h-1$，则 $h=\log_a(1+u)=\dfrac{\ln(1+u)}{\ln a}$，且 $h\to0$ 时 $u\to0$。于是
+$$\frac{a^h-1}{h}=\frac{u\ln a}{\ln(1+u)}=\ln a\cdot\frac{1}{\frac{\ln(1+u)}{u}}\to\ln a\cdot\frac11=\ln a,$$
+其中用到了 $\lim_{u\to0}\frac{\ln(1+u)}{u}=1$，这等价于 $\lim_{u\to0}(1+u)^{1/u}=e$，即 $e$ 的另一种常见定义 $\lim_{n\to\infty}(1+\tfrac1n)^n$。
+</Proof>
+
+所以 $c(a)=\ln a$，而 $c(a)=1\iff a=e$。实验里看到的"重合"，就是 $\ln e=1$。
+
+## 基本法则及其证明
+
+<Theorem title="导数的运算法则">
+设 $f,g$ 在 $x$ 可导。则
+1. $(f+g)'=f'+g'$；
+2. $(fg)'=f'g+fg'$；
+3. 若 $g(x)\ne0$，$\left(\dfrac fg\right)'=\dfrac{f'g-fg'}{g^2}$；
+4. （链式法则）若 $g$ 在 $x$ 可导、$f$ 在 $g(x)$ 可导，则 $(f\circ g)'(x)=f'(g(x))\,g'(x)$。
+</Theorem>
+
+<Proof>
+只证乘法法则，方法和极限乘法的证明一样：加一项减一项。
+$$\frac{f(x+h)g(x+h)-f(x)g(x)}{h}=\frac{f(x+h)-f(x)}{h}\,g(x+h)+f(x)\,\frac{g(x+h)-g(x)}{h}.$$
+$h\to0$ 时第一项趋于 $f'(x)g(x)$（用到 $g$ 可导蕴含 $g$ 连续，所以 $g(x+h)\to g(x)$），第二项趋于 $f(x)g'(x)$。
+</Proof>
+
+<Theorem title="可导蕴含连续">
+若 $f$ 在 $x_0$ 可导，则 $f$ 在 $x_0$ 连续。
+</Theorem>
+
+<Proof>
+$f(x_0+h)-f(x_0)=\dfrac{f(x_0+h)-f(x_0)}{h}\cdot h\to f'(x_0)\cdot0=0$。
+</Proof>
+
+反过来不对：$|x|$ 在 $0$ 连续但不可导，左右差商分别趋于 $-1$ 和 $1$。
+
+## 应用
+
+<Application title="为什么 e 处处出现">
+$(e^x)'=e^x$ 意味着：函数的**变化速度与自身成正比，比例为 1**。任何"增长率与现量成正比"的过程（复利、人口、放射性衰变、电容放电）的解都是 $Ce^{kt}$。这正是[ODE 是什么](/zh/concepts/what-is-ode)一节的第一个方程 $y'=ky$。
+</Application>
+
+<Application title="三角函数">
+由 $\lim_{x\to0}\frac{\sin x}{x}=1$ 和 $\lim_{x\to0}\frac{\cos x-1}{x}=0$，
+$$\frac{\sin(x+h)-\sin x}{h}=\sin x\,\frac{\cos h-1}{h}+\cos x\,\frac{\sin h}{h}\to\cos x.$$
+</Application>
+
+<Remark>
+观察 → 猜想 → 定义 → 推导 → 证明 → 应用。我们没有从"$e\approx2.718$"出发，而是先看到有一个特殊的底数，再定义它，再证明它就是 $\ln$ 的底。**定义是结论的整理，不是天上掉下来的。**
+</Remark>

@@ -1,0 +1,83 @@
+<Observe>
+选"单摆"：$\theta''+\gamma\theta'+\frac gL\sin\theta=0$。这个方程没有初等闭式解。但实验照样画出了曲线：它是一步一步**算**出来的。把步长 $h$ 调大，红色的 Euler 曲线开始偏离蓝色的 RK4，甚至发散。回到有精确解的"指数增长"，看右下角两种方法的终点误差随 $h$ 如何变化：$h$ 减半，Euler 误差约减半，RK4 误差约减到 $1/16$。
+
+<Experiment slug="ode-explorer" preset="pendulum" />
+</Observe>
+
+<Conjecture>
+$y'=f(t,y)$ 告诉我们当前的斜率。从 $(t_n,y_n)$ 出发，沿这个斜率走一小步 $h$，得到下一个近似点。步长越小越准，但误差如何随 $h$ 缩小，取决于我们对"走一步"的近似有多精细：这应该能用 [Taylor 展开](/zh/concepts/taylor-series)算清楚。
+</Conjecture>
+
+## 定义
+
+<Definition title="Euler 法">
+$$y_{n+1}=y_n+h\,f(t_n,y_n),\qquad t_{n+1}=t_n+h.$$
+</Definition>
+
+<Definition title="局部截断误差与全局误差">
+**局部截断误差**是从精确值 $y(t_n)$ 出发走一步后与 $y(t_{n+1})$ 的差。**全局误差**是 $|y_N-y(T)|$，其中 $N=T/h$ 步。若全局误差为 $O(h^p)$，称方法是 $p$ **阶**的。
+</Definition>
+
+## 推导：Euler 法的阶
+
+<Proposition title="Euler 法是一阶方法">
+局部截断误差为 $O(h^2)$，全局误差为 $O(h)$。
+</Proposition>
+
+<Proof>
+Taylor 展开精确解：$y(t_n+h)=y(t_n)+hy'(t_n)+\tfrac{h^2}2y''(\xi)=y(t_n)+hf(t_n,y(t_n))+O(h^2)$。Euler 一步正好是前两项，所以局部误差 $O(h^2)$。
+
+全局误差：设 $e_n=y_n-y(t_n)$，$f$ 关于 $y$ 是 $L$-Lipschitz 的，局部误差不超过 $Ch^2$。则
+$$|e_{n+1}|\le|e_n|+h|f(t_n,y_n)-f(t_n,y(t_n))|+Ch^2\le(1+hL)|e_n|+Ch^2.$$
+迭代得 $|e_N|\le Ch^2\sum_{k=0}^{N-1}(1+hL)^k\le Ch^2\cdot\dfrac{(1+hL)^N-1}{hL}\le\dfrac{Ch}{L}\bigl(e^{LT}-1\bigr)$，用了 $(1+hL)^N\le e^{hLN}=e^{LT}$。所以全局误差 $O(h)$：$N$ 步各犯 $O(h^2)$ 的错，累积成 $O(h)$。
+</Proof>
+
+## 更高阶：Runge–Kutta
+
+Euler 法只用了区间左端的斜率。更好的做法是在区间内多采几个斜率，加权平均。
+
+<Definition title="经典四阶 Runge–Kutta（RK4）">
+$$
+\begin{aligned}
+k_1&=f(t_n,\,y_n),\\
+k_2&=f\!\left(t_n+\tfrac h2,\ y_n+\tfrac h2k_1\right),\\
+k_3&=f\!\left(t_n+\tfrac h2,\ y_n+\tfrac h2k_2\right),\\
+k_4&=f\!\left(t_n+h,\ y_n+hk_3\right),\\
+y_{n+1}&=y_n+\frac h6\,(k_1+2k_2+2k_3+k_4).
+\end{aligned}
+$$
+</Definition>
+
+<Theorem title="RK4 是四阶方法">
+局部截断误差 $O(h^5)$，全局误差 $O(h^4)$。
+</Theorem>
+
+<Proof>
+完整证明要把 $k_1,\dots,k_4$ 全部 Taylor 展开到 $h^4$ 并与 $y(t_n+h)$ 的展开逐项比较，篇幅较长。这里证明一个足以说明思想的特殊情形：$f=f(t)$ 不依赖 $y$。此时 $k_1=f(t_n)$，$k_2=k_3=f(t_n+\tfrac h2)$，$k_4=f(t_n+h)$，
+$$y_{n+1}-y_n=\frac h6\Bigl[f(t_n)+4f\bigl(t_n+\tfrac h2\bigr)+f(t_n+h)\Bigr],$$
+这正是 Simpson 求积公式，而 $y(t_{n+1})-y(t_n)=\int_{t_n}^{t_{n+1}}f$。Simpson 公式对三次多项式精确，误差为 $-\frac{h^5}{2880}f^{(4)}(\xi)$，即 $O(h^5)$。一般情形的结论相同，只是展开更繁琐。全局误差从局部误差按 Euler 法证明中同样的累积论证得到 $O(h^4)$。
+</Proof>
+
+这就是实验中"$h$ 减半，误差减到 $1/16$"的来源：$(h/2)^4=h^4/16$。
+
+## 定理：为什么大步长会发散
+
+<Proposition title="Euler 法的稳定性">
+对 $y'=\lambda y$（$\lambda<0$），Euler 法给出 $y_n=(1+h\lambda)^ny_0$。真解衰减到 $0$，而数值解衰减当且仅当 $|1+h\lambda|<1$，即 $h<\dfrac2{|\lambda|}$。
+</Proposition>
+
+<Proof>
+直接代入：$y_{n+1}=y_n+h\lambda y_n=(1+h\lambda)y_n$。
+</Proof>
+
+步长超过 $2/|\lambda|$ 时 $(1+h\lambda)^n$ 振荡放大，与真解毫无关系。这解释了实验里大步长时 Euler 曲线的发散。这种"刚性"问题需要隐式方法，那是[数值分析](/zh/concepts/numerical-analysis)的内容。
+
+## 应用
+
+<Application title="没有闭式解的方程">
+单摆、三体问题、Lorenz 系统、几乎所有真实的物理模型，都只能数值求解。实验里单摆的曲线是 RK4 以 $h$ 为步长、每步四次求值算出来的。步数 $N=T/h$；精度和计算量之间的权衡，是整个科学计算的日常。
+</Application>
+
+<Remark>
+数值方法不是"近似的数学"。它有自己的定理：阶、收敛、稳定性都是可以精确证明的命题。Euler 法的全局误差界 $\dfrac{Ch}L(e^{LT}-1)$ 里的每个字母都有明确含义，而且它诚实地告诉你误差随 $T$ 指数增长：预报越远越不准。
+</Remark>
