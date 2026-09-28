@@ -93,12 +93,12 @@ export const software: Software[] = [
     status: "coming-soon",
     version: "2.1.2",
     tagline: {
-      zh: "科学研究与数学工作流工具。",
-      en: "A tool for scientific research and mathematical workflows.",
+      zh: "面向学习、研究与创作的 Windows 桌面 AI 工作台。",
+      en: "A Windows desktop AI workbench for learning, research and creation.",
     },
     description: {
-      zh: "把文献整理、公式推导、数值计算和记录放进同一个工作流。闭源软件，公开下载尚未开放。",
-      en: "Bring literature notes, symbolic derivation, numerical computation and record-keeping into one workflow. Closed source; public download is not open yet.",
+      zh: "在一个工作台里阅读文献、整理论证、跑计算、写成果。可接入 DeepSeek、OpenAI、Anthropic、Gemini、Moonshot、智谱、通义、火山等模型或本机 llama.cpp 模型，密钥只存本机；内置笔记本与计算环境（WSL2）、Lean 4 + Mathlib 证明检查、带页码引用的本地文献检索，以及文献 → 建模 → 数值实验 → 验证 → 写作的五角色科研流程；可导出到 Leo Tree。另含物理信息神经网络（PINN）闭环科研模块，其科学结论仍在验收中。闭源软件，公开下载尚未开放。",
+      en: "Read the literature, organise arguments, run computations and write up results in one workbench. Connects to DeepSeek, OpenAI, Anthropic, Gemini, Moonshot, Zhipu, Qwen, Volcano and other providers or to a local llama.cpp model, with keys kept on your machine; includes a notebook and computation environment (WSL2), Lean 4 + Mathlib proof checking, local literature search with page citations, and a five-role research pipeline (survey → model → numerical experiment → validate → write); exports to Leo Tree. A physics-informed neural network (PINN) closed-loop research module is included, with its scientific results still under review. Closed source; public download is not open yet.",
     },
   },
 ];
