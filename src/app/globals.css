@@ -179,6 +179,7 @@ button, input {
 .mblock-warning .mblock-head b { color: var(--accent-2); }
 
 .mblock-experiment { margin: 2.2em 0; }
+.mblock-tool { margin: 0.6em 0 1.4em; }
 .mblock-experiment .mblock-head { margin-bottom: 0.6em; }
 .mblock-experiment .mblock-head b { color: var(--leo); }
 

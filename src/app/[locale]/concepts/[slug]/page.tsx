@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { isLocale } from "@/i18n/config";
 import { getDictionary } from "@/i18n/dictionaries";
-import { getConcept, publishedConcepts, experimentsForConcept, dependents, neighboursInPath, prerequisiteChain } from "@/content/graph";
+import { getConcept, publishedConcepts, experimentsForConcept, dependents, neighboursInPath, prerequisiteChain, getTool } from "@/content/graph";
 import { exercisesForConcept } from "@/content/exercises";
 import { loadConceptArticle } from "@/lib/mdx";
 import { mdxComponents } from "@/components/mdx-components";
@@ -150,6 +150,17 @@ export default async function ConceptPage({ params }: { params: Promise<{ locale
                   )}
                 </li>
               ))}
+            </ul>
+          </div>
+        )}
+
+        {c.tools && c.tools.length > 0 && (
+          <div>
+            <p className="eyebrow mb-2">{t.learn.tools}</p>
+            <ul className="space-y-1">
+              {c.tools.map((id) => { const tool = getTool(id)!; return (
+                <li key={id}><Link href={`/${locale}${tool.href}`} className="text-leo hover:underline">{tool.cta[locale]}</Link></li>
+              ); })}
             </ul>
           </div>
         )}

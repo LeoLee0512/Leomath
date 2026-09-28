@@ -23,6 +23,14 @@ MathForge (LeoLee0512/MathLearn) is archived. What was worth keeping has been re
 - [ ] Proof exercises: MathForge's competition problems are proofs, which the numeric/choice checker cannot grade. Needs a "worked solution, self-check" exercise kind.
 - [ ] The Euclid corpus (7,152 semantic blocks with a dependency graph) stays in the archived repository; a possible future Leo Lab experiment on structured reading.
 
+## v0.1.3: depth over breadth
+
+No new nodes until the existing ones are complete. `node scripts/audit-chain.mjs` is the checklist. Known gaps:
+
+- [ ] Experiments for Limits (ε–δ band on a sequence), Vectors (basis and coordinates), Inner products (projection and the Cauchy–Schwarz slack).
+- [ ] A definition block for the mean value theorem article (extremum / critical point), or accept that it is theorem-centred.
+- [ ] Observation questions reviewed against what the experiments actually show.
+
 ## After launch
 
 - Search across concepts and exercises.

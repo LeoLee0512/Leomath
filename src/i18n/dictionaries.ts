@@ -77,6 +77,7 @@ const zh = {
     markReset: "重置进度",
     loginToTrack: "登录后可以同步学习进度。",
     inPath: "所属路线",
+    tools: "计算工具",
     positionInTree: "在知识树中的位置",
     nextConcept: "下一个知识点",
     prevConcept: "上一个知识点",
@@ -88,6 +89,10 @@ const zh = {
     subtitle: "浏览器内实时计算的数学实验。每一个都对应一个知识点的原理与推导。",
     relatedConcept: "对应知识点",
     open: "打开实验",
+    observeTitle: "你观察到了什么？",
+    observeLead: "先动手，再回答。想清楚之后再看解释。",
+    showExplanation: "查看解释",
+    hideExplanation: "收起解释",
   },
   problems: {
     title: "问题",
@@ -170,7 +175,7 @@ const zh = {
   },
   footer: {
     license: "正文内容采用 CC BY-SA 4.0，代码采用 MIT。",
-    built: "LeoMath v0.1.2 · 从定义出发理解数学",
+    built: "LeoMath v0.1.3 · 从定义出发理解数学",
     source: "源代码",
   },
   common: {
@@ -261,6 +266,7 @@ const en: Dictionary = {
     markReset: "Reset progress",
     loginToTrack: "Log in to sync your progress.",
     inPath: "Part of",
+    tools: "Tools",
     positionInTree: "Position in the knowledge tree",
     nextConcept: "Next concept",
     prevConcept: "Previous concept",
@@ -272,6 +278,10 @@ const en: Dictionary = {
     subtitle: "Mathematical experiments computed live in your browser. Each one is tied to a concept's principles and derivation.",
     relatedConcept: "Related concept",
     open: "Open experiment",
+    observeTitle: "What did you observe?",
+    observeLead: "Play first, then answer. Read the explanation only after you have thought it through.",
+    showExplanation: "Show explanation",
+    hideExplanation: "Hide explanation",
   },
   problems: {
     title: "Problems",
@@ -354,7 +364,7 @@ const en: Dictionary = {
   },
   footer: {
     license: "Content is CC BY-SA 4.0; code is MIT.",
-    built: "LeoMath v0.1.2 · understanding mathematics from definitions",
+    built: "LeoMath v0.1.3 · understanding mathematics from definitions",
     source: "Source code",
   },
   common: {

@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.1.3 (in progress)
+
+Depth over breadth.
+
+- Learn ↔ Explore ↔ Tools are one system: concepts declare their tools; concept pages show "Try it in the matrix calculator →" inline and in the sidebar; each tool lists the concepts that use it.
+- Every experiment ends with "What did you observe?": three questions and an explanation revealed on demand, so a visualisation becomes experiment → observation → conjecture → theory.
+- `scripts/audit-chain.mjs` lists, for each published concept, which links of problem → observe → definition → proof → experiment → exercises → tool are missing.
+
 ## 0.1.2 — 2026-09-29
 
 MathForge is archived; its non-overlapping parts are rebuilt here.

@@ -1,7 +1,8 @@
 import type { ComponentType, ReactNode } from "react";
 import type { Locale } from "@/i18n/config";
 import { ExperimentEmbed } from "./experiments/ExperimentEmbed";
-import { getExperiment } from "@/content/graph";
+import { getExperiment, getTool } from "@/content/graph";
+import Link from "next/link";
 
 const labels = {
   zh: {
@@ -89,7 +90,18 @@ export function mdxComponents(locale: Locale, chapter: number): Record<string, C
     );
   }
 
+  function Tool({ id }: { id: string }) {
+    const tool = getTool(id);
+    if (!tool) return null;
+    return (
+      <p className="mblock-tool">
+        <Link href={`/${locale}${tool.href}`} className="text-leo hover:underline text-[0.95rem] font-sans">{tool.cta[locale]}</Link>
+      </p>
+    );
+  }
+
   return {
+    Tool,
     Problem: plain("problem", "mblock-problem"),
     Observe: plain("observe", "mblock-observe"),
     Conjecture: plain("conjecture", "mblock-conjecture"),
