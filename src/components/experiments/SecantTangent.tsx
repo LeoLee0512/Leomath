@@ -74,7 +74,7 @@ export function SecantTangent({ locale }: { locale: Locale }) {
       </div>
       <div className="border-t border-rule px-4 py-3 flex flex-wrap items-center gap-x-6 gap-y-2 exp-control">
         <span dangerouslySetInnerHTML={{ __html: tex(`\\frac{f(x_0+h)-f(x_0)}{h}`) }} />
-        <span><span className="text-muted">{t.secant}</span> <span className="mono" style={{ color: colors.e1 }}>{format(secant, 4)}</span></span>
+        <span><span className="text-muted">{t.secant}</span> <span className="mono text-e1">{format(secant, 4)}</span></span>
         <span><span className="text-muted">{t.tangent}</span> <span className="mono text-leo">{format(tangent, 4)}</span></span>
         <span><span className="text-muted">{t.gap}</span> <span className="mono text-ink">{format(Math.abs(secant - tangent), 4)}</span></span>
         {fid === "ln" && <span className="text-muted">{t.domain}</span>}

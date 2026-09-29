@@ -5,6 +5,7 @@ import type { User } from "@/lib/auth";
 import { ThemeToggle } from "./ThemeToggle";
 import { LocaleSwitch } from "./LocaleSwitch";
 import { MobileMenu } from "./MobileMenu";
+import { NavLinks } from "./NavLinks";
 
 export function Nav({ locale, t, user }: { locale: Locale; t: Dictionary; user: User | null }) {
   const items = [
@@ -21,13 +22,7 @@ export function Nav({ locale, t, user }: { locale: Locale; t: Dictionary; user: 
         <Link href={`/${locale}`} className="display text-lg font-semibold tracking-tight">
           Leo<span className="text-leo">Math</span>
         </Link>
-        <nav className="hidden md:flex items-center gap-5 text-sm text-ink-2" aria-label={t.nav.menu}>
-          {items.map((item) => (
-            <Link key={item.href} href={item.href} className="hover:text-ink">
-              {item.label}
-            </Link>
-          ))}
-        </nav>
+        <NavLinks items={items} label={t.nav.menu} />
         <div className="ml-auto flex items-center gap-1">
           <Link
             href={`/${locale}/learn#search`}

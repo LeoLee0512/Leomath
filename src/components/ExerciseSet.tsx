@@ -28,14 +28,17 @@ export function ExerciseSet({ exercises, locale, t, summary, next }: {
           <ExerciseCard key={e.id} exercise={e} index={i + 1} locale={locale} t={t} summary={summary[e.id]} onSolved={onSolved} />
         ))}
       </div>
+      {/* The live region exists from the start, so screen readers announce the moment it fills. */}
+      <div role="status" aria-live="polite">
       {all && (
-        <div className="exercise-correct mt-8 border border-e2/50 bg-e2/10 rounded-[4px] px-5 py-4 flex flex-wrap items-center gap-x-6 gap-y-3" role="status">
+        <div className="exercise-correct mt-8 border border-e2/50 bg-e2/10 rounded-[4px] px-5 py-4 flex flex-wrap items-center gap-x-6 gap-y-3">
           <p className="display text-lg text-e2 font-semibold">✓ {t.allDone}</p>
           {next && (
             <Link href={next.href} className="btn btn-primary btn-small ml-auto">{t.allDoneNext.replace("{title}", next.title)}</Link>
           )}
         </div>
       )}
+      </div>
     </div>
   );
 }

@@ -31,7 +31,7 @@ export default async function LearnPage({ params }: { params: Promise<{ locale: 
         {paths.map((p, i) => <PathCard key={p.slug} p={p} stats={stats[i]} locale={locale} t={t.paths} />)}
       </div>
 
-      <div id="search" className="mt-16 max-w-2xl">
+      <div id="search" className="mt-16 max-w-2xl scroll-mt-24">
         <ConceptSearch locale={locale} items={all} placeholder={t.nav.search} />
       </div>
     </div>

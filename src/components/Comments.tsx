@@ -66,7 +66,7 @@ export async function Comments({ type, slug, path, locale, t }: {
         <CommentForm type={type} slug={slug} path={path} locale={locale} t={tc} maxLength={COMMENT_MAX_LENGTH} />
       ) : (
         <p className="mt-6 text-sm text-muted">
-          <Link href={`/${locale}/login?next=${encodeURIComponent(path)}`} className="text-leo hover:underline">{t.nav.login}</Link> · {tc.loginToComment}
+          <Link href={`/${locale}/login?next=${encodeURIComponent(path)}`} className="text-leo hover:underline">{t.nav.login}</Link>{tc.loginToComment}
         </p>
       )}
     </section>

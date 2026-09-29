@@ -18,7 +18,7 @@ const copy = {
     second: (n: number) => `第一次呈阳性的 ${n} 人再测一次`,
     positives: "阳性", ill: "其中患病", share: "占比（人数取整）",
     chain: "先验 → 后验", exact: "精确后验",
-    hint: "一千个人按患病与否、检测阴阳分成四块。阳性的人里，真正患病的占多少？",
+    hint: "一千个人：方块是病人，圆点是健康人；实心是阳性，空心是阴性。阳性的人里，真正患病的占多少？",
   },
   en: {
     prior: "prevalence (prior)", sens: "sensitivity P(+ | ill)", fpr: "false-positive rate P(+ | healthy)",
@@ -28,7 +28,7 @@ const copy = {
     second: (n: number) => `The ${n} first-time positives, tested again`,
     positives: "positives", ill: "of them ill", share: "share (whole people)",
     chain: "prior → posterior", exact: "exact posterior",
-    hint: "A thousand people split by illness and test result. What share of the positives are really ill?",
+    hint: "A thousand people: squares are ill, circles healthy; filled is positive, hollow negative. What share of the positives are really ill?",
   },
 };
 
@@ -93,17 +93,19 @@ export function BayesScreening({ locale }: { locale: Locale }) {
       const cx = x0 + Math.floor(i / rows) * cell + cell / 2;
       const cy = top + (i % rows) * cell + cell / 2;
       const col = p.ill ? colors.e1 : colors.ink2;
+      // Shape carries illness (square = ill, circle = healthy), fill carries the test result; colour only reinforces.
       ctx.beginPath();
+      const s = p.pos ? r : r * 0.8;
+      if (p.ill) ctx.rect(cx - s * 0.9, cy - s * 0.9, s * 1.8, s * 1.8);
+      else ctx.arc(cx, cy, s, 0, Math.PI * 2);
       if (p.pos) {
         ctx.fillStyle = col;
         ctx.globalAlpha = 1;
-        ctx.arc(cx, cy, r, 0, Math.PI * 2);
         ctx.fill();
       } else {
         ctx.strokeStyle = col;
         ctx.globalAlpha = p.ill ? 0.9 : 0.28;
         ctx.lineWidth = 1;
-        ctx.arc(cx, cy, r * 0.8, 0, Math.PI * 2);
         ctx.stroke();
       }
     });
@@ -117,10 +119,10 @@ export function BayesScreening({ locale }: { locale: Locale }) {
   return (
     <div ref={wrapRef} className="exp-frame">
       <ul className="px-4 py-2.5 border-b border-rule flex flex-wrap items-center gap-x-5 gap-y-1.5 exp-control">
-        <LegendItem color={colors.e1} dot label={t.tp} />
-        <LegendItem color={colors.ink2} dot label={t.fp} />
-        <LegendItem color={colors.e1} ring label={t.fn} />
-        <LegendItem color={colors.muted} ring label={t.tn} />
+        <LegendItem color="var(--e1)" square label={t.tp} />
+        <LegendItem color="var(--ink-2)" dot label={t.fp} />
+        <LegendItem color="var(--e1)" squareRing label={t.fn} />
+        <LegendItem color="var(--muted)" ring label={t.tn} />
       </ul>
       <canvas ref={canvasRef} className="exp-canvas" role="img" aria-label={t.hint} />
       <div className="border-t border-rule px-4 py-3 grid gap-x-6 gap-y-3 md:grid-cols-3">
@@ -140,8 +142,8 @@ export function BayesScreening({ locale }: { locale: Locale }) {
       <div className="border-t border-rule px-4 py-3 flex flex-wrap items-center gap-x-6 gap-y-2 exp-control">
         <button type="button" className={`btn btn-ghost btn-small ${retest ? "border-ink" : ""}`} aria-pressed={retest} onClick={() => setRetest((v) => !v)}>{t.retest}</button>
         <span><span className="text-muted">{t.positives}</span> <span className="mono text-ink">{pos}</span></span>
-        <span><span className="text-muted">{t.ill}</span> <span className="mono" style={{ color: colors.e1 }}>{c.tp}</span></span>
-        <span><span className="text-muted">{t.share}</span> <span className="mono" style={{ color: colors.e1 }}>{pos > 0 ? `${c.tp}/${pos} ≈ ${share.toFixed(3)}` : "—"}</span></span>
+        <span><span className="text-muted">{t.ill}</span> <span className="mono text-e1">{c.tp}</span></span>
+        <span><span className="text-muted">{t.share}</span> <span className="mono text-e1">{pos > 0 ? `${c.tp}/${pos} ≈ ${share.toFixed(3)}` : "—"}</span></span>
       </div>
       <div className="border-t border-rule px-4 py-3 flex flex-wrap items-center gap-x-6 gap-y-2 exp-control">
         <span dangerouslySetInnerHTML={{ __html: tex(`P(\\text{${locale === "zh" ? "病" : "ill"}}\\mid +)=\\frac{P(+\\mid\\text{${locale === "zh" ? "病" : "ill"}})\\,P(\\text{${locale === "zh" ? "病" : "ill"}})}{P(+)}`) }} />
@@ -149,11 +151,11 @@ export function BayesScreening({ locale }: { locale: Locale }) {
           <span className="text-muted">{t.chain}</span>{" "}
           <span className="mono text-ink">{prior.toFixed(3)}</span>
           <span className="text-muted"> → </span>
-          <span className="mono" style={{ color: retest ? colors.muted : colors.e1 }}>{post1.toFixed(3)}</span>
+          <span className={`mono ${retest ? "text-muted" : "text-e1"}`}>{post1.toFixed(3)}</span>
           {retest && (
             <>
               <span className="text-muted"> → </span>
-              <span className="mono" style={{ color: colors.e1 }}>{post2.toFixed(3)}</span>
+              <span className="mono text-e1">{post2.toFixed(3)}</span>
             </>
           )}
         </span>

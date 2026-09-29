@@ -39,7 +39,7 @@ export default async function ExplorePage({ params }: { params: Promise<{ locale
               <div className="text-muted text-lg h-8"><M>{formulas[e.slug] ?? ""}</M></div>
               <h2 className="display text-xl font-semibold mt-3">{e.title[locale]}</h2>
               <p className="mt-2 text-sm text-ink-2 leading-relaxed flex-1">{e.summary[locale]}</p>
-              <p className="mt-5 text-xs text-muted">{t.explore.relatedConcept}: {c.title[locale]}</p>
+              <p className="mt-5 text-xs text-muted">{t.explore.relatedConcept}{t.common.colon}{c.title[locale]}</p>
             </Link>
           );
         })}

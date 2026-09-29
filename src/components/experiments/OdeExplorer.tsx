@@ -257,15 +257,15 @@ export function OdeExplorer({ locale, preset: initialPreset = "exponential" }: {
         <span className="text-muted">{t.method}</span>
         <label className="inline-flex items-center gap-2">
           <input type="checkbox" checked={methods.euler} onChange={(e) => setMethods({ ...methods, euler: e.target.checked })} />
-          <span className="inline-block w-3 h-0.5" style={{ background: colors.e1 }} /> {t.euler}
+          <span className="inline-block w-3 h-0.5 bg-e1" /> {t.euler}
         </label>
         <label className="inline-flex items-center gap-2">
           <input type="checkbox" checked={methods.rk4} onChange={(e) => setMethods({ ...methods, rk4: e.target.checked })} />
-          <span className="inline-block w-3 h-0.5" style={{ background: colors.leo }} /> {t.rk4}
+          <span className="inline-block w-3 h-0.5 bg-leo" /> {t.rk4}
         </label>
         {exact ? (
           <span className="inline-flex items-center gap-2">
-            <span className="inline-block w-3 h-0.5" style={{ background: colors.ink }} /> {t.exact}
+            <span className="inline-block w-3 h-0.5 bg-ink" /> {t.exact}
           </span>
         ) : (
           <span className="text-muted">{t.noExact}</span>

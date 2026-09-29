@@ -122,11 +122,11 @@ export default async function ConceptPage({ params, searchParams }: { params: Pr
                 const isDone = (progress as Record<string, string>)[s] === "done";
                 return (
                   <li key={s} className="flex gap-2">
-                    <span className={`mono w-5 shrink-0 ${isDone ? "text-e2" : here ? "text-ink" : "text-muted"}`}>{isDone ? "✓" : here ? "◐" : i + 1}</span>
+                    <span aria-hidden="true" className={`mono w-5 shrink-0 ${isDone ? "text-e2" : here ? "text-ink" : "text-muted"}`}>{isDone ? "✓" : here ? "◐" : i + 1}</span>
                     {here ? (
                       <span className="font-semibold text-ink" aria-current="step">{pc.title[locale]}</span>
                     ) : (
-                      <Link href={`/${locale}/concepts/${s}`} className="text-ink-2 hover:text-leo">{pc.title[locale]}</Link>
+                      <Link href={`/${locale}/concepts/${s}`} className="text-ink-2 hover:text-leo">{pc.title[locale]}{isDone && <span className="sr-only"> ({t.learn.status.done})</span>}</Link>
                     )}
                   </li>
                 );

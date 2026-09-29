@@ -192,10 +192,10 @@ export function Conditioning({ locale }: { locale: Locale }) {
   return (
     <div ref={wrapRef} className="exp-frame">
       <ul className="px-4 py-2.5 border-b border-rule flex flex-wrap items-center gap-x-5 gap-y-1.5 exp-control">
-        <LegendItem color={`color-mix(in srgb, ${colors.leo} 22%, transparent)`} square label={t.legendA} />
-        <LegendItem color={`color-mix(in srgb, ${colors.e1} 60%, transparent)`} square label={t.legendAB} />
-        <LegendItem color={`color-mix(in srgb, ${colors.e1} 25%, transparent)`} square label={t.legendBonly} />
-        <LegendItem color={colors.accent2} dash="6 5" label={t.legendPB} />
+        <LegendItem color={`color-mix(in srgb, var(--leo) 22%, transparent)`} square label={t.legendA} />
+        <LegendItem color={`color-mix(in srgb, var(--e1) 60%, transparent)`} square label={t.legendAB} />
+        <LegendItem color={`color-mix(in srgb, var(--e1) 25%, transparent)`} square label={t.legendBonly} />
+        <LegendItem color="var(--accent-2)" dash="6 5" label={t.legendPB} />
       </ul>
       <canvas ref={canvasRef} className="exp-canvas" role="img" aria-label={t.hint} />
       <div className="border-t border-rule px-4 py-3 grid gap-x-6 gap-y-3 md:grid-cols-3">
@@ -213,7 +213,7 @@ export function Conditioning({ locale }: { locale: Locale }) {
         <span><span className="text-muted">{t.union}</span> <span className="mono text-ink">{k.union.toFixed(3)}</span></span>
         <span><span className="text-muted">P(B|A)</span> <span className="mono text-ink">{k.bGivenA.toFixed(3)}</span></span>
         <span><span className="text-muted">P(B|Aᶜ)</span> <span className="mono text-ink">{k.bGivenNotA.toFixed(3)}</span></span>
-        <span><span className="text-muted">P(A|B)</span> <span className="mono" style={{ color: colors.e1 }}>{k.aGivenB.toFixed(3)}</span></span>
+        <span><span className="text-muted">P(A|B)</span> <span className="mono text-e1">{k.aGivenB.toFixed(3)}</span></span>
         <span><span className="text-muted">{t.delta}</span> <span className="mono text-ink">{k.dependence.toFixed(3)}</span> <span className="text-muted">· {verdict}</span></span>
       </div>
     </div>

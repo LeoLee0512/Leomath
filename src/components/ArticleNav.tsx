@@ -40,8 +40,8 @@ export function ArticleNav({ headings, label, variant = "vertical" }: { headings
           const i = headings.indexOf(h);
           const state = i < idx ? "past" : i === idx ? "now" : "ahead";
           return (
-            <a key={h.id} href={`#${h.id}`} className={`whitespace-nowrap ${state === "now" ? "text-ink font-medium" : state === "past" ? "text-ink-2" : "text-muted"}`}>
-              <span className="mr-1">{state === "now" ? "◐" : state === "past" ? "●" : "○"}</span>{h.text}
+            <a key={h.id} href={`#${h.id}`} aria-current={state === "now" ? "location" : undefined} className={`whitespace-nowrap ${state === "now" ? "text-ink font-medium" : state === "past" ? "text-ink-2" : "text-muted"}`}>
+              <span aria-hidden="true" className="mr-1">{state === "now" ? "◐" : state === "past" ? "●" : "○"}</span>{h.text}
             </a>
           );
         })}
@@ -63,7 +63,7 @@ export function ArticleNav({ headings, label, variant = "vertical" }: { headings
                   state === "past" ? "bg-ink border-ink" : state === "now" ? "border-ink bg-[linear-gradient(90deg,var(--ink)_50%,var(--paper)_50%)]" : "bg-paper border-rule-2"
                 }`}
               />
-              <a href={`#${h.id}`} className={state === "now" ? "text-ink font-medium" : state === "past" ? "text-ink-2 hover:text-ink" : "text-muted hover:text-ink"}>
+              <a href={`#${h.id}`} aria-current={state === "now" ? "location" : undefined} className={state === "now" ? "text-ink font-medium" : state === "past" ? "text-ink-2 hover:text-ink" : "text-muted hover:text-ink"}>
                 {h.text}
               </a>
             </li>

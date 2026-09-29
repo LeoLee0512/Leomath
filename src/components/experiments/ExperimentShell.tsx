@@ -56,8 +56,8 @@ export function ExperimentShell({ slug, locale, query, backHref, children, after
         <div key={version}>{children}</div>
       </ExperimentUrlContext.Provider>
       <div className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1 exp-control text-sm">
-        <button type="button" onClick={reset} className="text-muted hover:text-ink">↺ {t.reset}</button>
-        <button type="button" onClick={share} className="text-muted hover:text-ink">⧉ {t.share}</button>
+        <button type="button" onClick={reset} className="text-muted hover:text-ink"><span aria-hidden="true">↺ </span>{t.reset}</button>
+        <button type="button" onClick={share} className="text-muted hover:text-ink"><span aria-hidden="true">⧉ </span>{t.share}</button>
         <span role="status" aria-live="polite" className="text-e2 text-xs">{copied ? t.copied : ""}</span>
         {backHref && <Link href={backHref} className="ml-auto text-leo hover:underline">{t.back}</Link>}
       </div>

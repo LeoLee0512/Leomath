@@ -4,8 +4,8 @@ import { useEffect, useState, useSyncExternalStore } from "react";
 import { readThemeColors, type ThemeColors } from "@/lib/plot";
 
 const fallback: ThemeColors = {
-  paper: "#faf8f3", ink: "#17191e", ink2: "#3a3d44", muted: "#6c7079", rule: "#e3dfd5", leo: "#1f5cb8",
-  grid: "#d9d3c6", gridStrong: "#b9b2a3", e1: "#c2452d", e2: "#1f7a4d", accent2: "#b8862a",
+  paper: "#faf8f3", ink: "#17191e", ink2: "#3a3d44", muted: "#62666e", rule: "#e3dfd5", leo: "#1f5cb8",
+  grid: "#d9d3c6", gridStrong: "#b9b2a3", e1: "#b03d27", e2: "#1b6e45", accent2: "#8a6418",
 };
 
 // A tiny external store over the <html> class attribute, so light ↔ dark switches re-render consumers.

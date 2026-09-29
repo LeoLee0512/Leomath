@@ -101,7 +101,7 @@ export default async function PathPage({ params }: { params: Promise<{ locale: s
                   </div>
                   <p className="mt-2 text-sm text-ink-2 pl-10">{c.summary[locale]}</p>
                   <p className="mt-3 text-xs mono text-muted pl-10">
-                    {minutes[slug] ? `${t.learn.readingTime(minutes[slug])} · ` : ""}{exps.length} {t.learn.experiments} · {exs.length} {t.learn.exercises}
+                    {minutes[slug] ? `${t.learn.readingTime(minutes[slug])} · ` : ""}{t.paths.conceptCounts(exps.length, exs.length)}
                   </p>
                 </Link>
               </li>

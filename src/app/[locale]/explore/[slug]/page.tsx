@@ -36,7 +36,7 @@ export default async function ExperimentPage({ params, searchParams }: { params:
         <ExperimentEmbed slug={slug} locale={locale} searchParams={query} backHref={main.status === "published" ? `/${locale}/concepts/${main.slug}#exp-${slug}` : undefined} />
       </div>
       <div className="mt-8 text-sm">
-        <span className="text-muted">{t.explore.relatedConcept}: </span>
+        <span className="text-muted">{t.explore.relatedConcept}{t.common.colon}</span>
         {(related.length ? related : [main]).map((c, i) => (
           <span key={c.slug}>
             {i > 0 && <span className="text-muted"> · </span>}

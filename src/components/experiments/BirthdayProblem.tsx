@@ -183,10 +183,10 @@ export function BirthdayProblem({ locale }: { locale: Locale }) {
   return (
     <div ref={wrapRef} className="exp-frame">
       <ul className="px-4 py-2.5 border-b border-rule flex flex-wrap items-center gap-x-5 gap-y-1.5 exp-control">
-        <LegendItem color={colors.ink} label={t.legendExact} />
-        <LegendItem color={colors.leo} dash="6 5" label={t.legendBound} formula={`1-e^{-n(n-1)/730}`} />
-        <LegendItem color={colors.accent2} dash="2 4" label={t.legendMine} />
-        {freq !== null && <LegendItem color={colors.e1} dot label={t.legendFreq} />}
+        <LegendItem color="var(--ink)" label={t.legendExact} />
+        <LegendItem color="var(--leo)" dash="6 5" label={t.legendBound} formula={`1-e^{-n(n-1)/730}`} />
+        <LegendItem color="var(--accent-2)" dash="2 4" label={t.legendMine} />
+        {freq !== null && <LegendItem color="var(--e1)" dot label={t.legendFreq} />}
       </ul>
       <canvas ref={curveRef} className="exp-canvas" role="img" aria-label={t.hint} />
       <div className="border-t border-rule">
@@ -208,12 +208,12 @@ export function BirthdayProblem({ locale }: { locale: Locale }) {
         <span><span className="text-muted">{t.pairs}</span> <span className="mono text-ink">{pairs(n)}</span></span>
         <span><span className="text-muted">{t.exact}</span> <span className="mono text-ink">{exact.toFixed(6)}</span></span>
         <span><span className="text-muted">{t.bound}</span> <span className="mono text-leo">{bound.toFixed(6)}</span></span>
-        <span><span className="text-muted">{t.mine}</span> <span className="mono" style={{ color: colors.accent2 }}>{mine.toFixed(6)}</span></span>
+        <span><span className="text-muted">{t.mine}</span> <span className="mono text-accent-2">{mine.toFixed(6)}</span></span>
       </div>
-      <div className="border-t border-rule px-4 py-3 flex flex-wrap items-center gap-x-6 gap-y-2 exp-control">
+      <div className="border-t border-rule px-4 py-3 flex flex-wrap items-center gap-x-6 gap-y-2 exp-control" aria-live="polite">
         <span><span className="text-muted">{t.classes}</span> <span className="mono text-ink">{trials}</span></span>
         <span><span className="text-muted">{t.hits}</span> <span className="mono text-ink">{hits}</span></span>
-        <span><span className="text-muted">{t.freq}</span> <span className="mono" style={{ color: colors.e1 }}>{freq === null ? "—" : format(freq, 4)}</span></span>
+        <span><span className="text-muted">{t.freq}</span> <span className="mono text-e1">{freq === null ? "—" : format(freq, 4)}</span></span>
       </div>
     </div>
   );

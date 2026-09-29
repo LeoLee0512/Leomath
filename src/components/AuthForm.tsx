@@ -27,7 +27,7 @@ export function AuthForm({ mode, locale, t, next }: { mode: "login" | "register"
           <input name="displayName" type="text" maxLength={60} className="field mt-1" />
         </label>
       )}
-      {state.error && <p className="text-sm text-e1">{state.error}</p>}
+      {state.error && <p className="text-sm text-e1" role="alert">{state.error}</p>}
       {mode === "register" && (
         <p className="text-xs text-muted">
           {t.agree[0]}

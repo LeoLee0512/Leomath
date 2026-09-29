@@ -62,7 +62,7 @@ const copy = {
     planned: "规划中",
     published: "已发布",
     building: "正在建设",
-    min: (m: number) => `${m} min`,
+    min: (m: number) => `约 ${m} 分钟`,
     legendPub: "已发布",
     legendPlan: "规划中",
     paths: "学习路线",
@@ -130,7 +130,8 @@ export function KnowledgeTree({ locale, focus, minutes = {} }: KnowledgeTreeProp
     <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_19rem] lg:items-start">
       {/* Desktop: the map. */}
       <div className="hidden md:block">
-        <svg viewBox="0 0 1120 800" className="w-full h-auto select-none" role="img" aria-label={t.hover}>
+        {/* role="group", not "img": an image hides its children, and the nodes here are real buttons. */}
+        <svg viewBox="0 0 1120 800" className="w-full h-auto select-none" role="group" aria-label={t.hover}>
           <defs>
             <marker id="kt-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
               <path d="M 0 0 L 10 5 L 0 10 z" fill="var(--leo)" />
@@ -201,12 +202,20 @@ export function KnowledgeTree({ locale, focus, minutes = {} }: KnowledgeTreeProp
                 style={{ transition: "opacity 160ms", cursor: "pointer" }}
                 tabIndex={0}
                 role="button"
+                aria-pressed={pinned === c.slug}
                 aria-label={label}
                 onMouseEnter={() => setHover(c.slug)}
                 onMouseLeave={() => setHover(null)}
                 onFocus={() => setHover(c.slug)}
                 onBlur={() => setHover(null)}
                 onClick={() => setPinned((p) => (p === c.slug ? null : c.slug))}
+                onKeyDown={(e) => {
+                  // Keyboard users pin a node with Enter or Space, so the panel stays while they Tab to its link.
+                  if (e.key === "Enter" || e.key === " ") {
+                    e.preventDefault();
+                    setPinned((p) => (p === c.slug ? null : c.slug));
+                  }
+                }}
               >
                 <rect
                   x={-w / 2}
