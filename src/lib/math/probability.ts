@@ -25,6 +25,7 @@ export function pairs(n: number): number {
 
 /** Smallest n with birthdayExact(n, d) ≥ p. */
 export function smallestGroup(p: number, d = 365): number {
+  if (!(p <= 1)) throw new RangeError("p must be at most 1");
   let n = 1;
   while (birthdayExact(n, d) < p) n++;
   return n;

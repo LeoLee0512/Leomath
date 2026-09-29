@@ -1,12 +1,13 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import type { Locale } from "@/i18n/config";
 import { Plot, fitCanvas } from "@/lib/plot";
 import { getPreset } from "@/lib/math/functions";
 import { format } from "@/lib/math/linear";
 import { tex } from "@/lib/katex";
 import { useResizeVersion, useThemeColors } from "./useTheme";
+import { useUrlState } from "./urlState";
 
 const copy = {
   zh: { fn: "函数", x0: "观察点 x₀", h: "增量 h", secant: "割线斜率", tangent: "切线斜率 f′(x₀)", gap: "差", hint: "把 h 调小，割线转向切线。差商 → 导数。", domain: "ln x 只在 x > 0 有定义。" },
@@ -21,9 +22,9 @@ export function SecantTangent({ locale }: { locale: Locale }) {
   const wrapRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const resize = useResizeVersion(wrapRef);
-  const [fid, setFid] = useState("sin");
-  const [x0, setX0] = useState(1);
-  const [h, setH] = useState(1.2);
+  const [fid, setFid] = useUrlState("f", "sin", IDS);
+  const [x0, setX0] = useUrlState("x0", 1, { min: -3, max: 3 });
+  const [h, setH] = useUrlState("h", 1.2, { min: 0.001, max: 2.5 });
   const p = getPreset(fid);
   const lo = p.domain ? Math.max(p.domain[0], -4) : -4;
   const xa = Math.max(lo, x0);

@@ -91,8 +91,18 @@ docker compose up -d --build
 
 ## 备份
 
+每天一次，只保留最近 30 天。隐私政策承诺“注销的数据 30 天内从所有备份中消失”，所以**不要**另外长期保存旧备份。
+
 ```bash
-docker compose exec db pg_dump -U leomath leomath | gzip > leomath-$(date +%F).sql.gz
+sudo mkdir -p /opt/leomath/backups
+# crontab -e（root），每天 03:30：
+30 3 * * * cd /opt/leomath && docker compose exec -T db pg_dump -U leomath leomath | gzip > backups/leomath-$(date +\%F).sql.gz && find backups -name 'leomath-*.sql.gz' -mtime +30 -delete
+```
+
+手动备份（同样放进 `backups/`，30 天后会被自动删除）：
+
+```bash
+docker compose exec -T db pg_dump -U leomath leomath | gzip > /opt/leomath/backups/leomath-$(date +%F).sql.gz
 ```
 
 ## 排错

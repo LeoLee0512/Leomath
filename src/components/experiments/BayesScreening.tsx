@@ -1,11 +1,12 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef } from "react";
 import type { Locale } from "@/i18n/config";
 import { fitCanvas } from "@/lib/plot";
 import { posterior, screeningCounts } from "@/lib/math/probability";
 import { tex } from "@/lib/katex";
 import { useResizeVersion, useThemeColors } from "./useTheme";
+import { useUrlState } from "./urlState";
 import { LegendItem } from "./Legend";
 
 const copy = {
@@ -15,7 +16,7 @@ const copy = {
     tp: "患病 · 阳性", fn: "患病 · 阴性", fp: "健康 · 阳性", tn: "健康 · 阴性",
     first: (n: number) => `${n} 人参加检测`,
     second: (n: number) => `第一次呈阳性的 ${n} 人再测一次`,
-    positives: "阳性", ill: "其中患病", share: "占比",
+    positives: "阳性", ill: "其中患病", share: "占比（人数取整）",
     chain: "先验 → 后验", exact: "精确后验",
     hint: "一千个人按患病与否、检测阴阳分成四块。阳性的人里，真正患病的占多少？",
   },
@@ -25,7 +26,7 @@ const copy = {
     tp: "ill · positive", fn: "ill · negative", fp: "healthy · positive", tn: "healthy · negative",
     first: (n: number) => `${n} people tested`,
     second: (n: number) => `The ${n} first-time positives, tested again`,
-    positives: "positives", ill: "of them ill", share: "share",
+    positives: "positives", ill: "of them ill", share: "share (whole people)",
     chain: "prior → posterior", exact: "exact posterior",
     hint: "A thousand people split by illness and test result. What share of the positives are really ill?",
   },
@@ -36,7 +37,7 @@ type Person = { ill: boolean; pos: boolean };
 
 function population(tp: number, fn: number, fp: number, tn: number): Person[] {
   const out: Person[] = [];
-  const push = (k: number, ill: boolean, pos: boolean) => { for (let i = 0; i < k; i++) out.push({ ill, pos }); };
+  const push = (k: number, ill: boolean, pos: boolean) => { for (let i = 0; i < k && out.length < N; i++) out.push({ ill, pos }); };
   push(tp, true, true);
   push(fp, false, true);
   push(fn, true, false);
@@ -50,10 +51,10 @@ export function BayesScreening({ locale }: { locale: Locale }) {
   const wrapRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const resize = useResizeVersion(wrapRef);
-  const [prior, setPrior] = useState(0.01);
-  const [sens, setSens] = useState(0.95);
-  const [fpr, setFpr] = useState(0.08);
-  const [retest, setRetest] = useState(false);
+  const [prior, setPrior] = useUrlState("prior", 0.01, { min: 0.001, max: 0.3 });
+  const [sens, setSens] = useUrlState("sens", 0.95, { min: 0.5, max: 1 });
+  const [fpr, setFpr] = useUrlState("fpr", 0.08, { min: 0, max: 0.3 });
+  const [retest, setRetest] = useUrlState("retest", false);
 
   const c1 = screeningCounts(N, prior, sens, fpr);
   const post1 = posterior(prior, sens, fpr);

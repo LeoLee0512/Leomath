@@ -25,7 +25,8 @@ describe("birthday problem", () => {
   });
   it("simulation agrees with the formula", () => {
     let s = 12345;
-    const rng = () => ((s = (s * 1103515245 + 12345) % 2147483648) / 2147483648);
+    // 32-bit LCG; Math.imul keeps the product exact (s * 1103515245 would overflow 2^53).
+    const rng = () => ((s = (Math.imul(s, 1103515245) + 12345) >>> 0) / 4294967296);
     const trials = 20000;
     let hits = 0;
     for (let i = 0; i < trials; i++) if (sharedDays(sampleBirthdays(23, rng)).size > 0) hits++;

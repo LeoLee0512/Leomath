@@ -7,6 +7,7 @@ import { birthdayBound, birthdayExact, pairs, sameAsMine, sampleBirthdays, share
 import { format } from "@/lib/math/linear";
 import { tex } from "@/lib/katex";
 import { useResizeVersion, useThemeColors } from "./useTheme";
+import { useUrlState } from "./urlState";
 import { LegendItem } from "./Legend";
 
 const copy = {
@@ -42,7 +43,7 @@ export function BirthdayProblem({ locale }: { locale: Locale }) {
   const curveRef = useRef<HTMLCanvasElement>(null);
   const yearRef = useRef<HTMLCanvasElement>(null);
   const resize = useResizeVersion(wrapRef);
-  const [n, setN] = useState(23);
+  const [n, setN] = useUrlState("n", 23, { min: 2, max: N_MAX, integer: true });
   const [trials, setTrials] = useState(0);
   const [hits, setHits] = useState(0);
   const [last, setLast] = useState<number[] | null>(null);

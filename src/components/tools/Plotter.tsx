@@ -131,7 +131,7 @@ export function Plotter({ locale }: { locale: Locale }) {
         <p className="text-sm text-muted mt-1">{t.hint}</p>
       </div>
       <div className="grid lg:grid-cols-[1fr_18rem]">
-        <canvas ref={canvasRef} className="exp-canvas cursor-move" onPointerDown={onDown} onPointerMove={onMove} onPointerUp={onUp} onPointerCancel={onUp} role="img" aria-label={t.title} />
+        <canvas ref={canvasRef} className="exp-canvas exp-canvas-drag cursor-move" onPointerDown={onDown} onPointerMove={onMove} onPointerUp={onUp} onPointerCancel={onUp} role="img" aria-label={t.title} />
         <div className="border-t lg:border-t-0 lg:border-l border-rule p-4 space-y-3 text-sm">
           {curves.map((cv, i) => (
             <div key={i}>

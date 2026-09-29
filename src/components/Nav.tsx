@@ -43,11 +43,11 @@ export function Nav({ locale, t, user }: { locale: Locale; t: Dictionary; user: 
           <ThemeToggle label={t.nav.theme} />
           <LocaleSwitch locale={locale} label={t.nav.language} />
           {user ? (
-            <Link href={`/${locale}/account`} className="text-sm text-ink-2 hover:text-ink px-2 py-1">
+            <Link href={`/${locale}/account`} className="text-sm text-ink-2 hover:text-ink px-2 py-1 whitespace-nowrap">
               {t.nav.account}
             </Link>
           ) : (
-            <Link href={`/${locale}/login`} className="text-sm text-ink-2 hover:text-ink px-2 py-1">
+            <Link href={`/${locale}/login`} className="text-sm text-ink-2 hover:text-ink px-2 py-1 whitespace-nowrap">
               {t.nav.login}
             </Link>
           )}

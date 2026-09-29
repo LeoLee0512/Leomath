@@ -183,6 +183,11 @@ button, input {
 .mblock-experiment .mblock-head { margin-bottom: 0.6em; }
 .mblock-experiment .mblock-head b { color: var(--leo); }
 
+/* A small, quick acknowledgement when an answer is right. */
+@keyframes exercise-correct { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
+.exercise-correct { animation: exercise-correct 220ms ease-out; }
+@media (prefers-reduced-motion: reduce) { .exercise-correct { animation: none; } }
+
 /* Keyboard users can jump past the header; the link shows only when focused. */
 .skip-link {
   position: absolute; left: 1rem; top: -3rem; z-index: 50;
@@ -204,7 +209,9 @@ button, input {
   border-radius: 6px;
   overflow: hidden;
 }
-.exp-canvas { display: block; width: 100%; height: auto; touch-action: none; user-select: none; }
+.exp-canvas { display: block; width: 100%; height: auto; user-select: none; }
+/* Only canvases you drag capture touch; the others let the page scroll under a finger. */
+.exp-canvas-drag { touch-action: none; }
 .exp-control { font-family: var(--font-ui); font-size: 0.85rem; color: var(--ink-2); }
 input[type="range"] { accent-color: var(--leo); width: 100%; }
 input[type="range"].e1 { accent-color: var(--e1); }

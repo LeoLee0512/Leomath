@@ -1,10 +1,11 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import type { Locale } from "@/i18n/config";
 import { fitCanvas } from "@/lib/plot";
 import { conditionals } from "@/lib/math/probability";
 import { useResizeVersion, useThemeColors } from "./useTheme";
+import { useUrlState } from "./urlState";
 import { LegendItem } from "./Legend";
 
 const copy = {
@@ -34,10 +35,10 @@ export function Conditioning({ locale }: { locale: Locale }) {
   const wrapRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const resize = useResizeVersion(wrapRef);
-  const [pA, setPA] = useState(0.5);
-  const [pB, setPB] = useState(0.4);
-  const [pABraw, setPAB] = useState(0.3);
-  const [given, setGiven] = useState(false);
+  const [pA, setPA] = useUrlState("pA", 0.5, { min: 0.05, max: 0.95 });
+  const [pB, setPB] = useUrlState("pB", 0.4, { min: 0.05, max: 0.95 });
+  const [pABraw, setPAB] = useUrlState("pAB", 0.3, { min: 0, max: 0.95 });
+  const [given, setGiven] = useUrlState("given", false);
   // Fréchet bounds for P(A∩B), inline so the compiler sees plain numbers.
   const lo = Math.max(0, pA + pB - 1);
   const hi = Math.min(pA, pB);

@@ -1,12 +1,13 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef } from "react";
 import type { Locale } from "@/i18n/config";
 import { Plot, fitCanvas } from "@/lib/plot";
 import { getPreset } from "@/lib/math/functions";
 import { format } from "@/lib/math/linear";
 import { tex } from "@/lib/katex";
 import { useResizeVersion, useThemeColors } from "./useTheme";
+import { useUrlState } from "./urlState";
 
 const copy = {
   zh: { fn: "函数", n: "分割数 n", a: "下限 a", b: "上限 b", sample: "取点", left: "左端点", right: "右端点", mid: "中点", sum: "Riemann 和", exact: "精确值", err: "误差", hint: "增大 n，三种取点的矩形和都趋于同一个数。控制逼近的是网格变细，不是取点方式。" },
@@ -15,6 +16,7 @@ const copy = {
 
 const IDS = ["square", "sin", "exp", "ln", "lorentz"];
 type Rule = "left" | "right" | "mid";
+const RULES: readonly Rule[] = ["left", "right", "mid"];
 
 export function RiemannSums({ locale }: { locale: Locale }) {
   const t = copy[locale];
@@ -22,11 +24,11 @@ export function RiemannSums({ locale }: { locale: Locale }) {
   const wrapRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const resize = useResizeVersion(wrapRef);
-  const [fid, setFid] = useState("square");
-  const [n, setN] = useState(8);
-  const [a, setA] = useState(0);
-  const [b, setB] = useState(2);
-  const [rule, setRule] = useState<Rule>("left");
+  const [fid, setFid] = useUrlState("f", "square", IDS);
+  const [n, setN] = useUrlState("n", 8, { min: 1, max: 200, integer: true });
+  const [a, setA] = useUrlState("a", 0, { min: -2.5, max: 2.5 });
+  const [b, setB] = useUrlState("b", 2, { min: -2.5, max: 2.5 });
+  const [rule, setRule] = useUrlState<Rule>("rule", "left", RULES);
   const p = getPreset(fid);
   const lo = p.domain ? Math.max(p.domain[0], -3) : -3;
   const aa = Math.max(lo, Math.min(a, b));

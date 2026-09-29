@@ -104,7 +104,7 @@ One test moves $1\%$ to $11\%$; two move it to $59\%$. This assumes the two test
 
 <Tool id="plot" />
 
-In the plotter, draw $\dfrac{0.95x}{0.95x+0.08(1-x)}$ with the prior (prevalence) $x$ on the horizontal axis and the posterior after a positive on the vertical one. For small $x$ the curve hugs zero: that is why a positive screen for a rare disease must be confirmed.
+In the plotter, draw $\dfrac{0.95x}{0.95x+0.08(1-x)}$ with the prior (prevalence) $x$ on the horizontal axis and the posterior after a positive on the vertical one. Near $x=0$ the posterior is about $12x$: the curve rises quickly at first, but as long as the prevalence is around $1\%$ or below, the posterior stays small. That is why a positive screen for a rare disease must be confirmed.
 
 ## Further: Bayesian neural networks
 
@@ -112,13 +112,13 @@ Replace "ill or not" by a neural network's **weights** $w$ and "the test result"
 $$p(w\mid D)=\frac{p(D\mid w)\,p(w)}{p(D)}.$$
 (Here $p$ is a probability density; for now read it as "probability for continuous quantities". The section on random variables will define it.)
 
-Ordinary training finds **one** best set of weights. A Bayesian neural network keeps the whole posterior $p(w\mid D)$: each weight is no longer a number but a distribution saying how sure we are. Predictions average over all plausible weights,
+Ordinary training finds **one** best set of weights. A Bayesian neural network keeps the whole posterior $p(w\mid D)$: the weights are no longer one fixed set of numbers but a joint distribution over all of them, saying how plausible each setting is. Predictions average over all plausible weights,
 $$p(y\mid x,D)=\int p(y\mid x,w)\,p(w\mid D)\,dw,$$
 so where data are scarce the predictions spread out: the model **knows when it does not know**. That matters wherever "I'm not sure" beats a confident mistake, as in medicine or self-driving cars.
 
-An unexpected connection: take only the single most probable set of weights and choose a normal prior $w\sim N(0,\sigma^2)$. Then maximising $\log p(D\mid w)+\log p(w)$ is exactly minimising "loss $+\ \frac1{2\sigma^2}\|w\|^2$", the familiar **L2 regularisation** (weight decay) used to train neural networks: **regularisation is a prior.**
+An unexpected connection: take only the single most probable set of weights and give each weight an independent normal prior $N(0,\sigma^2)$. Then maximising $\log p(D\mid w)+\log p(w)$ is the same as minimising $-\log p(D\mid w)+\frac1{2\sigma^2}\|w\|^2$: the negative log-likelihood plus an **L2 penalty**. (If the loss is averaged over examples or otherwise rescaled, the coefficient changes accordingly; with plain SGD, L2 regularisation is weight decay.) **Regularisation is a prior.**
 
-The real difficulty is the denominator $p(D)$: it integrates over all weights, often millions of dimensions, and cannot be computed directly. In practice the posterior is approximated by variational inference, Monte Carlo dropout and similar methods. That is a story for another course.
+The real difficulty is that the posterior cannot be computed: both the denominator $p(D)$ and the predictive integral run over all weights, often millions of dimensions. In practice the posterior is approximated by variational inference or Monte Carlo dropout, or sampled directly with MCMC. That is a story for another course.
 
 <Remark>
 In this section events have only two states, occurring or not. The next section, **random variables and distributions** (in progress), turns outcomes into numbers: counts of tests, numbers of positives, waiting times. The law of total probability and Bayes' theorem become sums and integrals over distributions there.

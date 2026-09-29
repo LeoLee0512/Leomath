@@ -11,7 +11,7 @@ export function LocaleSwitch({ locale, label }: { locale: Locale; label: string 
     <Link
       href={switchLocalePath(pathname, target)}
       hrefLang={target}
-      className="text-sm text-ink-2 hover:text-ink px-2 py-1 rounded"
+      className="text-sm text-ink-2 hover:text-ink px-2 py-1 rounded whitespace-nowrap"
     >
       {label}
     </Link>

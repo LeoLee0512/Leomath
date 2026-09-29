@@ -6,6 +6,7 @@ import { Plot, fitCanvas } from "@/lib/plot";
 import { apply, det, eigen, format, fromColumns, type Mat2, type Vec2 } from "@/lib/math/linear";
 import { tex } from "@/lib/katex";
 import { useResizeVersion, useThemeColors } from "./useTheme";
+import { useUrlState } from "./urlState";
 
 const RANGE = 3.2;
 const GRID_EXTENT = 8;
@@ -68,13 +69,24 @@ export interface LinearTransformProps {
   onChange?: (m: Mat2) => void;
 }
 
+const matText = (m: Mat2) => m.map((v) => String(Math.round(v * 1000) / 1000)).join(",");
+function parseMat(text: string, fallback: Mat2): Mat2 {
+  const v = text.split(",").map(Number);
+  if (v.length !== 4 || !v.every(Number.isFinite)) return fallback;
+  return v.map((x) => Math.max(-10, Math.min(10, x))) as unknown as Mat2;
+}
+
 export function LinearTransform({ locale, compact = false, initial = [1, 0, 0, 1], onChange }: LinearTransformProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const wrapRef = useRef<HTMLDivElement>(null);
   const colors = useThemeColors();
   const resizeVersion = useResizeVersion(wrapRef);
-  const [m, setM] = useState<Mat2>(initial);
-  const [showEigen, setShowEigen] = useState(!compact);
+  const [mText, setMText] = useUrlState("m", matText(initial));
+  const m = useMemo(() => parseMat(mText, initial), [mText, initial]);
+  const setM = useCallback((next: Mat2 | ((prev: Mat2) => Mat2)) => {
+    setMText((prev) => matText(typeof next === "function" ? next(parseMat(prev, initial)) : next));
+  }, [setMText, initial]);
+  const [showEigen, setShowEigen] = useUrlState("eigen", !compact);
   // Zero-cost onboarding: 0 = drag e1, 1 = look at the grid, 2 = drag e2, 3 = done.
   const [guideState, setGuide] = useState<0 | 1 | 2 | 3>(compact ? 0 : 3);
   const guideDone = useSyncExternalStore(noopSubscribe, readGuideDone, () => false);
@@ -236,7 +248,7 @@ export function LinearTransform({ locale, compact = false, initial = [1, 0, 0, 1
       )}
       <canvas
         ref={canvasRef}
-        className="exp-canvas cursor-grab active:cursor-grabbing"
+        className="exp-canvas exp-canvas-drag cursor-grab active:cursor-grabbing"
         onPointerDown={onDown}
         onPointerMove={onMove}
         onPointerUp={onUp}

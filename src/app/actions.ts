@@ -10,7 +10,7 @@ import { hasDatabase } from "@/lib/db";
 import { recordAttempt, setProgress, type ProgressStatus } from "@/lib/progress";
 import { addComment, deleteComment, isAdmin, postedRecently, COMMENT_MAX_LENGTH, type CommentTarget } from "@/lib/comments";
 import { normaliseBody } from "@/lib/comments-format";
-import { checkAnswer, getExercise } from "@/content/exercises";
+import { checkAnswer, diagnose, getExercise, type Diagnosis } from "@/content/exercises";
 import { getConcept, getExperiment } from "@/content/graph";
 import { getSoftware } from "@/content/software";
 import { deleteAccount, passwordMatches } from "@/lib/account";
@@ -117,6 +117,21 @@ export interface AnswerState {
   checked: boolean;
   correct: boolean;
   answer: string;
+  /** Coach-style note: why this answer is wrong, or why the chosen option is right. */
+  feedback?: string;
+}
+
+function feedbackText(d: Diagnosis | null, locale: Locale): string | undefined {
+  if (!d) return undefined;
+  const t = getDictionary(locale).diagnosis;
+  switch (d.kind) {
+    case "note": return d.note[locale];
+    case "unreadable": return t.unreadable;
+    case "sign": return t.sign;
+    case "reciprocal": return t.reciprocal;
+    case "scale": return t.scale(d.factor);
+    case "near": return t.near(String(d.tolerance));
+  }
 }
 
 export async function checkAnswerAction(_prev: AnswerState, form: FormData): Promise<AnswerState> {
@@ -125,11 +140,12 @@ export async function checkAnswerAction(_prev: AnswerState, form: FormData): Pro
   const exercise = getExercise(id);
   if (!exercise || !answer) return { checked: false, correct: false, answer };
   const correct = checkAnswer(exercise, answer);
+  const feedback = feedbackText(diagnose(exercise, answer), localeFrom(form));
   const user = await currentUser();
   if (user) {
     await recordAttempt(user.id, id, answer, correct).catch(() => undefined);
   }
-  return { checked: true, correct, answer };
+  return { checked: true, correct, answer, feedback };
 }
 
 // ---- Comments -------------------------------------------------------------

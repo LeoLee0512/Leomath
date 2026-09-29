@@ -105,17 +105,17 @@ In particular the probability exceeds $\tfrac12$ at $n=23$.
 <Proof>
 Apply the lemma to each factor: $1-\frac k{365}\le e^{-k/365}$. All factors are positive, so multiplying gives
 $$\prod_{k=1}^{n-1}\Bigl(1-\frac k{365}\Bigr)\le\exp\Bigl(-\frac{1+2+\cdots+(n-1)}{365}\Bigr)=\exp\Bigl(-\frac{n(n-1)}{730}\Bigr).$$
-Taking complements gives the inequality. At $n=23$, $\frac{23\cdot22}{730}=\frac{506}{730}\approx0.69315>\ln2\approx0.69314$, so the right-hand side exceeds $1-\tfrac12=\tfrac12$.
+Taking complements gives the inequality. At $n=23$, $\frac{23\cdot22}{730}=\frac{506}{730}\approx0.693151>\ln2\approx0.693147$, so the right-hand side exceeds $1-\tfrac12=\tfrac12$.
 </Proof>
 
 The exponent is exactly the number of **pairs** $\binom n2$ divided by $365$: that is what the conjecture was saying. For probability one half we need $\binom n2\approx365\ln2$, i.e. $n\approx\sqrt{2\cdot365\ln2}\approx22.5$. The group only needs to be on the order of the **square root** of the number of days.
 
 <Warning>
-"**Some two people** share a birthday" and "**someone shares mine**" are different events. The second involves only $n-1$ pairs (me with each other person), with probability $1-\bigl(\tfrac{364}{365}\bigr)^{n-1}$: about $5.9\%$ at $n=23$, and it takes $253$ people besides me to pass one half. The intuitive $8\%$ is really an answer to the second question. In the experiment, compare the dotted curve with the black one: they differ by an order of magnitude.
+"**Some two people** share a birthday" and "**someone shares mine**" are different events. The second involves only $n-1$ pairs (me with each other person), with probability $1-\bigl(\tfrac{364}{365}\bigr)^{n-1}$: about $5.9\%$ at $n=23$, and it takes $253$ people besides me to pass one half. The intuitive $8\%$ is really an answer to the second question. In the experiment, compare the dotted curve with the black one: near $n=23$ it is almost ten times lower.
 </Warning>
 
 <Remark>
-The classical model assumes birthdays are uniform; real ones are not (there are seasonal effects). One can prove that the less uniform the distribution, the **higher** the chance of a match. So the numbers above are lower bounds for reality, and the conclusion only gets stronger.
+The classical model assumes birthdays are uniform over $365$ days; real ones are not (there are seasonal effects). One can prove that, as long as birthdays stay independent and the year has $365$ days, the uniform distribution gives the **smallest** chance of a match among all distributions, for every $n$. So within this model the numbers above are lower bounds, and the conclusion only gets stronger. (Twins break independence and February 29 adds a day; neither is in the model.)
 </Remark>
 
 ## Applications
@@ -128,8 +128,8 @@ random inputs gives an even chance of two inputs with the same hash. For a $64$-
 
 <Tool id="plot" />
 
-In the plotter, draw $1-\exp(-x(x-1)/730)$, then replace $730$ by $2d$ for other numbers of "days": the shape stays the same and only stretches horizontally by $\sqrt d$.
+In the plotter, draw $1-\exp(-x(x-1)/730)$, then replace $730$ by $2d$ for other numbers of "days": the shape stays almost the same and stretches horizontally by roughly $\sqrt{d/365}$.
 
 <Remark>
-This section only needed counting outcomes. In many problems, though, we **first learn something** and then ask for a probability: given a positive test, how likely is the disease? New information changes the sample space. That is the question of the next section, **conditional probability and Bayes' theorem** (in progress).
+This section only needed counting outcomes. In many problems, though, we **first learn something** and then ask for a probability: given a positive test, how likely is the disease? New information changes the sample space. That is the question of the next section, [conditional probability and Bayes' theorem](/en/concepts/conditional-probability).
 </Remark>

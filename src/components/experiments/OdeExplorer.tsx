@@ -1,12 +1,13 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef } from "react";
 import type { Locale } from "@/i18n/config";
 import { Plot, fitCanvas } from "@/lib/plot";
 import { getPreset, integrate, presets, type Method } from "@/lib/math/ode";
 import { format } from "@/lib/math/linear";
 import { tex } from "@/lib/katex";
 import { useResizeVersion, useThemeColors } from "./useTheme";
+import { useUrlState } from "./urlState";
 
 const presetCopy: Record<string, { label: Record<Locale, string>; tex: string }> = {
   exponential: { label: { zh: "指数增长", en: "Exponential growth" }, tex: "y' = k\\,y" },
@@ -14,6 +15,16 @@ const presetCopy: Record<string, { label: Record<Locale, string>; tex: string }>
   harmonic: { label: { zh: "阻尼振子", en: "Damped oscillator" }, tex: "x'' + 2\\gamma x' + \\omega^2 x = 0" },
   pendulum: { label: { zh: "单摆", en: "Pendulum" }, tex: "\\theta'' + \\gamma\\theta' + \\tfrac{g}{L}\\sin\\theta = 0" },
 };
+
+const PRESET_IDS = presets.map((p) => p.id);
+const METHOD_SETS = ["euler,rk4", "euler", "rk4", "none"];
+
+/** Entry i of a comma list from the URL, clamped to [min, max]; the default when missing or unreadable. */
+function listValue(text: string, i: number, fallback: number, min: number, max: number): number {
+  const raw = text ? text.split(",")[i] : undefined;
+  const v = raw === undefined || raw === "" ? NaN : Number(raw);
+  return Number.isFinite(v) ? Math.min(max, Math.max(min, v)) : fallback;
+}
 
 const copy = {
   zh: {
@@ -56,18 +67,37 @@ export function OdeExplorer({ locale, preset: initialPreset = "exponential" }: {
   const phaseRef = useRef<HTMLCanvasElement>(null);
   const resizeVersion = useResizeVersion(wrapRef);
 
-  const [presetId, setPresetId] = useState(initialPreset);
+  const [presetId, setPresetId] = useUrlState("preset", initialPreset, PRESET_IDS);
   const preset = getPreset(presetId);
-  const [params, setParams] = useState<Record<string, number>>(() => Object.fromEntries(preset.params.map((p) => [p.key, p.value])));
-  const [y0, setY0] = useState<number[]>(preset.defaultY0);
-  const [h, setH] = useState(0.25);
-  const [methods, setMethods] = useState<Record<Method, boolean>>({ euler: true, midpoint: false, rk4: true });
+  // Parameters and initial values are kept in the URL as comma lists ("" = the preset's defaults),
+  // each entry clamped to its slider's range.
+  const [paramText, setParamText] = useUrlState("p", "");
+  const [y0Text, setY0Text] = useUrlState("y0", "");
+  const [h, setH] = useUrlState("h", 0.25, { min: 0.01, max: 1 });
+  const [methodText, setMethodText] = useUrlState("methods", "euler,rk4", METHOD_SETS);
 
+  const yRange = preset.bounds.x ?? preset.bounds.y;
+  const params = useMemo(
+    () => Object.fromEntries(preset.params.map((p, i) => [p.key, listValue(paramText, i, p.value, p.min, p.max)])),
+    [preset, paramText],
+  );
+  const y0 = useMemo(() => preset.defaultY0.map((v, i) => listValue(y0Text, i, v, yRange[0], yRange[1])), [preset, y0Text, yRange]);
+  const methods: Record<Method, boolean> = useMemo(() => ({ euler: methodText.includes("euler"), midpoint: false, rk4: methodText.includes("rk4") }), [methodText]);
+
+  function setParams(next: Record<string, number>) {
+    const text = preset.params.map((p) => next[p.key]).join(",");
+    setParamText(text === preset.params.map((p) => p.value).join(",") ? "" : text);
+  }
+  function setY0(next: number[]) {
+    setY0Text(next.join(",") === preset.defaultY0.join(",") ? "" : next.join(","));
+  }
+  function setMethods(next: Record<Method, boolean>) {
+    setMethodText([next.euler && "euler", next.rk4 && "rk4"].filter(Boolean).join(",") || "none");
+  }
   function choosePreset(id: string) {
-    const p = getPreset(id);
     setPresetId(id);
-    setParams(Object.fromEntries(p.params.map((q) => [q.key, q.value])));
-    setY0(p.defaultY0);
+    setParamText("");
+    setY0Text("");
   }
 
   const field = useMemo(() => preset.field(params), [preset, params]);
@@ -177,7 +207,7 @@ export function OdeExplorer({ locale, preset: initialPreset = "exponential" }: {
             {presetCopy[p.id].label[locale]}
           </button>
         ))}
-        <div className="ml-auto" dangerouslySetInnerHTML={{ __html: tex(presetCopy[presetId].tex) }} />
+        <div className="ml-auto" dangerouslySetInnerHTML={{ __html: tex(presetCopy[preset.id].tex) }} />
       </div>
 
       <div className={`grid ${preset.dimension === 2 ? "md:grid-cols-[3fr_2fr]" : ""}`}>

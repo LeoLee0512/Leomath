@@ -14,13 +14,15 @@ export interface UserDataExport {
   progress: { concept: string; status: string; updatedAt: string }[];
   exerciseAttempts: { exercise: string; answer: string; correct: boolean; at: string }[];
   comments: { on: string; slug: string; body: string; at: string; deletedAt: string | null }[];
+  /** Active and expired sign-ins (the token itself is never stored, only its hash, which is not exported). */
+  sessions: { createdAt: string; expiresAt: string }[];
 }
 
 const iso = (d: unknown) => (d instanceof Date ? d.toISOString() : String(d));
 
 /** Everything the site stores about one user, for “download my data”. The password hash is left out. */
 export async function exportUserData(userId: string, q: Queryable = pool()): Promise<UserDataExport> {
-  const [account, progress, attempts, comments] = await Promise.all([
+  const [account, progress, attempts, comments, sessions] = await Promise.all([
     q.query<{ email: string; display_name: string | null; locale: string; created_at: Date }>(
       "SELECT email, display_name, locale, created_at FROM users WHERE id = $1", [userId]),
     q.query<{ concept_slug: string; status: string; updated_at: Date }>(
@@ -29,6 +31,8 @@ export async function exportUserData(userId: string, q: Queryable = pool()): Pro
       "SELECT exercise_id, answer, correct, created_at FROM exercise_attempts WHERE user_id = $1 ORDER BY created_at", [userId]),
     q.query<{ target_type: string; target_slug: string; body: string; created_at: Date; deleted_at: Date | null }>(
       "SELECT target_type, target_slug, body, created_at, deleted_at FROM comments WHERE user_id = $1 ORDER BY created_at", [userId]),
+    q.query<{ created_at: Date; expires_at: Date }>(
+      "SELECT created_at, expires_at FROM sessions WHERE user_id = $1 ORDER BY created_at", [userId]),
   ]);
   const a = account.rows[0];
   return {
@@ -37,6 +41,7 @@ export async function exportUserData(userId: string, q: Queryable = pool()): Pro
     progress: progress.rows.map((r) => ({ concept: r.concept_slug, status: r.status, updatedAt: iso(r.updated_at) })),
     exerciseAttempts: attempts.rows.map((r) => ({ exercise: r.exercise_id, answer: r.answer, correct: r.correct, at: iso(r.created_at) })),
     comments: comments.rows.map((r) => ({ on: r.target_type, slug: r.target_slug, body: r.body, at: iso(r.created_at), deletedAt: r.deleted_at ? iso(r.deleted_at) : null })),
+    sessions: sessions.rows.map((r) => ({ createdAt: iso(r.created_at), expiresAt: iso(r.expires_at) })),
   };
 }
 

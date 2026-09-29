@@ -12,6 +12,21 @@ Depth over breadth.
 - Feedback address in the footer, on the About page and under every discussion.
 - The site publishes no links to source repositories: footer, About page and software pages drop their GitHub links; `repoUrl`/`releasesUrl` are replaced by an `openSource` flag.
 - New path: Foundations of probability (Probability spaces → Conditional probability → Random variables → Mean & variance → Central limit theorem). First concept published: Probability spaces, from the birthday problem through Kolmogorov's axioms to a proof that 23 people suffice via 1 − x ≤ e^{−x}; four exercises. The remaining four nodes are planned, with Mean & variance linked to Inner products.
+- Review fixes (a full review of the probability path, P0–P2):
+  - Security: experiment parameters from the URL are clamped to their controls' ranges and strings must be known values, so a crafted link can no longer stall or crash the server while it renders an experiment; the ODE integrator and the screening population also refuse runaway sizes. An unknown ODE preset in the URL no longer breaks the page.
+  - URL state: written with `history.replaceState(null, …)` so the Next.js router keeps it (it was lost after a server action); client-side mounts read the live URL, so Back/Forward show what the address bar says; writes pending when you navigate away are dropped; Copy link flushes synchronously (Safari). ODE parameters, initial values and methods and the Riemann sampling rule are now in the URL too.
+  - Mathematics: where the birthday curve is steepest (around n≈20), the posterior curve near x=0 (≈12x, not "hugging zero"), the MAP/L2 statement (exact form, and when weight decay equals L2), 506/730 vs ln 2 shown to six places, the non-uniform-birthdays remark made precise, the √(d/365) rescaling, the retest example's conditional-independence assumption in the experiment text; the English title of Conditional probability & Bayes now matches the Chinese.
+  - Exercises: tolerances match the decimals each statement asks for; taylor-2 asks for the sharpest bound; rounded percentages (16.7 for 1/6) are diagnosed; a solved card keeps its tick; two option notes rewritten.
+  - Privacy policy: the language cookie is set automatically; the sign-in cookie is also set at sign-up; database backups are kept at most 30 days (daily rotation in deploy/DEPLOYMENT.md), and the data export now includes sign-in records.
+  - English pages no longer show a Chinese full-width colon in "Next section".
+- Practice that coaches, from reader feedback:
+  - Every multiple-choice option has a note: wrong options name the misconception behind them, the right one says why it holds (`src/content/exercise-feedback.ts`; a test requires one note per option).
+  - Numeric answers are diagnosed: known specific mistakes first (e.g. answering with the prior instead of the posterior), then a sign error, a reciprocal, a factor of 10/100/1000 or a percentage, or a near miss outside the tolerance. The grading rule is stated under each input: exact value, or the allowed error.
+  - A correct answer gets a short green confirmation; each concept counts solved exercises and, when all are done, says so and offers the next section.
+- Experiments you can reuse:
+  - Parameters are kept in the URL (`?<experiment>.<param>=…`), read on the server so a shared link opens with the same settings; defaults are left out of the URL.
+  - Under every experiment: Reset (back to defaults, URL cleared), Copy link (with an anchor to the experiment), and on the standalone page, Back to the article.
+  - On phones only draggable canvases capture touch; the rest let the page scroll.
 - Learning first, from reader feedback:
   - Every path states its level, what it needs, who it is for and what you can do afterwards (only what its published concepts teach), with total reading time and the date its articles last changed (`scripts/content-dates.mjs` reads git history before each build into `src/content/updated.json`).
   - Home page: path cards directly under the hero; the hero buttons lead to the paths and to a sample section instead of the software page; a line of real counts (paths, concepts, experiments, exercises) and "free, no account needed"; the matrix demo is labelled as the kind of experiment every concept has; unreleased software no longer appears on the home page.

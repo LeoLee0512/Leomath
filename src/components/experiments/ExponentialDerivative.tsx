@@ -1,11 +1,12 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import type { Locale } from "@/i18n/config";
 import { Plot, fitCanvas } from "@/lib/plot";
 import { format } from "@/lib/math/linear";
 import { tex } from "@/lib/katex";
 import { useResizeVersion, useThemeColors } from "./useTheme";
+import { useUrlState } from "./urlState";
 
 const copy = {
   zh: {
@@ -37,8 +38,8 @@ export function ExponentialDerivative({ locale, compact = false }: { locale: Loc
   const wrapRef = useRef<HTMLDivElement>(null);
   const colors = useThemeColors();
   const resizeVersion = useResizeVersion(wrapRef);
-  const [a, setA] = useState(2);
-  const [h, setH] = useState(0.5);
+  const [a, setA] = useUrlState("a", 2, { min: 1.1, max: 4 });
+  const [h, setH] = useUrlState("h", 0.5, { min: 0.001, max: 1 });
   const t = copy[locale];
 
   const ratio = (Math.pow(a, h) - 1) / h; // (a^h − 1)/h → ln a as h → 0

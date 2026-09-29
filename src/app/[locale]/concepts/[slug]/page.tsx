@@ -10,7 +10,7 @@ import { mdxComponents } from "@/components/mdx-components";
 import { currentUser } from "@/lib/auth";
 import { getProgress, getExerciseSummary, type ProgressStatus } from "@/lib/progress";
 import { setProgressAction } from "@/app/actions";
-import { ExerciseCard } from "@/components/ExerciseCard";
+import { ExerciseSet } from "@/components/ExerciseSet";
 import { ArticleNav } from "@/components/ArticleNav";
 import { readingMinutes } from "@/lib/reading";
 import { Comments } from "@/components/Comments";
@@ -28,8 +28,9 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
   return pageMeta(locale, `/concepts/${slug}`, { title: c.title[locale], description: c.summary[locale], type: "article" });
 }
 
-export default async function ConceptPage({ params }: { params: Promise<{ locale: string; slug: string }> }) {
+export default async function ConceptPage({ params, searchParams }: { params: Promise<{ locale: string; slug: string }>; searchParams: Promise<Record<string, string | string[] | undefined>> }) {
   const { locale, slug } = await params;
+  const query = await searchParams;
   if (!isLocale(locale)) notFound();
   const c = getConcept(slug);
   if (!c || c.status !== "published") notFound();
@@ -65,17 +66,21 @@ export default async function ConceptPage({ params }: { params: Promise<{ locale
           <ArticleNav headings={navHeadings} label={t.learn.sections} variant="horizontal" />
         </div>
         <div className="prose-math mt-10">
-          <Content components={mdxComponents(locale, chapter)} />
+          <Content components={mdxComponents(locale, chapter, query)} />
         </div>
         <CreditLine credits={c.credits} locale={locale} className="mt-10 border-t border-rule pt-4" />
 
         {exs.length > 0 && (
           <section className="mt-16">
             <h2 id="exercises" className="display text-2xl font-semibold border-t border-rule pt-8 scroll-mt-24">{t.learn.exercises}</h2>
-            <div className="mt-6 space-y-6">
-              {exs.map((e, i) => (
-                <ExerciseCard key={e.id} exercise={e} index={i + 1} locale={locale} t={t.problems} summary={(summary as Record<string, { attempts: number; solved: boolean }>)[e.id]} />
-              ))}
+            <div className="mt-3">
+              <ExerciseSet
+                exercises={exs}
+                locale={locale}
+                t={t.problems}
+                summary={summary as Record<string, { attempts: number; solved: boolean }>}
+                next={next ? { href: `/${locale}/concepts/${next.slug}`, title: next.title[locale] } : undefined}
+              />
             </div>
           </section>
         )}
@@ -132,7 +137,7 @@ export default async function ConceptPage({ params }: { params: Promise<{ locale
             )}
             {next ? (
               <Link href={`/${locale}/concepts/${next.slug}`} className="btn btn-primary btn-small mt-3 w-full justify-center">
-                {t.paths.nextConcept}：{next.title[locale]} →
+                {t.paths.nextConcept(next.title[locale])}
               </Link>
             ) : (
               <p className="mt-3 text-xs text-muted">{t.paths.lastInPath}</p>

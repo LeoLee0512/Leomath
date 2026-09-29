@@ -43,8 +43,8 @@ export default async function PrivacyPage({ params }: { params: Promise<{ locale
 
             <h2>Cookie 与本地存储</h2>
             <ul>
-              <li><code>leomath_session</code>：登录凭证，仅在登录后设置，有效期 30 天。它是一个随机令牌，数据库中只保存其哈希；设置为 HttpOnly，页面脚本无法读取。退出登录即删除。</li>
-              <li><code>leomath_locale</code>：记住你选择的语言（中文 / English），有效期一年。</li>
+              <li><code>leomath_session</code>：登录凭证，在你注册或登录时设置，有效期 30 天。它是一个随机令牌，数据库中只保存其哈希；设置为 HttpOnly，页面脚本无法读取。退出登录即删除。</li>
+              <li><code>leomath_locale</code>：记录当前使用的界面语言（中文 / English）。访问任意中文或英文页面时自动设置，下次打开首页时沿用，有效期一年。</li>
               <li>浏览器本地存储：记住明暗主题，以及部分实验是否已显示过操作提示。这些只保存在你的浏览器里，不会发送到服务器。</li>
             </ul>
             <p>站点没有任何用于追踪或广告的 Cookie。</p>
@@ -52,8 +52,8 @@ export default async function PrivacyPage({ params }: { params: Promise<{ locale
             <h2>你的权利</h2>
             <p>登录后，在“<Link href="/zh/account">我的学习</Link>”页面底部可以自己完成：</p>
             <ul>
-              <li><strong>下载我的数据</strong>：账户信息、学习进度、全部练习提交和全部评论，导出为一个 JSON 文件。</li>
-              <li><strong>注销账户</strong>：输入密码确认后立即生效。账户以及与之关联的学习进度、练习记录和全部评论会从数据库中永久删除，无法恢复。</li>
+              <li><strong>下载我的数据</strong>：账户信息、学习进度、全部练习提交、全部评论和登录记录（时间），导出为一个 JSON 文件。</li>
+              <li><strong>注销账户</strong>：输入密码确认后立即生效。账户以及与之关联的学习进度、练习记录和全部评论会立即从数据库中删除，无法恢复。数据库备份最多保留 30 天，所以 30 天后这些数据也不会存在于任何备份中。</li>
             </ul>
             <p>如需更正信息，或无法登录时需要删除账户，请写信到 {mail}。</p>
 
@@ -79,8 +79,8 @@ export default async function PrivacyPage({ params }: { params: Promise<{ locale
 
             <h2>Cookies and local storage</h2>
             <ul>
-              <li><code>leomath_session</code>: your sign-in, set only when you log in, valid for 30 days. It is a random token of which the database stores only a hash; it is HttpOnly, so page scripts cannot read it. Logging out deletes it.</li>
-              <li><code>leomath_locale</code>: remembers your language choice (Chinese / English) for one year.</li>
+              <li><code>leomath_session</code>: your sign-in, set when you sign up or log in, valid for 30 days. It is a random token of which the database stores only a hash; it is HttpOnly, so page scripts cannot read it. Logging out deletes it.</li>
+              <li><code>leomath_locale</code>: records the interface language in use (Chinese / English). It is set automatically when you visit any Chinese or English page and used the next time you open the home page; it lasts one year.</li>
               <li>Browser local storage: remembers the light/dark theme and whether some experiments have shown their hints. It stays in your browser and is never sent to the server.</li>
             </ul>
             <p>The site sets no tracking or advertising cookies.</p>
@@ -88,8 +88,8 @@ export default async function PrivacyPage({ params }: { params: Promise<{ locale
             <h2>Your rights</h2>
             <p>When signed in, the bottom of the <Link href="/en/account">My learning</Link> page lets you do this yourself:</p>
             <ul>
-              <li><strong>Download my data</strong>: your account details, learning progress, every exercise answer and every comment, as one JSON file.</li>
-              <li><strong>Delete account</strong>: takes effect as soon as you confirm with your password. The account and its progress, exercise history and all comments are permanently removed from the database and cannot be recovered.</li>
+              <li><strong>Download my data</strong>: your account details, learning progress, every exercise answer, every comment and your sign-in records (times), as one JSON file.</li>
+              <li><strong>Delete account</strong>: takes effect as soon as you confirm with your password. The account and its progress, exercise history and all comments are removed from the database at once and cannot be recovered. Database backups are kept for at most 30 days, so after 30 days the data exists in no backup either.</li>
             </ul>
             <p>To correct information, or to delete an account you can no longer sign in to, write to {mail}.</p>
 
