@@ -14,6 +14,7 @@ import { ExerciseCard } from "@/components/ExerciseCard";
 import { ArticleNav } from "@/components/ArticleNav";
 import { readingMinutes } from "@/lib/reading";
 import { Comments } from "@/components/Comments";
+import { CreditLine } from "@/components/CreditLine";
 
 export function generateStaticParams() {
   return publishedConcepts().map((c) => ({ slug: c.slug }));
@@ -64,6 +65,7 @@ export default async function ConceptPage({ params }: { params: Promise<{ locale
         <div className="prose-math mt-10">
           <Content components={mdxComponents(locale, chapter)} />
         </div>
+        <CreditLine credits={c.credits} locale={locale} className="mt-10 border-t border-rule pt-4" />
 
         {exs.length > 0 && (
           <section className="mt-16">

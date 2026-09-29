@@ -4,6 +4,15 @@ export type Bilingual = Record<Locale, string>;
 export type ConceptStatus = "published" | "planned";
 export type Level = "highschool" | "undergrad" | "advanced" | "structure";
 
+/**
+ * Where an idea came from, when LeoMath rewrites something first seen elsewhere.
+ * Shown as a link only: `url` is the public source, `note` says what was borrowed.
+ */
+export interface Credit {
+  url: string;
+  note: Bilingual;
+}
+
 export interface Concept {
   slug: string;
   title: Bilingual;
@@ -19,6 +28,7 @@ export interface Concept {
   experiments: string[];
   /** Tools on /tools that let the reader compute with this concept. */
   tools?: Tool["id"][];
+  credits?: Credit[];
 }
 
 export interface LearningPath {
@@ -28,9 +38,13 @@ export interface LearningPath {
   /** What you will understand: shown as “If you want to understand … start here.” */
   intent: Bilingual;
   concepts: string[];
+  credits?: Credit[];
 }
 
 const b = (zh: string, en: string): Bilingual => ({ zh, en });
+
+/** Public probability demos whose ideas the probability path rewrites. Credited by link only, by the author's wish. */
+const PROB_DEMOS = "https://github.com/huzhuofan1020-svg";
 
 export interface Tool {
   id: "formula" | "plot" | "matrix";
@@ -56,7 +70,7 @@ export interface Observation {
   explanation: Bilingual;
 }
 
-export type ExperimentKind = "linear-transform" | "ode-explorer" | "exponential-derivative" | "secant-tangent" | "riemann-sums" | "taylor-approx";
+export type ExperimentKind = "linear-transform" | "ode-explorer" | "exponential-derivative" | "secant-tangent" | "riemann-sums" | "taylor-approx" | "birthday-problem";
 
 export interface Experiment {
   slug: string;
@@ -65,6 +79,7 @@ export interface Experiment {
   summary: Bilingual;
   concept: string;
   observe?: Observation;
+  credits?: Credit[];
 }
 
 
@@ -75,8 +90,13 @@ export const concepts: Concept[] = [
   { slug: "algebra", title: b("代数", "Algebra"), summary: b("结构、运算与对称。", "Structure, operations and symmetry."), parent: "mathematics", prerequisites: [], status: "planned", level: "structure", experiments: [] },
   { slug: "geometry", title: b("几何", "Geometry"), summary: b("形状、空间与变换。", "Shape, space and transformation."), parent: "mathematics", prerequisites: [], status: "planned", level: "structure", experiments: [] },
   { slug: "probability", title: b("概率", "Probability"), summary: b("不确定性的数学。", "The mathematics of uncertainty."), parent: "mathematics", prerequisites: [], status: "planned", level: "structure", experiments: [] },
-  { slug: "conditional-probability", title: b("条件概率与 Bayes", "Bayes' theorem"), summary: b("用结果反推原因。", "Reasoning from effects back to causes."), parent: "probability", prerequisites: [], status: "planned", level: "undergrad", experiments: [] },
-  { slug: "central-limit-theorem", title: b("中心极限定理", "Central limit theorem"), summary: b("分布为什么走向钟形。", "Why distributions tend to the bell curve."), parent: "probability", prerequisites: ["conditional-probability"], status: "planned", level: "undergrad", experiments: [] },
+
+  // ---- probability path ----
+  { slug: "probability-space", title: b("概率空间", "Probability spaces"), summary: b("样本空间、事件与三条公理；生日问题为什么反直觉。", "Sample space, events and three axioms; why the birthday problem defies intuition."), parent: "probability", prerequisites: [], status: "published", level: "undergrad", path: "probability", experiments: ["birthday-problem"], tools: ["plot"], credits: [{ url: `${PROB_DEMOS}/GDGX`, note: b("生日问题实验的思路参考", "Birthday-problem experiment idea from") }], },
+  { slug: "conditional-probability", title: b("条件概率与 Bayes", "Bayes' theorem"), summary: b("用结果反推原因。", "Reasoning from effects back to causes."), parent: "probability", prerequisites: ["probability-space"], status: "planned", level: "undergrad", experiments: [] },
+  { slug: "random-variables", title: b("随机变量与分布", "Random variables"), summary: b("把结果变成数；二项分布的极限是 Poisson。", "Turning outcomes into numbers; the Poisson law as a limit of binomials."), parent: "probability", prerequisites: ["conditional-probability"], status: "planned", level: "undergrad", experiments: [] },
+  { slug: "expectation-variance", title: b("期望与方差", "Mean & variance"), summary: b("协方差是一种内积，所以相关系数落在 [−1, 1]。", "Covariance is an inner product, so correlation lies in [−1, 1]."), parent: "probability", prerequisites: ["random-variables", "inner-product"], status: "planned", level: "undergrad", experiments: [] },
+  { slug: "central-limit-theorem", title: b("中心极限定理", "Central limit theorem"), summary: b("分布为什么走向钟形。", "Why distributions tend to the bell curve."), parent: "probability", prerequisites: ["expectation-variance"], status: "planned", level: "undergrad", experiments: [] },
 
   // ---- foundations (planned) ----
   { slug: "functions", title: b("函数与实数", "Functions & reals"), summary: b("实数的完备性与函数的语言。", "Completeness of the reals and the language of functions."), parent: "analysis", prerequisites: [], status: "planned", level: "highschool", experiments: [] },
@@ -130,6 +150,14 @@ export const paths: LearningPath[] = [
     subtitle: b("ODE 是什么 → 一阶方程 → 二阶线性方程 → 数值解", "What is an ODE → First-order → Second-order linear → Numerical solutions"),
     intent: b("一个系统如何随时间演化", "how a system evolves in time"),
     concepts: ["what-is-ode", "first-order-ode", "second-order-linear-ode", "numerical-ode"],
+  },
+  {
+    slug: "probability",
+    title: b("概率论基础", "Foundations of probability"),
+    subtitle: b("概率空间 → 条件概率 → 随机变量 → 期望与方差 → 中心极限定理（建设中）", "Probability spaces → Conditional probability → Random variables → Mean & variance → Central limit theorem (in progress)"),
+    intent: b("不确定性、计数与规律", "uncertainty, counting and regularity"),
+    concepts: ["probability-space"],
+    credits: [{ url: `${PROB_DEMOS}/probability-stats-hub`, note: b("路线规划参考", "Path outline informed by") }],
   },
 ];
 
@@ -241,6 +269,25 @@ export const experiments: Experiment[] = [
         "$P_n$ shares the first $n$ derivatives of $f$ at $a$, so a higher order widens the region of agreement around $a$, with the error growing like $|x-a|^{n+1}$. The region of best fit is always centred at $a$ and slides with it: a Taylor polynomial is first of all a **local** approximation. For $\\frac1{1-x}$ the series is $\\sum x^k$, convergent only for $|x|<1$; at $x=1.5$ each extra order takes $P_n$ further from the truth. Matching finitely many derivatives never guarantees convergence far away; the radius of convergence is a property of the series itself."
       ),
     },
+  },
+  {
+    slug: "birthday-problem",
+    kind: "birthday-problem",
+    title: b("生日问题", "The birthday problem"),
+    summary: b("改变人数，逐个班级地模拟生日，看频率如何走向公式给出的概率；对比精确值与指数下界。", "Change the group size, simulate class after class, and watch the frequency approach the formula; compare the exact value with the exponential bound."),
+    concept: "probability-space",
+    observe: {
+      questions: [
+        b("人数从 10 拖到 60，曲线在哪一段涨得最快？至少多少人时概率超过一半？", "Drag the group size from 10 to 60. Where does the curve rise fastest? From how many people on is the probability above one half?"),
+        b("n = 23 时，“两人同一天”的概率约 50%，可“有人和第一个人同一天”只有约 6%。两者差在哪里？", "At n = 23 “some two share a day” is about 50%, yet “someone shares the first person's day” is only about 6%. What is the difference?"),
+        b("只模拟 10 个班，频率和理论值差多少？模拟 1000 个班之后呢？", "Simulate only 10 classes: how far is the frequency from the theory? And after 1000 classes?"),
+      ],
+      explanation: b(
+        "精确曲线在 $n\\approx20$ 到 $40$ 之间最陡，$n=23$ 时第一次超过 $\\tfrac12$。关键在**对数**而不在人数：$23$ 人有 $\\binom{23}{2}=253$ 对，每一对都可能撞上；而“和第一个人同一天”只涉及 $22$ 对，概率 $1-(364/365)^{22}\\approx0.059$。频率是随机的，模拟越多越接近公式，偏差大约按 $1/\\sqrt N$ 缩小：这是后面大数定律要说清楚的事。",
+        "The exact curve is steepest between $n\\approx20$ and $40$ and first exceeds $\\tfrac12$ at $n=23$. What matters is the number of **pairs**, not people: $23$ people make $\\binom{23}{2}=253$ pairs, each a chance of a match; “sharing the first person's day” involves only $22$ pairs, probability $1-(364/365)^{22}\\approx0.059$. A frequency is random; the more classes simulated, the closer it gets, the gap shrinking roughly like $1/\\sqrt N$. Making that precise is the job of the law of large numbers later on."
+      ),
+    },
+    credits: [{ url: `${PROB_DEMOS}/GDGX`, note: b("实验思路参考", "Experiment idea from") }],
   },
 ];
 

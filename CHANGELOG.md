@@ -11,6 +11,9 @@ Depth over breadth.
 - Comments: every concept, experiment and software page ends with a discussion section. Signed-in users post plain text with `$…$` maths (2000 characters, 20 s cooldown) and delete their own comments; accounts listed in `ADMIN_EMAILS` can delete any. Migration `002_comments.sql`.
 - Feedback address in the footer, on the About page and under every discussion.
 - The site publishes no links to source repositories: footer, About page and software pages drop their GitHub links; `repoUrl`/`releasesUrl` are replaced by an `openSource` flag.
+- New path: Foundations of probability (Probability spaces → Conditional probability → Random variables → Mean & variance → Central limit theorem). First concept published: Probability spaces, from the birthday problem through Kolmogorov's axioms to a proof that 23 people suffice via 1 − x ≤ e^{−x}; four exercises. The remaining four nodes are planned, with Mean & variance linked to Inner products.
+- New experiment: the birthday problem (exact curve, exponential bound, "someone shares the first person's day", class-by-class simulation on a year strip).
+- Credits: concepts, experiments and paths can declare `credits` (a note and a public URL). They render under the experiment frame, at the end of the article and under the path title, as a link only. This is the one kind of outside link the site publishes: the probability path rewrites ideas from public demos at github.com/huzhuofan1020-svg.
 
 ## 0.1.2 — 2026-09-29
 

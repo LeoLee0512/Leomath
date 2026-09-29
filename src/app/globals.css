@@ -183,6 +183,11 @@ button, input {
 .mblock-experiment .mblock-head { margin-bottom: 0.6em; }
 .mblock-experiment .mblock-head b { color: var(--leo); }
 
+/* Credits: where a rewritten idea came from */
+.credit-line { font-family: var(--font-ui); font-size: 0.8rem; color: var(--muted); }
+.credit-line a { color: var(--ink-2); text-decoration: underline; text-decoration-color: var(--rule-2); text-underline-offset: 2px; overflow-wrap: anywhere; }
+.credit-line a:hover { color: var(--leo); text-decoration-color: var(--leo); }
+
 /* Experiments */
 .exp-frame {
   border: 1px solid var(--rule);

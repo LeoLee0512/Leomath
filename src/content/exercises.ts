@@ -248,6 +248,36 @@ export const exercises: Exercise[] = [
     hint: b("$(h/2)^4=h^4/16$。", "$(h/2)^4=h^4/16$."),
     solution: b("误差与 $h^4$ 成比例，所以减半后约为 $1/16$。", "Error scales like $h^4$, so halving $h$ divides it by about 16."),
   },
+  // ---- probability space ----
+  {
+    id: "probability-space-1", concept: "probability-space", kind: "numeric",
+    statement: b("掷两颗均匀骰子，点数之和为 $7$ 的概率是多少？（可以填分数）", "Roll two fair dice. What is the probability that the sum is $7$? (A fraction is fine.)"),
+    answer: 1 / 6, tolerance: 1e-3,
+    hint: b("样本空间是有序对 $(i,j)$，共 $36$ 个，等可能。", "The sample space is the $36$ equally likely ordered pairs $(i,j)$."),
+    solution: b("和为 $7$ 的有序对是 $(1,6),(2,5),\\dots,(6,1)$，共 $6$ 个，概率 $\\frac6{36}=\\frac16$。注意 $(1,6)$ 与 $(6,1)$ 是不同的样本点。", "The ordered pairs with sum $7$ are $(1,6),(2,5),\\dots,(6,1)$: six of them, so the probability is $\\frac6{36}=\\frac16$. Note that $(1,6)$ and $(6,1)$ are different outcomes."),
+  },
+  {
+    id: "probability-space-2", concept: "probability-space", kind: "numeric",
+    statement: b("已知 $P(A)=0.5$，$P(B)=0.4$，$P(A\\cup B)=0.7$。求 $P(A\\cap B)$。", "Given $P(A)=0.5$, $P(B)=0.4$ and $P(A\\cup B)=0.7$, find $P(A\\cap B)$."),
+    answer: 0.2, tolerance: 1e-6,
+    hint: b("用加法公式 $P(A\\cup B)=P(A)+P(B)-P(A\\cap B)$。", "Use $P(A\\cup B)=P(A)+P(B)-P(A\\cap B)$."),
+    solution: b("$P(A\\cap B)=0.5+0.4-0.7=0.2$。$P(A)+P(B)=0.9>0.7$，多出的 $0.2$ 正是交集被数了两次的部分。", "$P(A\\cap B)=0.5+0.4-0.7=0.2$. The sum $P(A)+P(B)=0.9$ exceeds $0.7$ by exactly the intersection, which was counted twice."),
+  },
+  {
+    id: "probability-space-3", concept: "probability-space", kind: "numeric",
+    statement: b("$3$ 个人中至少两人同一天生日的概率是多少？（按 $365$ 天均匀计，保留四位小数）", "What is the probability that among $3$ people at least two share a birthday? (Uniform over $365$ days; four decimals.)"),
+    answer: 1 - (364 * 363) / (365 * 365), tolerance: 1e-4,
+    hint: b("先算补事件\"三人生日两两不同\"。", "Compute the complement first: all three birthdays different."),
+    solution: b("$1-\\frac{365\\cdot364\\cdot363}{365^3}=1-\\frac{364\\cdot363}{365^2}\\approx0.0082$。和 $\\binom32\\cdot\\frac1{365}\\approx0.0082$ 几乎一样：人少时，概率约等于\"对数 × 每对撞上的概率\"。", "$1-\\frac{365\\cdot364\\cdot363}{365^3}=1-\\frac{364\\cdot363}{365^2}\\approx0.0082$, almost exactly $\\binom32\\cdot\\frac1{365}\\approx0.0082$: for small groups the probability is about \"pairs × chance per pair\"."),
+  },
+  {
+    id: "probability-space-4", concept: "probability-space", kind: "choice",
+    statement: b("一个 $23$ 人的班里，**有人和你同一天生日**（你是其中之一）的概率约为？", "In a class of $23$ that includes you, the probability that **someone shares your birthday** is about"),
+    options: [b("$6\\%$", "$6\\%$"), b("$25\\%$", "$25\\%$"), b("$51\\%$", "$51\\%$"), b("$94\\%$", "$94\\%$")],
+    correct: 0,
+    hint: b("这里只有 $22$ 对：你和其他每个人。", "Only $22$ pairs matter here: you and each other person."),
+    solution: b("$1-\\bigl(\\frac{364}{365}\\bigr)^{22}\\approx0.059$。$51\\%$ 是\"任意两人同一天\"的概率，那里有 $253$ 对。", "$1-\\bigl(\\frac{364}{365}\\bigr)^{22}\\approx0.059$. The $51\\%$ is for \"some two people share\", which involves $253$ pairs."),
+  },
 ];
 
 export function exercisesForConcept(slug: string): Exercise[] {

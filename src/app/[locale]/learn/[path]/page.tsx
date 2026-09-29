@@ -9,6 +9,7 @@ import { currentUser } from "@/lib/auth";
 import { getProgress } from "@/lib/progress";
 import { KnowledgeTree } from "@/components/KnowledgeTree";
 import { readingMinutesMap } from "@/lib/reading";
+import { CreditLine } from "@/components/CreditLine";
 
 export function generateStaticParams() {
   return paths.map((p) => ({ path: p.slug }));
@@ -35,6 +36,7 @@ export default async function PathPage({ params }: { params: Promise<{ locale: s
       <p className="eyebrow"><Link href={`/${locale}/learn`} className="hover:text-ink">{t.learn.title}</Link></p>
       <h1 className="display text-4xl font-semibold mt-3">{p.title[locale]}</h1>
       <p className="mt-3 text-ink-2 text-lg">{p.subtitle[locale]}</p>
+      <CreditLine credits={p.credits} locale={locale} className="mt-3" />
 
       <div className="mt-12 grid gap-12">
         <ol className="space-y-px bg-rule border border-rule">
