@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { birthdayBound, birthdayExact, pairs, sameAsMine, sampleBirthdays, sharedDays, smallestGroup } from "@/lib/math/probability";
+import { birthdayBound, birthdayExact, conditionals, intersectionRange, pairs, posterior, sameAsMine, sampleBirthdays, screeningCounts, sharedDays, smallestGroup } from "@/lib/math/probability";
 
 describe("birthday problem", () => {
   it("matches the known exact values", () => {
@@ -30,5 +30,41 @@ describe("birthday problem", () => {
     let hits = 0;
     for (let i = 0; i < trials; i++) if (sharedDays(sampleBirthdays(23, rng)).size > 0) hits++;
     expect(Math.abs(hits / trials - birthdayExact(23))).toBeLessThan(0.02);
+  });
+});
+
+describe("conditional probability and Bayes", () => {
+  it("screening posterior matches the article's numbers", () => {
+    const p1 = posterior(0.01, 0.95, 0.08);
+    expect(p1).toBeCloseTo(0.0095 / (0.0095 + 0.0792), 12);
+    expect(p1).toBeGreaterThan(0.1);
+    expect(p1).toBeLessThan(0.11);
+    const p2 = posterior(p1, 0.95, 0.08);
+    expect(p2).toBeCloseTo(0.5875, 3);
+  });
+  it("a perfect test and a useless test behave as expected", () => {
+    expect(posterior(0.3, 1, 0)).toBe(1);
+    expect(posterior(0.3, 0.6, 0.6)).toBeCloseTo(0.3, 12);
+  });
+  it("expected counts add up", () => {
+    const c = screeningCounts(1000, 0.01, 0.95, 0.08);
+    expect(c.sick + c.healthy).toBe(1000);
+    expect(c.tp + c.fn).toBe(c.sick);
+    expect(c.fp + c.tn).toBe(c.healthy);
+    expect(c).toMatchObject({ sick: 10, tp: 10, fp: 79 });
+  });
+  it("independence means B has the same share inside A and outside A", () => {
+    const c = conditionals(0.5, 0.4, 0.2);
+    expect(c.bGivenA).toBeCloseTo(0.4, 12);
+    expect(c.bGivenNotA).toBeCloseTo(0.4, 12);
+    expect(c.dependence).toBeCloseTo(0, 12);
+    expect(c.aGivenB).toBeCloseTo(0.5, 12);
+    expect(c.union).toBeCloseTo(0.7, 12);
+    expect(conditionals(0.3, 0.4, 0).dependence).toBeLessThan(0);
+  });
+  it("Fréchet bounds", () => {
+    expect(intersectionRange(0.7, 0.6)[0]).toBeCloseTo(0.3, 12);
+    expect(intersectionRange(0.7, 0.6)[1]).toBeCloseTo(0.6, 12);
+    expect(intersectionRange(0.2, 0.3)).toEqual([0, 0.2]);
   });
 });

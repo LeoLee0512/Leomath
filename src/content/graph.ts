@@ -70,7 +70,7 @@ export interface Observation {
   explanation: Bilingual;
 }
 
-export type ExperimentKind = "linear-transform" | "ode-explorer" | "exponential-derivative" | "secant-tangent" | "riemann-sums" | "taylor-approx" | "birthday-problem";
+export type ExperimentKind = "linear-transform" | "ode-explorer" | "exponential-derivative" | "secant-tangent" | "riemann-sums" | "taylor-approx" | "birthday-problem" | "conditioning" | "bayes-screening";
 
 export interface Experiment {
   slug: string;
@@ -93,7 +93,7 @@ export const concepts: Concept[] = [
 
   // ---- probability path ----
   { slug: "probability-space", title: b("概率空间", "Probability spaces"), summary: b("样本空间、事件与三条公理；生日问题为什么反直觉。", "Sample space, events and three axioms; why the birthday problem defies intuition."), parent: "probability", prerequisites: [], status: "published", level: "undergrad", path: "probability", experiments: ["birthday-problem"], tools: ["plot"], credits: [{ url: `${PROB_DEMOS}/GDGX`, note: b("生日问题实验的思路参考", "Birthday-problem experiment idea from") }], },
-  { slug: "conditional-probability", title: b("条件概率与 Bayes", "Bayes' theorem"), summary: b("用结果反推原因。", "Reasoning from effects back to causes."), parent: "probability", prerequisites: ["probability-space"], status: "planned", level: "undergrad", experiments: [] },
+  { slug: "conditional-probability", title: b("条件概率与 Bayes", "Bayes' theorem"), summary: b("知道一件事发生了，就把样本空间缩小到它；再用结果反推原因。", "Knowing an event occurred shrinks the sample space to it; then reason from effects back to causes."), parent: "probability", prerequisites: ["probability-space"], status: "published", level: "undergrad", path: "probability", experiments: ["bayes-screening", "conditioning"], tools: ["plot"], credits: [{ url: `${PROB_DEMOS}/ybs`, note: b("筛查实验的思路参考", "Screening experiment idea from") }, { url: `${PROB_DEMOS}/Venn`, note: b("事件关系实验的思路参考", "Event-relations experiment idea from") }] },
   { slug: "random-variables", title: b("随机变量与分布", "Random variables"), summary: b("把结果变成数；二项分布的极限是 Poisson。", "Turning outcomes into numbers; the Poisson law as a limit of binomials."), parent: "probability", prerequisites: ["conditional-probability"], status: "planned", level: "undergrad", experiments: [] },
   { slug: "expectation-variance", title: b("期望与方差", "Mean & variance"), summary: b("协方差是一种内积，所以相关系数落在 [−1, 1]。", "Covariance is an inner product, so correlation lies in [−1, 1]."), parent: "probability", prerequisites: ["random-variables", "inner-product"], status: "planned", level: "undergrad", experiments: [] },
   { slug: "central-limit-theorem", title: b("中心极限定理", "Central limit theorem"), summary: b("分布为什么走向钟形。", "Why distributions tend to the bell curve."), parent: "probability", prerequisites: ["expectation-variance"], status: "planned", level: "undergrad", experiments: [] },
@@ -156,7 +156,7 @@ export const paths: LearningPath[] = [
     title: b("概率论基础", "Foundations of probability"),
     subtitle: b("概率空间 → 条件概率 → 随机变量 → 期望与方差 → 中心极限定理（建设中）", "Probability spaces → Conditional probability → Random variables → Mean & variance → Central limit theorem (in progress)"),
     intent: b("不确定性、计数与规律", "uncertainty, counting and regularity"),
-    concepts: ["probability-space"],
+    concepts: ["probability-space", "conditional-probability"],
     credits: [{ url: `${PROB_DEMOS}/probability-stats-hub`, note: b("路线规划参考", "Path outline informed by") }],
   },
 ];
@@ -288,6 +288,44 @@ export const experiments: Experiment[] = [
       ),
     },
     credits: [{ url: `${PROB_DEMOS}/GDGX`, note: b("实验思路参考", "Experiment idea from") }],
+  },
+  {
+    slug: "bayes-screening",
+    kind: "bayes-screening",
+    title: b("筛查中的 Bayes", "Bayes in screening"),
+    summary: b("一千个人，按患病与否、检测阴阳分成四块。改变患病率、灵敏度和误报率，看阳性的人里真正患病的占多少；再对阳性者复检一次。", "A thousand people, split by illness and test result. Change the prevalence, sensitivity and false-positive rate and see what share of positives are really ill; then retest the positives."),
+    concept: "conditional-probability",
+    observe: {
+      questions: [
+        b("默认参数下，阳性的人里真正患病的有几个？为什么灵敏度高达 95%，这个比例却这么低？", "With the default settings, how many of the positives are actually ill? Why is that share so low when the sensitivity is 95%?"),
+        b("把患病率从 1% 拖到 20%，后验概率怎样变？检测本身并没有变。", "Drag the prevalence from 1% to 20%. How does the posterior change? The test itself has not changed."),
+        b("打开“复检阳性者”：为什么同一个检测做第二次，结论就可靠得多？", "Turn on “Retest the positives”. Why does the same test, taken a second time, give a much more reliable answer?"),
+      ],
+      explanation: b(
+        "默认参数下约 $10$ 个病人几乎全被查出，可 $990$ 个健康人里有约 $79$ 个误报，阳性者约 $89$ 人，真正患病的只占约 $11\\%$。灵敏度回答的是 $P(+\\mid\\text{病})$，我们关心的是 $P(\\text{病}\\mid+)$，两者之间隔着**先验**：病人太少，误报的绝对人数就压过了真阳性。患病率升高时，同样的检测给出的后验大幅上升，所以同一张化验单在不同人群里含义不同。复检时，第一次阳性的人群患病率已经是 $11\\%$ 而不是 $1\\%$：上一次的后验成了这一次的先验，后验跳到约 $59\\%$。",
+        "With the defaults, the roughly $10$ ill people are almost all caught, but about $79$ of the $990$ healthy people test positive too: of about $89$ positives only about $11\\%$ are ill. Sensitivity is $P(+\\mid\\text{ill})$; what we want is $P(\\text{ill}\\mid+)$, and between them stands the **prior**: the ill are so rare that false alarms outnumber true ones. Raise the prevalence and the same test gives a much higher posterior, so the same lab report means different things in different populations. On retesting, the prevalence among first-time positives is already $11\\%$, not $1\\%$: yesterday's posterior is today's prior, and the posterior jumps to about $59\\%$."
+      ),
+    },
+    credits: [{ url: `${PROB_DEMOS}/ybs`, note: b("实验思路参考", "Experiment idea from") }],
+  },
+  {
+    slug: "conditioning",
+    kind: "conditioning",
+    title: b("条件概率是面积之比", "Conditioning as a ratio of areas"),
+    summary: b("把样本空间画成面积为 1 的正方形，A 占左边一列。调 P(A)、P(B)、P(A∩B)，看 B 在 A 内外的高度；再“以 B 为条件”，只看 B 里面。", "Draw the sample space as a unit square with A as its left column. Adjust P(A), P(B), P(A∩B) and watch the height of B inside and outside A; then condition on B and look only inside it."),
+    concept: "conditional-probability",
+    observe: {
+      questions: [
+        b("按“独立”：B 变成了什么形状？这时 P(B | A) 和 P(B) 是什么关系？", "Press “Independent”. What shape does B take? How do P(B | A) and P(B) compare?"),
+        b("按“互斥”：A 和 B 看起来“毫不相干”，它们独立吗？", "Press “Mutually exclusive”. A and B look “unrelated”. Are they independent?"),
+        b("打开“以 B 为条件”，P(A | B) 是哪两块面积之比？它和 P(B | A) 一般相等吗？", "Turn on “Condition on B”. Which two areas does P(A | B) compare? Is it usually equal to P(B | A)?"),
+      ],
+      explanation: b(
+        "独立时 B 在 A 内外一样高，拼成一条水平带：知道 $A$ 是否发生，完全不改变 $B$ 所占的比例，即 $P(B\\mid A)=P(B)$。互斥时 B 在 A 里面高度为零：一旦 $A$ 发生，$B$ 就**不可能**发生，这是最强的相关，而不是无关；只要 $P(A),P(B)>0$，互斥的事件一定不独立。以 $B$ 为条件就是把 $B$ 当成新的全空间，$P(A\\mid B)=\\dfrac{P(A\\cap B)}{P(B)}$ 是交集占 $B$ 的比例；$P(B\\mid A)$ 是交集占 $A$ 的比例，分母不同，一般不相等。",
+        "When independent, B has the same height inside and outside A and forms a horizontal band: knowing whether $A$ occurred does not change $B$'s share at all, $P(B\\mid A)=P(B)$. When mutually exclusive, B has zero height inside A: once $A$ occurs, $B$ **cannot** occur. That is the strongest kind of dependence, not unrelatedness; as long as $P(A),P(B)>0$, exclusive events are never independent. Conditioning on $B$ makes $B$ the new whole space: $P(A\\mid B)=\\dfrac{P(A\\cap B)}{P(B)}$ is the intersection's share of $B$, while $P(B\\mid A)$ is its share of $A$. Different denominators, so in general they differ."
+      ),
+    },
+    credits: [{ url: `${PROB_DEMOS}/Venn`, note: b("实验思路参考", "Experiment idea from") }],
   },
 ];
 

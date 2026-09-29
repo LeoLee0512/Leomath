@@ -7,6 +7,8 @@ import { SecantTangent } from "./SecantTangent";
 import { RiemannSums } from "./RiemannSums";
 import { TaylorApprox } from "./TaylorApprox";
 import { BirthdayProblem } from "./BirthdayProblem";
+import { BayesScreening } from "./BayesScreening";
+import { Conditioning } from "./Conditioning";
 import { ObservationPanel } from "./ObservationPanel";
 import { CreditLine } from "../CreditLine";
 
@@ -46,5 +48,9 @@ function renderExperiment(kind: ExperimentKind, locale: Locale, preset?: string,
       return <TaylorApprox locale={locale} />;
     case "birthday-problem":
       return <BirthdayProblem locale={locale} />;
+    case "bayes-screening":
+      return <BayesScreening locale={locale} />;
+    case "conditioning":
+      return <Conditioning locale={locale} />;
   }
 }

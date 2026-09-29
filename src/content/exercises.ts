@@ -278,6 +278,36 @@ export const exercises: Exercise[] = [
     hint: b("这里只有 $22$ 对：你和其他每个人。", "Only $22$ pairs matter here: you and each other person."),
     solution: b("$1-\\bigl(\\frac{364}{365}\\bigr)^{22}\\approx0.059$。$51\\%$ 是\"任意两人同一天\"的概率，那里有 $253$ 对。", "$1-\\bigl(\\frac{364}{365}\\bigr)^{22}\\approx0.059$. The $51\\%$ is for \"some two people share\", which involves $253$ pairs."),
   },
+  // ---- conditional probability ----
+  {
+    id: "conditional-probability-1", concept: "conditional-probability", kind: "numeric",
+    statement: b("掷两颗均匀骰子，已知点数之和为 $8$，求第一颗是 $6$ 的条件概率。（可以填分数）", "Roll two fair dice. Given that the sum is $8$, what is the probability that the first die shows $6$? (A fraction is fine.)"),
+    answer: 1 / 5, tolerance: 1e-3,
+    hint: b("已知条件把样本空间缩小成和为 $8$ 的那些有序对。", "The condition shrinks the sample space to the ordered pairs with sum $8$."),
+    solution: b("和为 $8$ 的有序对是 $(2,6),(3,5),(4,4),(5,3),(6,2)$，共 $5$ 个，其中第一颗是 $6$ 的只有 $(6,2)$，所以是 $\\frac15$。它比无条件的 $\\frac16$ 大：知道和较大，第一颗大的可能性就上升了。", "The ordered pairs with sum $8$ are $(2,6),(3,5),(4,4),(5,3),(6,2)$: five of them, and only $(6,2)$ has a $6$ first, so the answer is $\\frac15$. It exceeds the unconditional $\\frac16$: a large sum makes a large first die more likely."),
+  },
+  {
+    id: "conditional-probability-2", concept: "conditional-probability", kind: "numeric",
+    statement: b("甲、乙两台机器分别生产 $60\\%$ 和 $40\\%$ 的零件，次品率分别为 $2\\%$ 和 $5\\%$。随机抽到一个次品，它来自乙的概率是多少？（保留三位小数）", "Machines A and B make $60\\%$ and $40\\%$ of the parts, with defect rates $2\\%$ and $5\\%$. A randomly chosen part is defective. What is the probability it came from B? (Three decimals.)"),
+    answer: 0.625, tolerance: 1e-3,
+    hint: b("先用全概率公式算出次品的总概率。", "First find the total probability of a defect with the law of total probability."),
+    solution: b("$P(\\text{次})=0.6\\times0.02+0.4\\times0.05=0.032$，$P(\\text{乙}\\mid\\text{次})=\\frac{0.4\\times0.05}{0.032}=0.625$。乙只生产四成，却贡献了六成多的次品。", "$P(\\text{defect})=0.6\\times0.02+0.4\\times0.05=0.032$, so $P(B\\mid\\text{defect})=\\frac{0.4\\times0.05}{0.032}=0.625$. B makes only 40% of the parts but over 60% of the defects."),
+  },
+  {
+    id: "conditional-probability-3", concept: "conditional-probability", kind: "choice",
+    statement: b("设 $P(A)>0$，$P(B)>0$，且 $A$ 与 $B$ 互斥。那么 $A$ 与 $B$：", "Let $P(A)>0$, $P(B)>0$, and let $A$ and $B$ be mutually exclusive. Then $A$ and $B$ are"),
+    options: [b("一定独立", "always independent"), b("一定不独立", "never independent"), b("可能独立也可能不独立", "sometimes independent, sometimes not"), b("独立当且仅当 $P(A)=P(B)$", "independent exactly when $P(A)=P(B)$")],
+    correct: 1,
+    hint: b("比较 $P(A\\cap B)$ 与 $P(A)P(B)$。", "Compare $P(A\\cap B)$ with $P(A)P(B)$."),
+    solution: b("互斥给出 $P(A\\cap B)=0$，而 $P(A)P(B)>0$，所以乘积公式不成立。直观上，$A$ 发生就排除了 $B$，这是最强的相关。", "Exclusivity gives $P(A\\cap B)=0$ while $P(A)P(B)>0$, so the product rule fails. Intuitively, $A$ occurring rules $B$ out: the strongest kind of dependence."),
+  },
+  {
+    id: "conditional-probability-4", concept: "conditional-probability", kind: "numeric",
+    statement: b("沿用正文的检测：患病率 $1\\%$，灵敏度 $95\\%$，误报率 $8\\%$。某人连续两次检测都呈阳性（两次检测在是否患病已知时条件独立），他患病的概率是多少？（保留两位小数）", "Use the test from the article: prevalence $1\\%$, sensitivity $95\\%$, false-positive rate $8\\%$. Someone tests positive twice (the tests are conditionally independent given the true state). What is the probability that they are ill? (Two decimals.)"),
+    answer: (0.95 * 0.95 * 0.01) / (0.95 * 0.95 * 0.01 + 0.08 * 0.08 * 0.99), tolerance: 0.006,
+    hint: b("把第一次的后验当作第二次的先验；或者直接用 $P(++\\mid\\text{病})=0.95^2$。", "Use the first posterior as the second prior, or directly $P(++\\mid\\text{ill})=0.95^2$."),
+    solution: b("$\\frac{0.95^2\\times0.01}{0.95^2\\times0.01+0.08^2\\times0.99}=\\frac{0.009025}{0.009025+0.006336}\\approx0.59$。分两步算（$0.01\\to0.107\\to0.59$）结果相同：条件独立时，Bayes 更新可以一条一条地做。", "$\\frac{0.95^2\\times0.01}{0.95^2\\times0.01+0.08^2\\times0.99}=\\frac{0.009025}{0.009025+0.006336}\\approx0.59$. Doing it in two steps ($0.01\\to0.107\\to0.59$) gives the same result: with conditional independence, Bayesian updates can be done one piece of evidence at a time."),
+  },
 ];
 
 export function exercisesForConcept(slug: string): Exercise[] {

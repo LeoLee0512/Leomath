@@ -7,6 +7,7 @@ import { birthdayBound, birthdayExact, pairs, sameAsMine, sampleBirthdays, share
 import { format } from "@/lib/math/linear";
 import { tex } from "@/lib/katex";
 import { useResizeVersion, useThemeColors } from "./useTheme";
+import { LegendItem } from "./Legend";
 
 const copy = {
   zh: {
@@ -217,19 +218,3 @@ export function BirthdayProblem({ locale }: { locale: Locale }) {
   );
 }
 
-/** One legend entry: a short line (or dot) in the series style, its name, and optionally its formula. */
-function LegendItem({ color, label, dash, dot, formula }: { color: string; label: string; dash?: string; dot?: boolean; formula?: string }) {
-  return (
-    <li className="inline-flex items-center gap-2 whitespace-nowrap">
-      <svg width="22" height="10" aria-hidden="true" className="shrink-0">
-        {dot ? (
-          <circle cx="11" cy="5" r="4" fill={color} />
-        ) : (
-          <line x1="1" y1="5" x2="21" y2="5" stroke={color} strokeWidth="2.2" strokeDasharray={dash} strokeLinecap={dash ? "butt" : "round"} />
-        )}
-      </svg>
-      <span>{label}</span>
-      {formula && <span className="text-muted" dangerouslySetInnerHTML={{ __html: tex(formula) }} />}
-    </li>
-  );
-}

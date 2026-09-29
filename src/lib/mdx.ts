@@ -60,6 +60,15 @@ function rehypeHeadings(headings: Heading[]) {
   };
 }
 
+/**
+ * Articles write display equations on one line, `$$…$$`. remark-math parses that as inline math,
+ * so a line holding nothing but `$$…$$` is rewritten into the fenced block form it was meant as.
+ * Keep in sync with scripts/compile-mdx.mjs.
+ */
+export function displayMathBlocks(source: string): string {
+  return source.replace(/^([ \t]*)\$\$(?!\$)(.+?)\$\$[ \t]*$/gm, "$1$$$$\n$1$2\n$1$$$$");
+}
+
 /** Load content/concepts/<slug>/<locale>.mdx, falling back to Chinese when a translation is missing. */
 export async function loadConceptArticle(slug: string, locale: Locale): Promise<LoadedArticle | null> {
   if (!/^[a-z0-9-]+$/.test(slug)) return null;
@@ -73,7 +82,7 @@ export async function loadConceptArticle(slug: string, locale: Locale): Promise<
   }
   const source = await readFile(file, "utf8");
   const headings: Heading[] = [];
-  const { default: Content } = await evaluate(source, {
+  const { default: Content } = await evaluate(displayMathBlocks(source), {
     ...runtime,
     remarkPlugins: [remarkGfm, remarkMath],
     rehypePlugins: [[rehypeKatex, { strict: "ignore", trust: false }], rehypeHeadings(headings)],
