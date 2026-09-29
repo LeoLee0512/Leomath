@@ -5,7 +5,7 @@ import type { Locale } from "@/i18n/config";
 import { Plot, fitCanvas } from "@/lib/plot";
 import { getPreset } from "@/lib/math/functions";
 import { format } from "@/lib/math/linear";
-import { tex } from "@/lib/katex";
+import { useTex } from "./texContext";
 import { useResizeVersion, useThemeColors } from "./useTheme";
 import { useUrlState } from "./urlState";
 
@@ -18,6 +18,7 @@ const IDS = ["exp", "sin", "square", "cubic", "ln"];
 
 export function SecantTangent({ locale }: { locale: Locale }) {
   const t = copy[locale];
+  const quotientHtml = useTex("quotient");
   const colors = useThemeColors();
   const wrapRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -73,7 +74,7 @@ export function SecantTangent({ locale }: { locale: Locale }) {
         </label>
       </div>
       <div className="border-t border-rule px-4 py-3 flex flex-wrap items-center gap-x-6 gap-y-2 exp-control">
-        <span dangerouslySetInnerHTML={{ __html: tex(`\\frac{f(x_0+h)-f(x_0)}{h}`) }} />
+        <span dangerouslySetInnerHTML={{ __html: quotientHtml }} />
         <span><span className="text-muted">{t.secant}</span> <span className="mono text-e1">{format(secant, 4)}</span></span>
         <span><span className="text-muted">{t.tangent}</span> <span className="mono text-leo">{format(tangent, 4)}</span></span>
         <span><span className="text-muted">{t.gap}</span> <span className="mono text-ink">{format(Math.abs(secant - tangent), 4)}</span></span>

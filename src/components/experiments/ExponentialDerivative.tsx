@@ -4,7 +4,7 @@ import { useCallback, useEffect, useRef } from "react";
 import type { Locale } from "@/i18n/config";
 import { Plot, fitCanvas } from "@/lib/plot";
 import { format } from "@/lib/math/linear";
-import { tex } from "@/lib/katex";
+import { useTex } from "./texContext";
 import { useResizeVersion, useThemeColors } from "./useTheme";
 import { useUrlState } from "./urlState";
 
@@ -41,6 +41,7 @@ export function ExponentialDerivative({ locale, compact = false }: { locale: Loc
   const [a, setA] = useUrlState("a", 2, { min: 1.1, max: 4 });
   const [h, setH] = useUrlState("h", 0.5, { min: 0.001, max: 1 });
   const t = copy[locale];
+  const quotientHtml = useTex("quotient");
 
   const ratio = (Math.pow(a, h) - 1) / h; // (a^h − 1)/h → ln a as h → 0
   const closeness = Math.abs(ratio - 1);
@@ -95,7 +96,7 @@ export function ExponentialDerivative({ locale, compact = false }: { locale: Loc
         </button>
       </div>
       <div className="border-t border-rule px-4 py-3 flex flex-wrap items-center gap-x-6 gap-y-2">
-        <div dangerouslySetInnerHTML={{ __html: tex(`\\frac{a^{x+h}-a^{x}}{h}=a^{x}\\cdot\\frac{a^{h}-1}{h}`) }} />
+        <div dangerouslySetInnerHTML={{ __html: quotientHtml }} />
         <div className="exp-control">
           <span className="text-muted">{t.ratio}</span>{" "}
           <span className="mono text-ink">{format(ratio, 4)}</span>

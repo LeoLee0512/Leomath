@@ -5,7 +5,7 @@ import type { Locale } from "@/i18n/config";
 import { Plot, fitCanvas } from "@/lib/plot";
 import { getPreset } from "@/lib/math/functions";
 import { format } from "@/lib/math/linear";
-import { tex } from "@/lib/katex";
+import { useTex } from "./texContext";
 import { useResizeVersion, useThemeColors } from "./useTheme";
 import { useUrlState } from "./urlState";
 
@@ -20,6 +20,7 @@ const RULES: readonly Rule[] = ["left", "right", "mid"];
 
 export function RiemannSums({ locale }: { locale: Locale }) {
   const t = copy[locale];
+  const sumHtml = useTex("sum");
   const colors = useThemeColors();
   const wrapRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -109,7 +110,7 @@ export function RiemannSums({ locale }: { locale: Locale }) {
         </label>
       </div>
       <div className="border-t border-rule px-4 py-3 flex flex-wrap items-center gap-x-6 gap-y-2 exp-control">
-        <span dangerouslySetInnerHTML={{ __html: tex(`\\sum_{i=1}^{${n}} f(\\xi_i)\\,\\Delta x`) }} />
+        <span dangerouslySetInnerHTML={{ __html: sumHtml }} />
         <span><span className="text-muted">{t.sum}</span> <span className="mono text-leo">{format(sum, 5)}</span></span>
         {Number.isFinite(exact) && (<>
           <span><span className="text-muted">{t.exact}</span> <span className="mono text-ink">{format(exact, 5)}</span></span>

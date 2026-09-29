@@ -1,10 +1,8 @@
-import { tex } from "@/lib/katex";
-
 /**
- * One legend entry: a swatch in the series style (line, dot, ring or filled square), its name, and optionally its formula.
+ * One legend entry: a swatch in the series style (line, dot, ring or filled square), its name, and optionally its formula (server-rendered HTML).
  * Pass colours as CSS values (e.g. "var(--e1)"), so the swatch is right before hydration and in dark mode.
  */
-export function LegendItem({ color, label, dash, dot, ring, square, squareRing, formula }: { color: string; label: string; dash?: string; dot?: boolean; ring?: boolean; square?: boolean; squareRing?: boolean; formula?: string }) {
+export function LegendItem({ color, label, dash, dot, ring, square, squareRing, formulaHtml }: { color: string; label: string; dash?: string; dot?: boolean; ring?: boolean; square?: boolean; squareRing?: boolean; formulaHtml?: string }) {
   return (
     <li className="inline-flex items-center gap-2 whitespace-nowrap">
       <svg width="22" height="10" aria-hidden="true" className="shrink-0">
@@ -21,7 +19,7 @@ export function LegendItem({ color, label, dash, dot, ring, square, squareRing, 
         )}
       </svg>
       <span>{label}</span>
-      {formula && <span className="text-muted" dangerouslySetInnerHTML={{ __html: tex(formula) }} />}
+      {formulaHtml && <span className="text-muted" dangerouslySetInnerHTML={{ __html: formulaHtml }} />}
     </li>
   );
 }

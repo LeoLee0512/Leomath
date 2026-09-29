@@ -2,8 +2,6 @@
 
 import { useState } from "react";
 import type { Locale } from "@/i18n/config";
-import type { Observation } from "@/content/graph";
-import { RichText } from "../Math";
 
 const copy = {
   zh: { title: "你观察到了什么？", lead: "先动手，再回答。想清楚之后再看解释。", show: "查看解释", hide: "收起解释" },
@@ -11,17 +9,18 @@ const copy = {
 };
 
 /** Experiment → observation → conjecture → theory: the questions that turn a visualisation into an experiment. */
-export function ObservationPanel({ observe, locale }: { observe: Observation; locale: Locale }) {
+/** Questions and explanation arrive as server-rendered HTML (maths included), so no KaTeX is needed here. */
+export function ObservationPanel({ questionsHtml, explanationHtml, locale }: { questionsHtml: string[]; explanationHtml: string; locale: Locale }) {
   const [open, setOpen] = useState(false);
   const t = copy[locale];
   return (
     <section className="mt-4 border-l-2 border-dotted border-accent-2 pl-5 py-1">
       <p className="mblock-head"><b>{t.title}</b><span className="mblock-title">{t.lead}</span></p>
       <ol className="mt-2 space-y-2 text-[0.97rem] leading-relaxed prose-math">
-        {observe.questions.map((q, i) => (
+        {questionsHtml.map((q, i) => (
           <li key={i} className="flex gap-3">
             <span className="mono text-muted shrink-0">{i + 1}.</span>
-            <span><RichText>{q[locale]}</RichText></span>
+            <span dangerouslySetInnerHTML={{ __html: q }} />
           </li>
         ))}
       </ol>
@@ -30,7 +29,7 @@ export function ObservationPanel({ observe, locale }: { observe: Observation; lo
       </button>
       {open && (
         <div className="mt-3 prose-math text-[0.97rem] border-t border-rule pt-3">
-          <RichText>{observe.explanation[locale]}</RichText>
+          <div dangerouslySetInnerHTML={{ __html: explanationHtml }} />
         </div>
       )}
     </section>

@@ -5,7 +5,7 @@ import type { Locale } from "@/i18n/config";
 import { Plot, fitCanvas } from "@/lib/plot";
 import { getPreset, taylor } from "@/lib/math/functions";
 import { format } from "@/lib/math/linear";
-import { tex } from "@/lib/katex";
+import { useTex } from "./texContext";
 import { useResizeVersion, useThemeColors } from "./useTheme";
 import { useUrlState } from "./urlState";
 
@@ -18,6 +18,7 @@ const IDS = ["sin", "cos", "exp", "ln1p", "geom"];
 
 export function TaylorApprox({ locale }: { locale: Locale }) {
   const t = copy[locale];
+  const polyHtml = useTex("poly");
   const colors = useThemeColors();
   const wrapRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -82,7 +83,7 @@ export function TaylorApprox({ locale }: { locale: Locale }) {
         </label>
       </div>
       <div className="border-t border-rule px-4 py-3 flex flex-wrap items-center gap-x-6 gap-y-2 exp-control">
-        <span dangerouslySetInnerHTML={{ __html: tex(`P_{${n}}(x)=\\sum_{k=0}^{${n}}\\frac{f^{(k)}(a)}{k!}(x-a)^{k}`) }} />
+        <span dangerouslySetInnerHTML={{ __html: polyHtml }} />
         <span><span className="text-muted">{t.maxerr}</span> <span className="mono text-ink">{maxErr < 1e-3 ? maxErr.toExponential(2) : format(maxErr, 4)}</span></span>
         {fixedCentre && <span><span className="text-muted">{t.radius}</span> <span className="mono text-ink">{p.radius}</span></span>}
       </div>

@@ -5,15 +5,15 @@ import type { Locale } from "@/i18n/config";
 import { Plot, fitCanvas } from "@/lib/plot";
 import { getPreset, integrate, presets, type Method } from "@/lib/math/ode";
 import { format } from "@/lib/math/linear";
-import { tex } from "@/lib/katex";
+import { useTex } from "./texContext";
 import { useResizeVersion, useThemeColors } from "./useTheme";
 import { useUrlState } from "./urlState";
 
-const presetCopy: Record<string, { label: Record<Locale, string>; tex: string }> = {
-  exponential: { label: { zh: "指数增长", en: "Exponential growth" }, tex: "y' = k\\,y" },
-  logistic: { label: { zh: "Logistic 增长", en: "Logistic growth" }, tex: "y' = r\\,y\\left(1-\\tfrac{y}{K}\\right)" },
-  harmonic: { label: { zh: "阻尼振子", en: "Damped oscillator" }, tex: "x'' + 2\\gamma x' + \\omega^2 x = 0" },
-  pendulum: { label: { zh: "单摆", en: "Pendulum" }, tex: "\\theta'' + \\gamma\\theta' + \\tfrac{g}{L}\\sin\\theta = 0" },
+const presetCopy: Record<string, { label: Record<Locale, string> }> = {
+  exponential: { label: { zh: "指数增长", en: "Exponential growth" } },
+  logistic: { label: { zh: "Logistic 增长", en: "Logistic growth" } },
+  harmonic: { label: { zh: "阻尼振子", en: "Damped oscillator" } },
+  pendulum: { label: { zh: "单摆", en: "Pendulum" } },
 };
 
 const PRESET_IDS = presets.map((p) => p.id);
@@ -69,6 +69,7 @@ export function OdeExplorer({ locale, preset: initialPreset = "exponential" }: {
 
   const [presetId, setPresetId] = useUrlState("preset", initialPreset, PRESET_IDS);
   const preset = getPreset(presetId);
+  const equationHtml = useTex(preset.id);
   // Parameters and initial values are kept in the URL as comma lists ("" = the preset's defaults),
   // each entry clamped to its slider's range.
   const [paramText, setParamText] = useUrlState("p", "");
@@ -207,7 +208,7 @@ export function OdeExplorer({ locale, preset: initialPreset = "exponential" }: {
             {presetCopy[p.id].label[locale]}
           </button>
         ))}
-        <div className="ml-auto" dangerouslySetInnerHTML={{ __html: tex(presetCopy[preset.id].tex) }} />
+        <div className="ml-auto" dangerouslySetInnerHTML={{ __html: equationHtml }} />
       </div>
 
       <div className={`grid ${preset.dimension === 2 ? "md:grid-cols-[3fr_2fr]" : ""}`}>

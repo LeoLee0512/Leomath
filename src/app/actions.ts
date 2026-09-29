@@ -14,6 +14,7 @@ import { checkAnswer, diagnose, getExercise, type Diagnosis } from "@/content/ex
 import { getConcept, getExperiment } from "@/content/graph";
 import { getSoftware } from "@/content/software";
 import { deleteAccount, passwordMatches } from "@/lib/account";
+import { richHtml } from "@/lib/rich";
 import { clear, clientIp, isLimited, record, FIFTEEN_MINUTES, ONE_HOUR } from "@/lib/rate-limit";
 
 export interface FormState {
@@ -134,7 +135,7 @@ export interface AnswerState {
   checked: boolean;
   correct: boolean;
   answer: string;
-  /** Coach-style note: why this answer is wrong, or why the chosen option is right. */
+  /** Coach-style note (server-rendered HTML): why this answer is wrong, or why the chosen option is right. */
   feedback?: string;
 }
 
@@ -151,13 +152,21 @@ function feedbackText(d: Diagnosis | null, locale: Locale): string | undefined {
   }
 }
 
+/** A hint or solution as HTML, fetched when the reader opens it. */
+export async function exerciseTextAction(id: string, part: "hint" | "solution", locale: string): Promise<string> {
+  const exercise = getExercise(id);
+  if (!exercise || (part !== "hint" && part !== "solution")) return "";
+  return richHtml(exercise[part][isLocale(locale) ? locale : "zh"]);
+}
+
 export async function checkAnswerAction(_prev: AnswerState, form: FormData): Promise<AnswerState> {
   const id = String(form.get("exercise") ?? "");
   const answer = String(form.get("answer") ?? "").trim();
   const exercise = getExercise(id);
   if (!exercise || !answer) return { checked: false, correct: false, answer };
   const correct = checkAnswer(exercise, answer);
-  const feedback = feedbackText(diagnose(exercise, answer), localeFrom(form));
+  const note = feedbackText(diagnose(exercise, answer), localeFrom(form));
+  const feedback = note ? richHtml(note) : undefined;
   const user = await currentUser();
   if (user) {
     await recordAttempt(user.id, id, answer, correct).catch(() => undefined);

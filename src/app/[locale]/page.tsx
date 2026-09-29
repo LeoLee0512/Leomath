@@ -16,6 +16,9 @@ import { M, MB } from "@/components/Math";
 import { readingMinutesMap } from "@/lib/reading";
 import { publishedConcepts } from "@/content/graph";
 import { pageMeta } from "@/lib/seo";
+import { TexProvider } from "@/components/experiments/texContext";
+import { formulasFor } from "@/content/experiment-tex";
+import { tex } from "@/lib/katex";
 import { VERSION } from "@/content/site";
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
@@ -122,7 +125,7 @@ export default async function Home({ params }: { params: Promise<{ locale: strin
             <p className="mt-3 text-ink-2 leading-relaxed max-w-md">{t.home.methodBoth}</p>
             <Link href={`/${locale}/concepts/derivative`} className="mt-5 inline-block text-sm text-leo hover:underline">{t.home.methodLink}</Link>
           </div>
-          <ExponentialDerivative locale={locale} compact />
+          <TexProvider html={{ quotient: tex(formulasFor("exponential-derivative", locale).quotient) }}><ExponentialDerivative locale={locale} compact /></TexProvider>
         </div>
       </section>
 

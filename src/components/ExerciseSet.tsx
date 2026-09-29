@@ -4,12 +4,12 @@ import Link from "next/link";
 import { useCallback, useState } from "react";
 import type { Locale } from "@/i18n/config";
 import type { Dictionary } from "@/i18n/dictionaries";
-import type { Exercise } from "@/content/exercises";
+import type { ExerciseView } from "@/lib/exercise-view";
 import { ExerciseCard } from "./ExerciseCard";
 
 /** A concept's exercises, with a running count and a moment of completion when the last one is solved. */
 export function ExerciseSet({ exercises, locale, t, summary, next }: {
-  exercises: Exercise[];
+  exercises: ExerciseView[];
   locale: Locale;
   t: Dictionary["problems"];
   summary: Record<string, { attempts: number; solved: boolean }>;

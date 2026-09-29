@@ -11,6 +11,7 @@ import { currentUser } from "@/lib/auth";
 import { getProgress, getExerciseSummary, type ProgressStatus } from "@/lib/progress";
 import { setProgressAction } from "@/app/actions";
 import { ExerciseSet } from "@/components/ExerciseSet";
+import { exerciseView } from "@/lib/exercise-view";
 import { ArticleNav } from "@/components/ArticleNav";
 import { readingMinutes } from "@/lib/reading";
 import { Comments } from "@/components/Comments";
@@ -75,7 +76,7 @@ export default async function ConceptPage({ params, searchParams }: { params: Pr
             <h2 id="exercises" className="display text-2xl font-semibold border-t border-rule pt-8 scroll-mt-24">{t.learn.exercises}</h2>
             <div className="mt-3">
               <ExerciseSet
-                exercises={exs}
+                exercises={exs.map((e) => exerciseView(e, locale))}
                 locale={locale}
                 t={t.problems}
                 summary={summary as Record<string, { attempts: number; solved: boolean }>}

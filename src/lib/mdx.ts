@@ -1,13 +1,14 @@
 import "server-only";
-import { readFile, access } from "node:fs/promises";
+import { readFile, access, stat } from "node:fs/promises";
 import path from "node:path";
 import { evaluate } from "@mdx-js/mdx";
 import * as runtime from "react/jsx-runtime";
 import remarkGfm from "remark-gfm";
 import remarkMath from "remark-math";
-import rehypeKatex from "rehype-katex";
+import { visit, SKIP } from "unist-util-visit";
+import { tex } from "./katex";
 import type { ComponentType } from "react";
-import type { Root, Element, Text } from "hast";
+import type { Root, Element, Text, ElementContent, RootContent } from "hast";
 import type { Locale } from "@/i18n/config";
 
 const CONTENT_ROOT = path.join(process.cwd(), "content", "concepts");
@@ -69,6 +70,62 @@ export function displayMathBlocks(source: string): string {
   return source.replace(/^([ \t]*)\$\$(?!\$)(.+?)\$\$[ \t]*$/gm, "$1$$$$\n$1$2\n$1$$$$");
 }
 
+/**
+ * Renders every formula with KaTeX at compile time and embeds it as one HTML string (`<Tex html="…">`),
+ * instead of turning KaTeX's markup into a tree of React elements. The page's React payload then carries
+ * each formula once, as a compact string, rather than as dozens of nested element records.
+ */
+function rehypeTex() {
+  const text = (node: Element): string => node.children.map((c) => (c.type === "text" ? c.value : c.type === "element" ? text(c) : "")).join("");
+  const isMath = (node: ElementContent | RootContent, kind: string): node is Element =>
+    node.type === "element" && node.tagName === "code" && Array.isArray(node.properties?.className) && node.properties.className.includes(kind);
+  const texNode = (source: string, display: boolean) => ({
+    type: display ? "mdxJsxFlowElement" : "mdxJsxTextElement",
+    name: "Tex",
+    attributes: [
+      { type: "mdxJsxAttribute", name: "html", value: tex(source, display) },
+      ...(display ? [{ type: "mdxJsxAttribute", name: "display", value: null }] : []),
+    ],
+    children: [],
+  }) as unknown as Element;
+  return () => (tree: Root) => {
+    visit(tree, "element", (node, index, parent) => {
+      if (!parent || index === undefined) return;
+      if (node.tagName === "pre" && node.children.length === 1 && isMath(node.children[0], "math-display")) {
+        parent.children[index] = texNode(text(node.children[0] as Element), true);
+        return [SKIP, index];
+      }
+      if (isMath(node, "math-inline")) {
+        parent.children[index] = texNode(text(node), false);
+        return [SKIP, index];
+      }
+    });
+  };
+}
+
+/**
+ * Compiled articles, kept per file and re-compiled only when the file changes on disk.
+ * Compiling MDX with maths took most of a concept page's server time on every request.
+ */
+const compiled = new Map<string, { mtime: number; Content: LoadedArticle["Content"]; headings: Heading[] }>();
+
+async function compileArticle(file: string) {
+  const mtime = (await stat(file)).mtimeMs;
+  const hit = compiled.get(file);
+  if (hit && hit.mtime === mtime) return hit;
+  const source = await readFile(file, "utf8");
+  const headings: Heading[] = [];
+  const { default: Content } = await evaluate(displayMathBlocks(source), {
+    ...runtime,
+    remarkPlugins: [remarkGfm, remarkMath],
+    rehypePlugins: [rehypeTex(), rehypeHeadings(headings)],
+    development: false,
+  });
+  const entry = { mtime, Content: Content as LoadedArticle["Content"], headings };
+  compiled.set(file, entry);
+  return entry;
+}
+
 /** Load content/concepts/<slug>/<locale>.mdx, falling back to Chinese when a translation is missing. */
 export async function loadConceptArticle(slug: string, locale: Locale): Promise<LoadedArticle | null> {
   if (!/^[a-z0-9-]+$/.test(slug)) return null;
@@ -80,15 +137,8 @@ export async function loadConceptArticle(slug: string, locale: Locale): Promise<
     file = path.join(dir, "zh.mdx");
     if (!(await exists(file))) return null;
   }
-  const source = await readFile(file, "utf8");
-  const headings: Heading[] = [];
-  const { default: Content } = await evaluate(displayMathBlocks(source), {
-    ...runtime,
-    remarkPlugins: [remarkGfm, remarkMath],
-    rehypePlugins: [[rehypeKatex, { strict: "ignore", trust: false }], rehypeHeadings(headings)],
-    development: false,
-  });
-  return { Content: Content as LoadedArticle["Content"], headings, locale: actual, fallback: actual !== locale };
+  const { Content, headings } = await compileArticle(file);
+  return { Content, headings, locale: actual, fallback: actual !== locale };
 }
 
 export async function articleExists(slug: string, locale: Locale): Promise<boolean> {

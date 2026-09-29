@@ -100,7 +100,13 @@ export function mdxComponents(locale: Locale, chapter: number, searchParams?: Se
     );
   }
 
+  /** A formula pre-rendered by rehypeTex in src/lib/mdx.ts. */
+  function Tex({ html, display }: { html: string; display?: boolean }) {
+    return display ? <div dangerouslySetInnerHTML={{ __html: html }} /> : <span dangerouslySetInnerHTML={{ __html: html }} />;
+  }
+
   return {
+    Tex,
     Tool,
     Problem: plain("problem", "mblock-problem"),
     Observe: plain("observe", "mblock-observe"),

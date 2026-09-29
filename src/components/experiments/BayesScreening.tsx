@@ -4,7 +4,7 @@ import { useCallback, useEffect, useMemo, useRef } from "react";
 import type { Locale } from "@/i18n/config";
 import { fitCanvas } from "@/lib/plot";
 import { posterior, screeningCounts } from "@/lib/math/probability";
-import { tex } from "@/lib/katex";
+import { useTex } from "./texContext";
 import { useResizeVersion, useThemeColors } from "./useTheme";
 import { useUrlState } from "./urlState";
 import { LegendItem } from "./Legend";
@@ -48,6 +48,7 @@ function population(tp: number, fn: number, fp: number, tn: number): Person[] {
 export function BayesScreening({ locale }: { locale: Locale }) {
   const t = copy[locale];
   const colors = useThemeColors();
+  const bayesHtml = useTex("bayes");
   const wrapRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const resize = useResizeVersion(wrapRef);
@@ -146,7 +147,7 @@ export function BayesScreening({ locale }: { locale: Locale }) {
         <span><span className="text-muted">{t.share}</span> <span className="mono text-e1">{pos > 0 ? `${c.tp}/${pos} ≈ ${share.toFixed(3)}` : "—"}</span></span>
       </div>
       <div className="border-t border-rule px-4 py-3 flex flex-wrap items-center gap-x-6 gap-y-2 exp-control">
-        <span dangerouslySetInnerHTML={{ __html: tex(`P(\\text{${locale === "zh" ? "病" : "ill"}}\\mid +)=\\frac{P(+\\mid\\text{${locale === "zh" ? "病" : "ill"}})\\,P(\\text{${locale === "zh" ? "病" : "ill"}})}{P(+)}`) }} />
+        <span dangerouslySetInnerHTML={{ __html: bayesHtml }} />
         <span>
           <span className="text-muted">{t.chain}</span>{" "}
           <span className="mono text-ink">{prior.toFixed(3)}</span>

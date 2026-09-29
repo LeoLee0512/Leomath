@@ -5,7 +5,7 @@ import type { Locale } from "@/i18n/config";
 import { Plot, fitCanvas } from "@/lib/plot";
 import { birthdayBound, birthdayExact, pairs, sameAsMine, sampleBirthdays, sharedDays } from "@/lib/math/probability";
 import { format } from "@/lib/math/linear";
-import { tex } from "@/lib/katex";
+import { useTex } from "./texContext";
 import { useResizeVersion, useThemeColors } from "./useTheme";
 import { useUrlState } from "./urlState";
 import { LegendItem } from "./Legend";
@@ -39,6 +39,8 @@ const MONTH_START = [0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334];
 export function BirthdayProblem({ locale }: { locale: Locale }) {
   const t = copy[locale];
   const colors = useThemeColors();
+  const exactHtml = useTex("exact");
+  const boundHtml = useTex("bound");
   const wrapRef = useRef<HTMLDivElement>(null);
   const curveRef = useRef<HTMLCanvasElement>(null);
   const yearRef = useRef<HTMLCanvasElement>(null);
@@ -184,7 +186,7 @@ export function BirthdayProblem({ locale }: { locale: Locale }) {
     <div ref={wrapRef} className="exp-frame">
       <ul className="px-4 py-2.5 border-b border-rule flex flex-wrap items-center gap-x-5 gap-y-1.5 exp-control">
         <LegendItem color="var(--ink)" label={t.legendExact} />
-        <LegendItem color="var(--leo)" dash="6 5" label={t.legendBound} formula={`1-e^{-n(n-1)/730}`} />
+        <LegendItem color="var(--leo)" dash="6 5" label={t.legendBound} formulaHtml={boundHtml} />
         <LegendItem color="var(--accent-2)" dash="2 4" label={t.legendMine} />
         {freq !== null && <LegendItem color="var(--e1)" dot label={t.legendFreq} />}
       </ul>
@@ -204,7 +206,7 @@ export function BirthdayProblem({ locale }: { locale: Locale }) {
         </div>
       </div>
       <div className="border-t border-rule px-4 py-3 flex flex-wrap items-center gap-x-6 gap-y-2 exp-control">
-        <span dangerouslySetInnerHTML={{ __html: tex(`1-\\frac{365\\cdot364\\cdots(365-n+1)}{365^n}`) }} />
+        <span dangerouslySetInnerHTML={{ __html: exactHtml }} />
         <span><span className="text-muted">{t.pairs}</span> <span className="mono text-ink">{pairs(n)}</span></span>
         <span><span className="text-muted">{t.exact}</span> <span className="mono text-ink">{exact.toFixed(6)}</span></span>
         <span><span className="text-muted">{t.bound}</span> <span className="mono text-leo">{bound.toFixed(6)}</span></span>

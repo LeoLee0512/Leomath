@@ -1,17 +1,29 @@
 import type { Locale } from "@/i18n/config";
+import dynamic from "next/dynamic";
 import { getExperiment, type ExperimentKind } from "@/content/graph";
-import { LinearTransform } from "./LinearTransform";
-import { OdeExplorer } from "./OdeExplorer";
-import { ExponentialDerivative } from "./ExponentialDerivative";
-import { SecantTangent } from "./SecantTangent";
-import { RiemannSums } from "./RiemannSums";
-import { TaylorApprox } from "./TaylorApprox";
-import { BirthdayProblem } from "./BirthdayProblem";
-import { BayesScreening } from "./BayesScreening";
-import { Conditioning } from "./Conditioning";
 import { ObservationPanel } from "./ObservationPanel";
 import { ExperimentShell } from "./ExperimentShell";
 import { CreditLine } from "../CreditLine";
+import { TexProvider } from "./texContext";
+import { formulasFor } from "@/content/experiment-tex";
+import { tex } from "@/lib/katex";
+import { richHtml } from "@/lib/rich";
+
+/** The experiment's formulas as HTML, rendered here on the server. */
+function formulaHtml(kind: ExperimentKind, locale: Locale): Record<string, string> {
+  return Object.fromEntries(Object.entries(formulasFor(kind, locale)).map(([k, v]) => [k, tex(v)]));
+}
+
+// One chunk per experiment: a page downloads only the experiments it shows (still rendered on the server).
+const LinearTransform = dynamic(() => import("./LinearTransform").then((m) => m.LinearTransform));
+const OdeExplorer = dynamic(() => import("./OdeExplorer").then((m) => m.OdeExplorer));
+const ExponentialDerivative = dynamic(() => import("./ExponentialDerivative").then((m) => m.ExponentialDerivative));
+const SecantTangent = dynamic(() => import("./SecantTangent").then((m) => m.SecantTangent));
+const RiemannSums = dynamic(() => import("./RiemannSums").then((m) => m.RiemannSums));
+const TaylorApprox = dynamic(() => import("./TaylorApprox").then((m) => m.TaylorApprox));
+const BirthdayProblem = dynamic(() => import("./BirthdayProblem").then((m) => m.BirthdayProblem));
+const BayesScreening = dynamic(() => import("./BayesScreening").then((m) => m.BayesScreening));
+const Conditioning = dynamic(() => import("./Conditioning").then((m) => m.Conditioning));
 
 export type SearchParams = Record<string, string | string[] | undefined>;
 
@@ -38,7 +50,7 @@ export function ExperimentEmbed({ slug, locale, preset, compact, withObservation
 }) {
   const exp = getExperiment(slug);
   if (!exp) return null;
-  const frame = renderExperiment(exp.kind, locale, preset, compact);
+  const frame = <TexProvider html={formulaHtml(exp.kind, locale)}>{renderExperiment(exp.kind, locale, preset, compact)}</TexProvider>;
   if (compact) return frame;
   return (
     <ExperimentShell
@@ -49,7 +61,7 @@ export function ExperimentEmbed({ slug, locale, preset, compact, withObservation
       after={
         <>
           {exp.credits?.length ? <CreditLine credits={exp.credits} locale={locale} className="mt-1" /> : null}
-          {withObservation && exp.observe ? <ObservationPanel observe={exp.observe} locale={locale} /> : null}
+          {withObservation && exp.observe ? <ObservationPanel questionsHtml={exp.observe.questions.map((q) => richHtml(q[locale]))} explanationHtml={richHtml(exp.observe.explanation[locale])} locale={locale} /> : null}
         </>
       }
     >
