@@ -13,6 +13,7 @@ import { normaliseBody } from "@/lib/comments-format";
 import { checkAnswer, getExercise } from "@/content/exercises";
 import { getConcept, getExperiment } from "@/content/graph";
 import { getSoftware } from "@/content/software";
+import { deleteAccount, passwordMatches } from "@/lib/account";
 
 export interface FormState {
   error?: string;
@@ -76,6 +77,24 @@ export async function loginAction(_prev: FormState, form: FormData): Promise<For
     return { error: t.generic, email };
   }
   redirect(safeNext(form, locale));
+}
+
+/** Self-service account deletion: the password confirms it is really the owner, then everything is deleted. */
+export async function deleteAccountAction(_prev: FormState, form: FormData): Promise<FormState> {
+  const locale = localeFrom(form);
+  const t = getDictionary(locale).auth.data;
+  const user = await currentUser();
+  if (!user) redirect(`/${locale}/login`);
+  if (form.get("confirm") !== "yes") return { error: t.needConfirm };
+  const password = String(form.get("password") ?? "");
+  try {
+    if (!(await passwordMatches(user.id, password))) return { error: t.wrongPassword };
+    await deleteAccount(user.id);
+  } catch {
+    return { error: getDictionary(locale).auth.errors.generic };
+  }
+  await endSession();
+  redirect(`/${locale}/account/deleted`);
 }
 
 export async function logoutAction(form: FormData): Promise<void> {

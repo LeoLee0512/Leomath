@@ -37,7 +37,7 @@ export default async function PrivacyPage({ params }: { params: Promise<{ locale
             <ul>
               <li><strong>账户信息</strong>：邮箱、你选择填写的昵称、界面语言、注册时间。密码只以 bcrypt 哈希形式保存，任何人（包括站长）都无法看到原密码。</li>
               <li><strong>学习记录</strong>：每个知识点的学习状态（学习中 / 已完成），以及每次练习提交的答案、是否正确和时间，用于显示你的进度。</li>
-              <li><strong>评论</strong>：评论内容与发布时间会公开显示，署名为你的昵称；没有昵称时显示部分隐去的邮箱。你删除评论后它不再显示，但记录会保留在数据库中，以便处理滥用与投诉。</li>
+              <li><strong>评论</strong>：评论内容与发布时间会公开显示，署名为你的昵称；没有昵称时显示部分隐去的邮箱。单独删除一条评论后它不再显示，但记录会保留在数据库中，以便处理滥用与投诉；注销账户时这些记录会一并删除。</li>
             </ul>
             <p>这些信息只用于提供上述功能，不出售、不用于广告，也不提供给第三方，法律法规要求的情形除外。数据保存在位于中国大陆的服务器上。</p>
 
@@ -50,7 +50,12 @@ export default async function PrivacyPage({ params }: { params: Promise<{ locale
             <p>站点没有任何用于追踪或广告的 Cookie。</p>
 
             <h2>你的权利</h2>
-            <p>你可以随时查询、更正或要求删除你的账户和全部相关数据（学习记录、练习记录、评论）。目前请写信到 {mail} 提出，我会在 15 个工作日内处理。删除账户后，数据库中与该账户关联的记录会一并删除。</p>
+            <p>登录后，在“<Link href="/zh/account">我的学习</Link>”页面底部可以自己完成：</p>
+            <ul>
+              <li><strong>下载我的数据</strong>：账户信息、学习进度、全部练习提交和全部评论，导出为一个 JSON 文件。</li>
+              <li><strong>注销账户</strong>：输入密码确认后立即生效。账户以及与之关联的学习进度、练习记录和全部评论会从数据库中永久删除，无法恢复。</li>
+            </ul>
+            <p>如需更正信息，或无法登录时需要删除账户，请写信到 {mail}。</p>
 
             <h2>变更</h2>
             <p>本政策如有变化，会更新本页顶部的日期；重大变化会在站点上另行说明。相关条款见<Link href="/zh/terms">用户协议</Link>。</p>
@@ -68,7 +73,7 @@ export default async function PrivacyPage({ params }: { params: Promise<{ locale
             <ul>
               <li><strong>Account</strong>: your email, the display name you choose to give, interface language and sign-up time. Passwords are stored only as bcrypt hashes; nobody, the maintainer included, can see the original.</li>
               <li><strong>Learning records</strong>: the status of each concept (learning / done) and every exercise answer you submit, whether it was correct and when, used to show your progress.</li>
-              <li><strong>Comments</strong>: comment text and time are shown publicly under your display name, or a partly masked email if you have none. When you delete a comment it is no longer shown, but the record is kept in the database to handle abuse and complaints.</li>
+              <li><strong>Comments</strong>: comment text and time are shown publicly under your display name, or a partly masked email if you have none. When you delete a single comment it is no longer shown, but the record is kept in the database to handle abuse and complaints; deleting your account removes those records too.</li>
             </ul>
             <p>This information is used only to provide these features. It is not sold, not used for advertising and not shared with third parties, except where the law requires. Data is stored on servers in mainland China.</p>
 
@@ -81,7 +86,12 @@ export default async function PrivacyPage({ params }: { params: Promise<{ locale
             <p>The site sets no tracking or advertising cookies.</p>
 
             <h2>Your rights</h2>
-            <p>You can ask at any time to see, correct or delete your account and all related data (learning records, exercise history, comments). For now, write to {mail}; requests are handled within 15 working days. Deleting an account deletes every database record linked to it.</p>
+            <p>When signed in, the bottom of the <Link href="/en/account">My learning</Link> page lets you do this yourself:</p>
+            <ul>
+              <li><strong>Download my data</strong>: your account details, learning progress, every exercise answer and every comment, as one JSON file.</li>
+              <li><strong>Delete account</strong>: takes effect as soon as you confirm with your password. The account and its progress, exercise history and all comments are permanently removed from the database and cannot be recovered.</li>
+            </ul>
+            <p>To correct information, or to delete an account you can no longer sign in to, write to {mail}.</p>
 
             <h2>Changes</h2>
             <p>If this policy changes, the date at the top of this page is updated; significant changes are announced on the site. See also the <Link href="/en/terms">terms of use</Link>.</p>

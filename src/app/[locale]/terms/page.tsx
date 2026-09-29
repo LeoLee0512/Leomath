@@ -41,7 +41,7 @@ export default async function TermsPage({ params }: { params: Promise<{ locale: 
             </ul>
 
             <h2>账户</h2>
-            <p>请妥善保管密码。发现账户被他人使用，请立即修改密码并写信告知。你可以随时要求删除账户，方式见隐私政策。</p>
+            <p>请妥善保管密码。发现账户被他人使用，请立即修改密码并写信告知。你可以随时在“我的学习”页面自行注销账户，详见隐私政策。</p>
 
             <h2>软件下载</h2>
             <p>软件页提供的程序按现状提供。安装前请确认来源为本站页面所列地址。</p>
@@ -68,7 +68,7 @@ export default async function TermsPage({ params }: { params: Promise<{ locale: 
             </ul>
 
             <h2>Accounts</h2>
-            <p>Keep your password safe. If someone else uses your account, change your password at once and write to us. You can ask for your account to be deleted at any time; see the privacy policy.</p>
+            <p>Keep your password safe. If someone else uses your account, change your password at once and write to us. You can delete your account yourself at any time from the My learning page; see the privacy policy.</p>
 
             <h2>Software downloads</h2>
             <p>Programs offered on the software pages are provided as they are. Before installing, make sure the download comes from an address listed on this site.</p>

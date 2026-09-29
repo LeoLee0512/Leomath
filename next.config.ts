@@ -30,6 +30,8 @@ const nextConfig: NextConfig = {
   output: "standalone",
   reactStrictMode: true,
   poweredByHeader: false,
+  // Next 16 dev writes AGENTS.md / CLAUDE.md into the repo root by default; this repo does not keep them.
+  agentRules: false,
   serverExternalPackages: ["pg", "bcryptjs"],
   async headers() {
     return [
