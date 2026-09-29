@@ -25,7 +25,7 @@ export async function Comments({ type, slug, path, locale, t }: {
   const tc = t.comments;
   const user = await currentUser();
   const comments = hasDatabase() ? await listComments({ type, slug }).catch(() => []) : [];
-  const admin = user ? isAdmin(user.email) : false;
+  const admin = isAdmin(user);
   return (
     <section id="comments" className="mt-16 border-t border-rule pt-8 scroll-mt-24">
       <h2 className="display text-2xl font-semibold">{tc.title}</h2>

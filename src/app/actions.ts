@@ -14,6 +14,7 @@ import { checkAnswer, diagnose, getExercise, type Diagnosis } from "@/content/ex
 import { getConcept, getExperiment } from "@/content/graph";
 import { getSoftware } from "@/content/software";
 import { deleteAccount, passwordMatches } from "@/lib/account";
+import { clear, clientIp, isLimited, record, FIFTEEN_MINUTES, ONE_HOUR } from "@/lib/rate-limit";
 
 export interface FormState {
   error?: string;
@@ -48,6 +49,9 @@ export async function registerAction(_prev: FormState, form: FormData): Promise<
     displayName: form.get("displayName") || undefined,
   });
   const echo = String(form.get("email") ?? "");
+  const ipKey = `register:${await clientIp()}`;
+  if (isLimited(ipKey, 10)) return { error: t.tooMany, email: echo };
+  record(ipKey, ONE_HOUR);
   if (!parsed.success) {
     const issue = parsed.error.issues[0];
     return { error: issue.path[0] === "email" ? t.invalidEmail : t.shortPassword, email: echo };
@@ -69,9 +73,17 @@ export async function loginAction(_prev: FormState, form: FormData): Promise<For
   const email = String(form.get("email") ?? "");
   const password = String(form.get("password") ?? "");
   if (!email || !password) return { error: t.badCredentials, email };
+  const ipKey = `login-ip:${await clientIp()}`;
+  const accountKey = `login-account:${email.trim().toLowerCase()}`;
+  if (isLimited(ipKey, 20) || isLimited(accountKey, 5)) return { error: t.tooMany, email };
   try {
     const user = await verifyUser(email, password);
-    if (!user) return { error: t.badCredentials, email };
+    if (!user) {
+      record(ipKey, FIFTEEN_MINUTES);
+      record(accountKey, FIFTEEN_MINUTES);
+      return { error: t.badCredentials, email };
+    }
+    clear(accountKey);
     await startSession(user.id);
   } catch {
     return { error: t.generic, email };
@@ -87,8 +99,13 @@ export async function deleteAccountAction(_prev: FormState, form: FormData): Pro
   if (!user) redirect(`/${locale}/login`);
   if (form.get("confirm") !== "yes") return { error: t.needConfirm };
   const password = String(form.get("password") ?? "");
+  const key = `delete:${user.id}`;
+  if (isLimited(key, 5)) return { error: getDictionary(locale).auth.errors.tooMany };
   try {
-    if (!(await passwordMatches(user.id, password))) return { error: t.wrongPassword };
+    if (!(await passwordMatches(user.id, password))) {
+      record(key, FIFTEEN_MINUTES);
+      return { error: t.wrongPassword };
+    }
     await deleteAccount(user.id);
   } catch {
     return { error: getDictionary(locale).auth.errors.generic };
@@ -203,7 +220,7 @@ export async function deleteCommentAction(form: FormData): Promise<void> {
   const user = await currentUser();
   const id = String(form.get("id") ?? "");
   if (!user || !/^\d{1,18}$/.test(id) || !hasDatabase()) return;
-  await deleteComment(id, user.id, isAdmin(user.email)).catch(() => undefined);
+  await deleteComment(id, user.id, isAdmin(user)).catch(() => undefined);
   const path = pagePath(form, locale);
   if (path) revalidatePath(path);
 }

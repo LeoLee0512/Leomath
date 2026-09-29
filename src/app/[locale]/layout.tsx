@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
+import { headers } from "next/headers";
 import { notFound } from "next/navigation";
 import { isLocale, locales, type Locale } from "@/i18n/config";
 import { getDictionary } from "@/i18n/dictionaries";
@@ -34,10 +35,12 @@ export default async function LocaleLayout({ children, params }: { children: Rea
   if (!isLocale(locale)) notFound();
   const t = getDictionary(locale);
   const user = await currentUser();
+  // Set by src/proxy.ts; the inline theme script must carry it to run under the CSP.
+  const nonce = (await headers()).get("x-nonce") ?? undefined;
   return (
     <html lang={locale === "zh" ? "zh-CN" : "en"} suppressHydrationWarning>
       <head>
-        <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
+        <script nonce={nonce} dangerouslySetInnerHTML={{ __html: themeInitScript }} />
       </head>
       <body className="flex min-h-dvh flex-col">
         <a href="#main" className="skip-link">{t.nav.skip}</a>

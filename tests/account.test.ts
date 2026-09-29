@@ -65,6 +65,12 @@ describe("account data export and deletion", () => {
     }
   });
 
+  it("new accounts are not moderators; the flag lives in the database", async () => {
+    const id = await makeUser("plain@example.com", "correct horse battery");
+    const { rows } = await pg.query<{ is_admin: boolean }>("SELECT is_admin FROM users WHERE id = $1", [id]);
+    expect(rows[0].is_admin).toBe(false);
+  });
+
   it("every table that references users cascades on delete", async () => {
     // Guards future migrations: a new table pointing at users without ON DELETE CASCADE would block or leak deletion.
     const { rows } = await pg.query<{ table_name: string; delete_rule: string }>(`

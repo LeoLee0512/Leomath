@@ -3,6 +3,29 @@ import { LOCALE_COOKIE, isLocale, negotiateLocale } from "@/i18n/config";
 
 const PUBLIC_FILE = /\.[a-zA-Z0-9]+$/;
 
+/**
+ * Content-Security-Policy with a fresh nonce per request. Scripts run only if they carry the nonce
+ * (Next.js adds it to its own scripts when it sees the policy on the request; the layout adds it to the
+ * theme script) or are loaded by such a script ('strict-dynamic'). Styles still allow inline, for KaTeX.
+ * Report-only unless CSP_ENFORCE=1; violations are logged by /api/csp-report.
+ */
+function contentSecurityPolicy(nonce: string): string {
+  const dev = process.env.NODE_ENV !== "production";
+  return [
+    "default-src 'self'",
+    `script-src 'self' 'nonce-${nonce}' 'strict-dynamic'${dev ? " 'unsafe-eval'" : ""}`,
+    "style-src 'self' 'unsafe-inline'",
+    "img-src 'self' data: blob:",
+    "font-src 'self' data:",
+    `connect-src 'self'${dev ? " ws: wss:" : ""}`,
+    "object-src 'none'",
+    "base-uri 'self'",
+    "form-action 'self'",
+    "frame-ancestors 'none'",
+    "report-uri /api/csp-report",
+  ].join("; ");
+}
+
 export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
   if (
@@ -15,7 +38,14 @@ export function proxy(request: NextRequest) {
 
   const first = pathname.split("/")[1];
   if (isLocale(first)) {
-    const response = NextResponse.next();
+    const nonce = btoa(crypto.randomUUID());
+    const policy = contentSecurityPolicy(nonce);
+    const header = process.env.CSP_ENFORCE === "1" ? "Content-Security-Policy" : "Content-Security-Policy-Report-Only";
+    const requestHeaders = new Headers(request.headers);
+    requestHeaders.set("x-nonce", nonce);
+    requestHeaders.set(header, policy);
+    const response = NextResponse.next({ request: { headers: requestHeaders } });
+    response.headers.set(header, policy);
     if (request.cookies.get(LOCALE_COOKIE)?.value !== first) {
       response.cookies.set(LOCALE_COOKIE, first, {
         path: "/",

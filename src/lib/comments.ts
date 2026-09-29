@@ -64,8 +64,7 @@ export async function deleteComment(id: string, userId: string, admin: boolean):
   );
 }
 
-/** Site moderators, from the comma-separated ADMIN_EMAILS environment variable. */
-export function isAdmin(email: string): boolean {
-  const list = (process.env.ADMIN_EMAILS ?? "").split(",").map((s) => s.trim().toLowerCase()).filter(Boolean);
-  return list.includes(email.toLowerCase());
+/** Site moderators: accounts flagged in the database (see db/migrations/003_admin.sql). */
+export function isAdmin(user: { isAdmin: boolean } | null): boolean {
+  return Boolean(user?.isAdmin);
 }
