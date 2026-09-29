@@ -28,6 +28,15 @@ export function AuthForm({ mode, locale, t, next }: { mode: "login" | "register"
         </label>
       )}
       {state.error && <p className="text-sm text-e1">{state.error}</p>}
+      {mode === "register" && (
+        <p className="text-xs text-muted">
+          {t.agree[0]}
+          <Link href={`/${locale}/terms`} className="text-leo hover:underline">{t.agree[1]}</Link>
+          {t.agree[2]}
+          <Link href={`/${locale}/privacy`} className="text-leo hover:underline">{t.agree[3]}</Link>
+          {t.agree[4]}
+        </p>
+      )}
       <button className="btn btn-primary w-full justify-center" disabled={pending}>
         {mode === "login" ? t.submitLogin : t.submitRegister}
       </button>

@@ -16,6 +16,8 @@ const zh = {
     login: "登录",
     register: "注册",
     account: "我的学习",
+    menu: "菜单",
+    skip: "跳到正文",
     logout: "退出",
   },
   home: {
@@ -151,6 +153,7 @@ const zh = {
     email: "邮箱",
     password: "密码",
     passwordHint: "至少 10 个字符",
+    agree: ["注册即表示你同意", "用户协议", "和", "隐私政策", "。"],
     displayName: "显示名称（可选）",
     submitLogin: "登录",
     submitRegister: "注册",
@@ -172,8 +175,10 @@ const zh = {
   },
   footer: {
     license: "正文内容采用 CC BY-SA 4.0，代码采用 MIT。",
-    built: "LeoMath v0.1.3 · 从定义出发理解数学",
+    built: (v: string) => `LeoMath v${v} · 从定义出发理解数学`,
     feedback: "反馈",
+    privacy: "隐私政策",
+    terms: "用户协议",
   },
   comments: {
     title: "讨论",
@@ -220,6 +225,8 @@ const en: Dictionary = {
     login: "Log in",
     register: "Sign up",
     account: "My learning",
+    menu: "Menu",
+    skip: "Skip to content",
     logout: "Log out",
   },
   home: {
@@ -355,6 +362,7 @@ const en: Dictionary = {
     email: "Email",
     password: "Password",
     passwordHint: "At least 10 characters",
+    agree: ["By signing up you agree to the ", "terms of use", " and the ", "privacy policy", "."],
     displayName: "Display name (optional)",
     submitLogin: "Log in",
     submitRegister: "Sign up",
@@ -376,8 +384,10 @@ const en: Dictionary = {
   },
   footer: {
     license: "Content is CC BY-SA 4.0; code is MIT.",
-    built: "LeoMath v0.1.3 · understanding mathematics from definitions",
+    built: (v: string) => `LeoMath v${v} · understanding mathematics from definitions`,
     feedback: "Feedback",
+    privacy: "Privacy",
+    terms: "Terms",
   },
   comments: {
     title: "Discussion",

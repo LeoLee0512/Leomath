@@ -4,6 +4,7 @@ import type { Dictionary } from "@/i18n/dictionaries";
 import type { User } from "@/lib/auth";
 import { ThemeToggle } from "./ThemeToggle";
 import { LocaleSwitch } from "./LocaleSwitch";
+import { MobileMenu } from "./MobileMenu";
 
 export function Nav({ locale, t, user }: { locale: Locale; t: Dictionary; user: User | null }) {
   const items = [
@@ -16,11 +17,11 @@ export function Nav({ locale, t, user }: { locale: Locale; t: Dictionary; user: 
   ];
   return (
     <header className="sticky top-0 z-40 bg-paper/85 backdrop-blur border-b border-rule">
-      <div className="container flex h-14 items-center gap-6">
+      <div className="container relative flex h-14 items-center gap-6">
         <Link href={`/${locale}`} className="display text-lg font-semibold tracking-tight">
           Leo<span className="text-leo">Math</span>
         </Link>
-        <nav className="hidden md:flex items-center gap-5 text-sm text-ink-2">
+        <nav className="hidden md:flex items-center gap-5 text-sm text-ink-2" aria-label={t.nav.menu}>
           {items.map((item) => (
             <Link key={item.href} href={item.href} className="hover:text-ink">
               {item.label}
@@ -50,15 +51,9 @@ export function Nav({ locale, t, user }: { locale: Locale; t: Dictionary; user: 
               {t.nav.login}
             </Link>
           )}
+          <MobileMenu items={items} label={t.nav.menu} />
         </div>
       </div>
-      <nav className="md:hidden container flex gap-4 overflow-x-auto pb-2 text-sm text-ink-2">
-        {items.map((item) => (
-          <Link key={item.href} href={item.href} className="whitespace-nowrap hover:text-ink">
-            {item.label}
-          </Link>
-        ))}
-      </nav>
     </header>
   );
 }

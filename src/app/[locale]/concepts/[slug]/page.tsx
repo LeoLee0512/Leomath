@@ -15,6 +15,7 @@ import { ArticleNav } from "@/components/ArticleNav";
 import { readingMinutes } from "@/lib/reading";
 import { Comments } from "@/components/Comments";
 import { CreditLine } from "@/components/CreditLine";
+import { pageMeta } from "@/lib/seo";
 
 export function generateStaticParams() {
   return publishedConcepts().map((c) => ({ slug: c.slug }));
@@ -24,7 +25,7 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
   const { locale, slug } = await params;
   const c = getConcept(slug);
   if (!c || !isLocale(locale)) return {};
-  return { title: c.title[locale], description: c.summary[locale] };
+  return pageMeta(locale, `/concepts/${slug}`, { title: c.title[locale], description: c.summary[locale], type: "article" });
 }
 
 export default async function ConceptPage({ params }: { params: Promise<{ locale: string; slug: string }> }) {

@@ -99,11 +99,11 @@ export function RiemannSums({ locale }: { locale: Locale }) {
         </label>
         <label className="exp-control block">
           <div className="flex justify-between"><span>{t.a}</span><span className="mono">{aa.toFixed(2)}</span></div>
-          <input type="range" className="e1" min={-2.5} max={2.5} step={0.05} value={a} onChange={(e) => setA(Number(e.target.value))} />
+          <input type="range" aria-valuetext={aa.toFixed(2)} className="e1" min={-2.5} max={2.5} step={0.05} value={a} onChange={(e) => setA(Number(e.target.value))} />
         </label>
         <label className="exp-control block">
           <div className="flex justify-between"><span>{t.b}</span><span className="mono">{bb.toFixed(2)}</span></div>
-          <input type="range" className="e1" min={-2.5} max={2.5} step={0.05} value={b} onChange={(e) => setB(Number(e.target.value))} />
+          <input type="range" aria-valuetext={bb.toFixed(2)} className="e1" min={-2.5} max={2.5} step={0.05} value={b} onChange={(e) => setB(Number(e.target.value))} />
         </label>
       </div>
       <div className="border-t border-rule px-4 py-3 flex flex-wrap items-center gap-x-6 gap-y-2 exp-control">

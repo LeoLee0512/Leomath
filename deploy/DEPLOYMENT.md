@@ -79,6 +79,16 @@ docker compose up -d --build
 
 新的 SQL 迁移放在 `db/migrations/` 下，容器启动时自动应用。
 
+## 安全响应头、备案号
+
+- **CSP**：生产构建默认发送 `Content-Security-Policy-Report-Only`，违规会以 `[csp] ...` 写进 web 容器日志。观察一段时间：
+  ```bash
+  docker compose logs web | grep "\[csp\]"
+  ```
+  日志干净后，在 `.env` 里设 `CSP_ENFORCE=1` 并 `docker compose up -d --build`（这是**构建时**设置，只重启不生效）。
+- **HSTS**：`SITE_URL` 以 `https://` 开头时自动发送 `Strict-Transport-Security: max-age=15552000`（180 天）。只在 HTTPS 已稳定可用后部署这一版；一旦浏览器收到 HSTS，180 天内都只会用 HTTPS 访问。
+- **ICP 备案号**：备案通过后在 `.env` 里设 `ICP_NUMBER=京ICP备xxxxxxxx号-1`，重启即可，页脚会显示并链接到 beian.miit.gov.cn。
+
 ## 备份
 
 ```bash

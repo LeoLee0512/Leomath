@@ -7,10 +7,13 @@ import { FormulaEditor } from "@/components/tools/FormulaEditor";
 import { Plotter } from "@/components/tools/Plotter";
 import { MatrixTool } from "@/components/tools/MatrixTool";
 import { concepts, type Tool } from "@/content/graph";
+import { pageMeta } from "@/lib/seo";
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
   const { locale } = await params;
-  return { title: isLocale(locale) ? getDictionary(locale).tools.title : "Tools" };
+  if (!isLocale(locale)) return {};
+  const t = getDictionary(locale);
+  return pageMeta(locale, "/tools", { title: t.tools.title, description: t.tools.subtitle });
 }
 
 function Related({ id, locale, label }: { id: Tool["id"]; locale: "zh" | "en"; label: string }) {

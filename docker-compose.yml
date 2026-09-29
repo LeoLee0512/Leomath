@@ -15,7 +15,11 @@ services:
       retries: 10
 
   web:
-    build: .
+    build:
+      context: .
+      args:
+        NEXT_PUBLIC_SITE_URL: ${SITE_URL:-https://leomath.cn}
+        CSP_ENFORCE: ${CSP_ENFORCE:-}
     restart: unless-stopped
     depends_on:
       db:
@@ -24,6 +28,7 @@ services:
       DATABASE_URL: postgres://leomath:${POSTGRES_PASSWORD:-change-me}@db:5432/leomath
       NEXT_PUBLIC_SITE_URL: ${SITE_URL:-https://leomath.cn}
       ADMIN_EMAILS: ${ADMIN_EMAILS:-}
+      ICP_NUMBER: ${ICP_NUMBER:-}
     ports:
       - "127.0.0.1:${WEB_PORT:-3000}:3000"
 

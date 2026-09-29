@@ -6,6 +6,7 @@ import { getDictionary } from "@/i18n/dictionaries";
 import { software, getSoftware } from "@/content/software";
 import { statusLabel } from "@/components/SoftwareCard";
 import { Comments } from "@/components/Comments";
+import { pageMeta } from "@/lib/seo";
 
 export function generateStaticParams() {
   return software.map((s) => ({ slug: s.slug }));
@@ -14,7 +15,7 @@ export function generateStaticParams() {
 export async function generateMetadata({ params }: { params: Promise<{ locale: string; slug: string }> }): Promise<Metadata> {
   const { locale, slug } = await params;
   const s = getSoftware(slug);
-  return s && isLocale(locale) ? { title: s.name, description: s.tagline[locale] } : {};
+  return s && isLocale(locale) ? pageMeta(locale, `/software/${slug}`, { title: s.name, description: s.tagline[locale] }) : {};
 }
 
 export default async function SoftwareDetail({ params }: { params: Promise<{ locale: string; slug: string }> }) {

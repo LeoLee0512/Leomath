@@ -200,7 +200,7 @@ export function OdeExplorer({ locale, preset: initialPreset = "exponential" }: {
               <span>{p.label}</span>
               <span className="mono">{params[p.key]?.toFixed(2)}</span>
             </div>
-            <input type="range" min={p.min} max={p.max} step={p.step} value={params[p.key] ?? p.value}
+            <input type="range" aria-valuetext={(params[p.key] ?? p.value).toFixed(2)} min={p.min} max={p.max} step={p.step} value={params[p.key] ?? p.value}
               onChange={(e) => setParams({ ...params, [p.key]: Number(e.target.value) })} />
           </label>
         ))}
@@ -210,7 +210,7 @@ export function OdeExplorer({ locale, preset: initialPreset = "exponential" }: {
               <span>{t.init} {preset.dimension === 2 ? (i === 0 ? "x(0)" : "x′(0)") : "y(0)"}</span>
               <span className="mono">{v.toFixed(2)}</span>
             </div>
-            <input type="range" min={preset.bounds.x ? preset.bounds.x[0] : preset.bounds.y[0]} max={preset.bounds.x ? preset.bounds.x[1] : preset.bounds.y[1]} step={0.05} value={v}
+            <input type="range" aria-valuetext={v.toFixed(2)} min={preset.bounds.x ? preset.bounds.x[0] : preset.bounds.y[0]} max={preset.bounds.x ? preset.bounds.x[1] : preset.bounds.y[1]} step={0.05} value={v}
               onChange={(e) => setY0(y0.map((w, j) => (j === i ? Number(e.target.value) : w)))} />
           </label>
         ))}
@@ -219,7 +219,7 @@ export function OdeExplorer({ locale, preset: initialPreset = "exponential" }: {
             <span>{t.step}</span>
             <span className="mono">{h.toFixed(3)} · {stepCount} {t.steps}</span>
           </div>
-          <input type="range" min={0.01} max={1} step={0.005} value={h} onChange={(e) => setH(Number(e.target.value))} />
+          <input type="range" aria-valuetext={`${h.toFixed(3)}, ${stepCount} ${t.steps}`} min={0.01} max={1} step={0.005} value={h} onChange={(e) => setH(Number(e.target.value))} />
         </label>
       </div>
 

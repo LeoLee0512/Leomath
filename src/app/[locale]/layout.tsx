@@ -7,8 +7,7 @@ import { currentUser } from "@/lib/auth";
 import { Nav } from "@/components/Nav";
 import { Footer } from "@/components/Footer";
 import { themeInitScript } from "@/components/ThemeToggle";
-
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://leomath.cn";
+import { SITE_URL, SITE_NAME } from "@/lib/seo";
 
 // Pages show per-user progress, so they are rendered on each request.
 export const dynamic = "force-dynamic";
@@ -22,11 +21,11 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
   const l: Locale = isLocale(locale) ? locale : "zh";
   const t = getDictionary(l);
   return {
-    metadataBase: new URL(siteUrl),
-    title: { default: `LeoMath — ${t.tagline}`, template: "%s · LeoMath" },
+    metadataBase: new URL(SITE_URL),
+    title: { default: `${SITE_NAME} — ${t.tagline}`, template: `%s · ${SITE_NAME}` },
     description: t.home.heroSubtitle,
-    alternates: { languages: { zh: "/zh", en: "/en" } },
-    icons: { icon: "/icon.svg" },
+    applicationName: SITE_NAME,
+    icons: { icon: [{ url: "/icon.svg", type: "image/svg+xml" }, { url: "/favicon.ico", sizes: "32x32" }], apple: "/apple-touch-icon.png" },
   };
 }
 
@@ -41,8 +40,9 @@ export default async function LocaleLayout({ children, params }: { children: Rea
         <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
       </head>
       <body className="flex min-h-dvh flex-col">
+        <a href="#main" className="skip-link">{t.nav.skip}</a>
         <Nav locale={locale} t={t} user={user} />
-        <main className="flex-1">{children}</main>
+        <main id="main" tabIndex={-1} className="flex-1 outline-none">{children}</main>
         <Footer locale={locale} t={t} />
       </body>
     </html>

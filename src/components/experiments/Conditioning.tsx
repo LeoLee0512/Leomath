@@ -184,7 +184,7 @@ export function Conditioning({ locale }: { locale: Locale }) {
   const slider = (label: string, value: number, set: (v: number) => void, min: number, max: number, cls = "") => (
     <label className="exp-control block">
       <div className="flex justify-between"><span>{label}</span><span className="mono">{value.toFixed(3)}</span></div>
-      <input type="range" className={cls} min={min} max={max} step={0.001} value={value} onChange={(e) => set(Number(e.target.value))} />
+      <input type="range" aria-valuetext={value.toFixed(3)} className={cls} min={min} max={max} step={0.001} value={value} onChange={(e) => set(Number(e.target.value))} />
     </label>
   );
 

@@ -1,4 +1,5 @@
 import Link from "next/link";
+import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { isLocale } from "@/i18n/config";
 import { getDictionary } from "@/i18n/dictionaries";
@@ -12,6 +13,14 @@ import { KnowledgeTree } from "@/components/KnowledgeTree";
 import { M, MB } from "@/components/Math";
 import { readingMinutesMap } from "@/lib/reading";
 import { publishedConcepts } from "@/content/graph";
+import { pageMeta } from "@/lib/seo";
+import { VERSION } from "@/content/site";
+
+export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
+  const { locale } = await params;
+  if (!isLocale(locale)) return {};
+  return pageMeta(locale, "", { description: getDictionary(locale).home.heroSubtitle });
+}
 
 export default async function Home({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
@@ -133,7 +142,7 @@ export default async function Home({ params }: { params: Promise<{ locale: strin
             {[
               { title: t.home.labExperiments, desc: t.home.labExperimentsDesc, formula: "\\dot{x}=\\sigma(y-x)", href: `/${locale}/explore`, live: true },
               { title: t.home.labComputing, desc: t.home.labComputingDesc, formula: "\\|y_n-y(t_n)\\|=O(h^4)", href: `/${locale}/explore/ode-explorer`, live: true },
-              { title: t.home.labDevlog, desc: t.home.labDevlogDesc, formula: "\\text{v}0.1.3", href: `/${locale}/about`, live: false },
+              { title: t.home.labDevlog, desc: t.home.labDevlogDesc, formula: `\\text{v}${VERSION}`, href: `/${locale}/about`, live: false },
             ].map((card) => (
               <Link key={card.title} href={card.href} className="group block border-t border-ink-2 pt-5">
                 <div className="text-muted text-lg h-8"><M>{card.formula}</M></div>

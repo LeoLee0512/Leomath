@@ -80,14 +80,14 @@ export function ExponentialDerivative({ locale, compact = false }: { locale: Loc
             <span>{t.base}</span>
             <span className="mono">{a.toFixed(3)}</span>
           </div>
-          <input type="range" min={1.1} max={4} step={0.001} value={a} onChange={(e) => setA(Number(e.target.value))} />
+          <input type="range" aria-valuetext={a.toFixed(3)} min={1.1} max={4} step={0.001} value={a} onChange={(e) => setA(Number(e.target.value))} />
         </label>
         <label className="exp-control block">
           <div className="flex justify-between">
             <span>{t.step}</span>
             <span className="mono">{h.toFixed(3)}</span>
           </div>
-          <input type="range" min={0.001} max={1} step={0.001} value={h} onChange={(e) => setH(Number(e.target.value))} />
+          <input type="range" aria-valuetext={h.toFixed(3)} min={0.001} max={1} step={0.001} value={h} onChange={(e) => setH(Number(e.target.value))} />
         </label>
         <button type="button" className="btn btn-ghost btn-small" onClick={() => setA(Math.E)}>
           {t.setE}

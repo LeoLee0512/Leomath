@@ -183,6 +183,15 @@ button, input {
 .mblock-experiment .mblock-head { margin-bottom: 0.6em; }
 .mblock-experiment .mblock-head b { color: var(--leo); }
 
+/* Keyboard users can jump past the header; the link shows only when focused. */
+.skip-link {
+  position: absolute; left: 1rem; top: -3rem; z-index: 50;
+  padding: 0.5rem 0.9rem; border-radius: 4px;
+  background: var(--ink); color: var(--paper); font-family: var(--font-ui); font-size: 0.9rem;
+  transition: top 120ms;
+}
+.skip-link:focus { top: 0.6rem; outline: 2px solid var(--leo); outline-offset: 2px; }
+
 /* Credits: where a rewritten idea came from */
 .credit-line { font-family: var(--font-ui); font-size: 0.8rem; color: var(--muted); }
 .credit-line a { color: var(--ink-2); text-decoration: underline; text-decoration-color: var(--rule-2); text-underline-offset: 2px; overflow-wrap: anywhere; }

@@ -4,10 +4,13 @@ import { isLocale } from "@/i18n/config";
 import { getDictionary } from "@/i18n/dictionaries";
 import { software } from "@/content/software";
 import { SoftwareCard } from "@/components/SoftwareCard";
+import { pageMeta } from "@/lib/seo";
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
   const { locale } = await params;
-  return { title: isLocale(locale) ? getDictionary(locale).nav.software : "Software" };
+  if (!isLocale(locale)) return {};
+  const t = getDictionary(locale);
+  return pageMeta(locale, "/software", { title: t.nav.software, description: t.software.subtitle });
 }
 
 export default async function SoftwarePage({ params }: { params: Promise<{ locale: string }> }) {

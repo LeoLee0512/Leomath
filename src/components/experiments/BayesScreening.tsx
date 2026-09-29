@@ -125,15 +125,15 @@ export function BayesScreening({ locale }: { locale: Locale }) {
       <div className="border-t border-rule px-4 py-3 grid gap-x-6 gap-y-3 md:grid-cols-3">
         <label className="exp-control block">
           <div className="flex justify-between"><span>{t.prior}</span><span className="mono">{pct(prior)}</span></div>
-          <input type="range" className="e1" min={0.001} max={0.3} step={0.001} value={prior} onChange={(e) => setPrior(Number(e.target.value))} />
+          <input type="range" aria-valuetext={pct(prior)} className="e1" min={0.001} max={0.3} step={0.001} value={prior} onChange={(e) => setPrior(Number(e.target.value))} />
         </label>
         <label className="exp-control block">
           <div className="flex justify-between"><span>{t.sens}</span><span className="mono">{pct(sens)}</span></div>
-          <input type="range" min={0.5} max={1} step={0.01} value={sens} onChange={(e) => setSens(Number(e.target.value))} />
+          <input type="range" aria-valuetext={pct(sens)} min={0.5} max={1} step={0.01} value={sens} onChange={(e) => setSens(Number(e.target.value))} />
         </label>
         <label className="exp-control block">
           <div className="flex justify-between"><span>{t.fpr}</span><span className="mono">{pct(fpr)}</span></div>
-          <input type="range" min={0} max={0.3} step={0.005} value={fpr} onChange={(e) => setFpr(Number(e.target.value))} />
+          <input type="range" aria-valuetext={pct(fpr)} min={0} max={0.3} step={0.005} value={fpr} onChange={(e) => setFpr(Number(e.target.value))} />
         </label>
       </div>
       <div className="border-t border-rule px-4 py-3 flex flex-wrap items-center gap-x-6 gap-y-2 exp-control">

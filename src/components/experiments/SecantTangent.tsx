@@ -64,11 +64,11 @@ export function SecantTangent({ locale }: { locale: Locale }) {
       <div className="border-t border-rule px-4 py-3 grid gap-x-6 gap-y-3 md:grid-cols-2">
         <label className="exp-control block">
           <div className="flex justify-between"><span>{t.x0}</span><span className="mono">{xa.toFixed(2)}</span></div>
-          <input type="range" min={-3} max={3} step={0.01} value={x0} onChange={(e) => setX0(Number(e.target.value))} />
+          <input type="range" aria-valuetext={xa.toFixed(2)} min={-3} max={3} step={0.01} value={x0} onChange={(e) => setX0(Number(e.target.value))} />
         </label>
         <label className="exp-control block">
           <div className="flex justify-between"><span>{t.h}</span><span className="mono">{h.toFixed(3)}</span></div>
-          <input type="range" className="e1" min={0.001} max={2.5} step={0.001} value={h} onChange={(e) => setH(Number(e.target.value))} />
+          <input type="range" aria-valuetext={h.toFixed(3)} className="e1" min={0.001} max={2.5} step={0.001} value={h} onChange={(e) => setH(Number(e.target.value))} />
         </label>
       </div>
       <div className="border-t border-rule px-4 py-3 flex flex-wrap items-center gap-x-6 gap-y-2 exp-control">

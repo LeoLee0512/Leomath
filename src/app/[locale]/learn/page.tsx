@@ -6,10 +6,13 @@ import { getDictionary } from "@/i18n/dictionaries";
 import { paths, getConcept, experimentsForConcept, publishedConcepts } from "@/content/graph";
 import { exercisesForConcept } from "@/content/exercises";
 import { ConceptSearch } from "@/components/ConceptSearch";
+import { pageMeta } from "@/lib/seo";
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
   const { locale } = await params;
-  return { title: isLocale(locale) ? getDictionary(locale).learn.title : "Learn" };
+  if (!isLocale(locale)) return {};
+  const t = getDictionary(locale);
+  return pageMeta(locale, "/learn", { title: t.learn.title, description: t.learn.subtitle });
 }
 
 export default async function LearnPage({ params }: { params: Promise<{ locale: string }> }) {

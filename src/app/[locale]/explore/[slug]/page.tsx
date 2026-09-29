@@ -6,6 +6,7 @@ import { getDictionary } from "@/i18n/dictionaries";
 import { experiments, getExperiment, getConcept, concepts } from "@/content/graph";
 import { ExperimentEmbed } from "@/components/experiments/ExperimentEmbed";
 import { Comments } from "@/components/Comments";
+import { pageMeta } from "@/lib/seo";
 
 export function generateStaticParams() {
   return experiments.map((e) => ({ slug: e.slug }));
@@ -14,7 +15,7 @@ export function generateStaticParams() {
 export async function generateMetadata({ params }: { params: Promise<{ locale: string; slug: string }> }): Promise<Metadata> {
   const { locale, slug } = await params;
   const e = getExperiment(slug);
-  return e && isLocale(locale) ? { title: e.title[locale], description: e.summary[locale] } : {};
+  return e && isLocale(locale) ? pageMeta(locale, `/explore/${slug}`, { title: e.title[locale], description: e.summary[locale] }) : {};
 }
 
 export default async function ExperimentPage({ params }: { params: Promise<{ locale: string; slug: string }> }) {

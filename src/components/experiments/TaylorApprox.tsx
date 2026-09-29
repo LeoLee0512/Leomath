@@ -77,7 +77,7 @@ export function TaylorApprox({ locale }: { locale: Locale }) {
         </label>
         <label className="exp-control block">
           <div className="flex justify-between"><span>{t.center}</span><span className="mono">{aa.toFixed(2)}</span></div>
-          <input type="range" className="e1" min={-3} max={3} step={0.05} value={aa} disabled={fixedCentre} onChange={(e) => setA(Number(e.target.value))} />
+          <input type="range" aria-valuetext={aa.toFixed(2)} className="e1" min={-3} max={3} step={0.05} value={aa} disabled={fixedCentre} onChange={(e) => setA(Number(e.target.value))} />
         </label>
       </div>
       <div className="border-t border-rule px-4 py-3 flex flex-wrap items-center gap-x-6 gap-y-2 exp-control">

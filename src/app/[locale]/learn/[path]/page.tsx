@@ -10,6 +10,7 @@ import { getProgress } from "@/lib/progress";
 import { KnowledgeTree } from "@/components/KnowledgeTree";
 import { readingMinutesMap } from "@/lib/reading";
 import { CreditLine } from "@/components/CreditLine";
+import { pageMeta } from "@/lib/seo";
 
 export function generateStaticParams() {
   return paths.map((p) => ({ path: p.slug }));
@@ -18,7 +19,7 @@ export function generateStaticParams() {
 export async function generateMetadata({ params }: { params: Promise<{ locale: string; path: string }> }): Promise<Metadata> {
   const { locale, path } = await params;
   const p = getPath(path);
-  return { title: p && isLocale(locale) ? p.title[locale] : "Path" };
+  return p && isLocale(locale) ? pageMeta(locale, `/learn/${path}`, { title: p.title[locale], description: `${p.subtitle[locale]}` }) : {};
 }
 
 export default async function PathPage({ params }: { params: Promise<{ locale: string; path: string }> }) {

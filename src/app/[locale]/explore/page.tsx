@@ -5,6 +5,7 @@ import { isLocale } from "@/i18n/config";
 import { getDictionary } from "@/i18n/dictionaries";
 import { experiments, getConcept } from "@/content/graph";
 import { M } from "@/components/Math";
+import { pageMeta } from "@/lib/seo";
 
 const formulas: Record<string, string> = {
   "linear-transform": "A\\mathbf e_1,\\ A\\mathbf e_2",
@@ -17,7 +18,9 @@ const formulas: Record<string, string> = {
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
   const { locale } = await params;
-  return { title: isLocale(locale) ? getDictionary(locale).explore.title : "Explore" };
+  if (!isLocale(locale)) return {};
+  const t = getDictionary(locale);
+  return pageMeta(locale, "/explore", { title: t.explore.title, description: t.explore.subtitle });
 }
 
 export default async function ExplorePage({ params }: { params: Promise<{ locale: string }> }) {

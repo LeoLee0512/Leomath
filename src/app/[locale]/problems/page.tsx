@@ -8,10 +8,13 @@ import { exercisesForConcept } from "@/content/exercises";
 import { currentUser } from "@/lib/auth";
 import { getExerciseSummary } from "@/lib/progress";
 import { ExerciseCard } from "@/components/ExerciseCard";
+import { pageMeta } from "@/lib/seo";
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
   const { locale } = await params;
-  return { title: isLocale(locale) ? getDictionary(locale).problems.title : "Problems" };
+  if (!isLocale(locale)) return {};
+  const t = getDictionary(locale);
+  return pageMeta(locale, "/problems", { title: t.problems.title, description: t.problems.subtitle });
 }
 
 export default async function ProblemsPage({ params }: { params: Promise<{ locale: string }> }) {

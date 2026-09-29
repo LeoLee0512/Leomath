@@ -8,10 +8,13 @@ import { getExerciseSummary, getProgress } from "@/lib/progress";
 import { getConcept, paths } from "@/content/graph";
 import { getExercise } from "@/content/exercises";
 import { logoutAction } from "@/app/actions";
+import { pageMeta } from "@/lib/seo";
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
   const { locale } = await params;
-  return { title: isLocale(locale) ? getDictionary(locale).auth.accountTitle : "Account" };
+  if (!isLocale(locale)) return {};
+  const t = getDictionary(locale);
+  return pageMeta(locale, "/account", { title: t.auth.accountTitle, description: t.tagline, noindex: true });
 }
 
 export default async function AccountPage({ params }: { params: Promise<{ locale: string }> }) {
