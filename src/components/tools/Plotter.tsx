@@ -131,7 +131,7 @@ export function Plotter({ locale }: { locale: Locale }) {
         <p className="text-sm text-muted mt-1">{t.hint}</p>
       </div>
       <div className="grid lg:grid-cols-[1fr_18rem]">
-        <canvas ref={canvasRef} className="exp-canvas cursor-move" onPointerDown={onDown} onPointerMove={onMove} onPointerUp={onUp} onPointerCancel={onUp} role="img" aria-label={t.title} />
+        <canvas ref={canvasRef} className="exp-canvas exp-canvas-drag cursor-move" onPointerDown={onDown} onPointerMove={onMove} onPointerUp={onUp} onPointerCancel={onUp} role="img" aria-label={t.title} />
         <div className="border-t lg:border-t-0 lg:border-l border-rule p-4 space-y-3 text-sm">
           {curves.map((cv, i) => (
             <div key={i}>
@@ -153,7 +153,7 @@ export function Plotter({ locale }: { locale: Locale }) {
               {paramNames.map((n) => (
                 <label key={n} className="exp-control block mb-2">
                   <div className="flex justify-between"><span className="mono">{n}</span><span className="mono">{(params[n] ?? 1).toFixed(2)}</span></div>
-                  <input type="range" min={-5} max={5} step={0.01} value={params[n] ?? 1} onChange={(e) => setParams({ ...params, [n]: Number(e.target.value) })} />
+                  <input type="range" aria-valuetext={(params[n] ?? 1).toFixed(2)} min={-5} max={5} step={0.01} value={params[n] ?? 1} onChange={(e) => setParams({ ...params, [n]: Number(e.target.value) })} />
                 </label>
               ))}
             </div>
@@ -161,7 +161,7 @@ export function Plotter({ locale }: { locale: Locale }) {
           <div className="pt-2 border-t border-rule">
             <label className="exp-control block">
               <div className="flex justify-between"><span>{t.at}</span><span className="mono">{probe.toFixed(2)}</span></div>
-              <input type="range" min={view.cx - view.w / 2} max={view.cx + view.w / 2} step={view.w / 400} value={probe} onChange={(e) => setProbe(Number(e.target.value))} />
+              <input type="range" aria-valuetext={probe.toFixed(2)} min={view.cx - view.w / 2} max={view.cx + view.w / 2} step={view.w / 400} value={probe} onChange={(e) => setProbe(Number(e.target.value))} />
             </label>
             <ul className="mono text-xs mt-1 space-y-0.5">
               {curves.map((cv, i) => {

@@ -32,6 +32,9 @@ export function rk4Step(f: Field, t: number, y: readonly number[], h: number): n
 
 const steppers = { euler: eulerStep, midpoint: midpointStep, rk4: rk4Step } as const;
 
+/** Upper bound on steps per run; the explorer's smallest step needs 1500. */
+const MAX_STEPS = 20_000;
+
 export function integrate(
   f: Field,
   y0: readonly number[],
@@ -41,7 +44,8 @@ export function integrate(
   method: Method,
 ): Trajectory {
   const step = steppers[method];
-  const n = Math.max(1, Math.ceil((t1 - t0) / h - 1e-9));
+  if (!(h > 0) || !Number.isFinite(h) || !(t1 > t0)) return { t: [t0], y: [[...y0]] };
+  const n = Math.min(MAX_STEPS, Math.max(1, Math.ceil((t1 - t0) / h - 1e-9)));
   const t: number[] = [t0];
   const y: number[][] = [[...y0]];
   let cur = [...y0];

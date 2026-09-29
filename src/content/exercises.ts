@@ -1,4 +1,5 @@
 import type { Bilingual } from "./graph";
+import { numericMistakes, optionFeedback } from "./exercise-feedback";
 
 export type Exercise =
   | {
@@ -52,7 +53,7 @@ export const exercises: Exercise[] = [
   {
     id: "derivative-2", concept: "derivative", kind: "numeric",
     statement: b("求 $\\displaystyle\\lim_{h\\to0}\\frac{2^h-1}{h}$（保留三位小数）。这正是 $2^x$ 在 $x=0$ 处的导数。", "Compute $\\displaystyle\\lim_{h\\to0}\\frac{2^h-1}{h}$ to three decimals. This is the derivative of $2^x$ at $x=0$."),
-    answer: Math.LN2, tolerance: 0.002,
+    answer: Math.LN2, tolerance: 6e-4,
     hint: b("写 $2^h=e^{h\\ln 2}$，再用 $e^u\\approx 1+u$。", "Write $2^h=e^{h\\ln 2}$ and use $e^u\\approx 1+u$."),
     solution: b("$\\frac{2^h-1}{h}=\\frac{e^{h\\ln2}-1}{h}\\to\\ln 2\\approx0.693$。", "$\\frac{2^h-1}{h}=\\frac{e^{h\\ln2}-1}{h}\\to\\ln 2\\approx0.693$."),
   },
@@ -60,7 +61,7 @@ export const exercises: Exercise[] = [
   {
     id: "mean-value-theorem-1", concept: "mean-value-theorem", kind: "numeric",
     statement: b("$f(x)=x^3$ 在 $[0,2]$ 上，求满足 $f'(\\xi)=\\dfrac{f(2)-f(0)}{2-0}$ 的 $\\xi\\in(0,2)$（保留三位小数）。", "For $f(x)=x^3$ on $[0,2]$, find $\\xi\\in(0,2)$ with $f'(\\xi)=\\dfrac{f(2)-f(0)}{2-0}$ (three decimals)."),
-    answer: 2 / Math.sqrt(3), tolerance: 0.002,
+    answer: 2 / Math.sqrt(3), tolerance: 6e-4,
     hint: b("平均斜率是 $4$，所以要解 $3\\xi^2=4$。", "The average slope is $4$, so solve $3\\xi^2=4$."),
     solution: b("$3\\xi^2=4\\Rightarrow\\xi=2/\\sqrt3\\approx1.155$，它确实在 $(0,2)$ 内。", "$3\\xi^2=4\\Rightarrow\\xi=2/\\sqrt3\\approx1.155$, which lies in $(0,2)$."),
   },
@@ -76,7 +77,7 @@ export const exercises: Exercise[] = [
   {
     id: "integral-1", concept: "integral", kind: "numeric",
     statement: b("计算 $\\displaystyle\\int_0^1 x^2\\,dx$（保留四位小数）。", "Compute $\\displaystyle\\int_0^1 x^2\\,dx$ to four decimals."),
-    answer: 1 / 3, tolerance: 0.001,
+    answer: 1 / 3, tolerance: 6e-5,
     hint: b("找一个导数是 $x^2$ 的函数。", "Find a function whose derivative is $x^2$."),
     solution: b("$\\int_0^1x^2\\,dx=\\left[\\tfrac{x^3}{3}\\right]_0^1=\\tfrac13$。", "$\\int_0^1x^2\\,dx=\\left[\\tfrac{x^3}{3}\\right]_0^1=\\tfrac13$."),
   },
@@ -92,13 +93,13 @@ export const exercises: Exercise[] = [
   {
     id: "taylor-1", concept: "taylor-series", kind: "numeric",
     statement: b("$\\sin x$ 在 $x=0$ 处的 Taylor 级数中，$x^3$ 的系数是多少（保留四位小数）？", "In the Taylor series of $\\sin x$ at $0$, what is the coefficient of $x^3$ (four decimals)?"),
-    answer: -1 / 6, tolerance: 0.001,
+    answer: -1 / 6, tolerance: 6e-5,
     hint: b("系数是 $f^{(3)}(0)/3!$。", "The coefficient is $f^{(3)}(0)/3!$."),
     solution: b("$\\sin'''(x)=-\\cos x$，$\\sin'''(0)=-1$，系数为 $-1/6$。", "$\\sin'''(x)=-\\cos x$, so $\\sin'''(0)=-1$ and the coefficient is $-1/6$."),
   },
   {
     id: "taylor-2", concept: "taylor-series", kind: "choice",
-    statement: b("用 $1-\\tfrac{x^2}{2}$ 近似 $\\cos x$，当 $|x|\\le 0.5$ 时，Lagrange 余项给出的误差上界最接近下列哪个？", "Approximating $\\cos x$ by $1-\\tfrac{x^2}{2}$ for $|x|\\le0.5$, the Lagrange remainder bounds the error by approximately"),
+    statement: b("用 $1-\\tfrac{x^2}{2}$ 近似 $\\cos x$，当 $|x|\\le 0.5$ 时，Lagrange 余项能给出的最紧误差上界最接近下列哪个？", "Approximating $\\cos x$ by $1-\\tfrac{x^2}{2}$ for $|x|\\le0.5$, the sharpest bound the Lagrange remainder gives on the error is approximately"),
     options: [b("$0.0026$", "$0.0026$"), b("$0.0208$", "$0.0208$"), b("$0.125$", "$0.125$"), b("$0.5$", "$0.5$")],
     correct: 0,
     hint: b("$x^3$ 项系数为 0，所以余项是四阶的：$|R|\\le\\frac{|x|^4}{4!}$。", "The $x^3$ coefficient is $0$, so the remainder is fourth order: $|R|\\le\\frac{|x|^4}{4!}$."),
@@ -124,7 +125,7 @@ export const exercises: Exercise[] = [
   {
     id: "inner-product-1", concept: "inner-product", kind: "numeric",
     statement: b("求向量 $u=(1,2,2)$ 与 $v=(2,-1,2)$ 夹角的余弦（保留三位小数）。", "Find the cosine of the angle between $u=(1,2,2)$ and $v=(2,-1,2)$ (three decimals)."),
-    answer: 4 / 9, tolerance: 0.002,
+    answer: 4 / 9, tolerance: 6e-4,
     hint: b("$\\cos\\theta=\\dfrac{\\langle u,v\\rangle}{\\|u\\|\\,\\|v\\|}$。", "$\\cos\\theta=\\dfrac{\\langle u,v\\rangle}{\\|u\\|\\,\\|v\\|}$."),
     solution: b("$\\langle u,v\\rangle=2-2+4=4$，$\\|u\\|=\\|v\\|=3$，所以 $\\cos\\theta=4/9\\approx0.444$。", "$\\langle u,v\\rangle=2-2+4=4$, $\\|u\\|=\\|v\\|=3$, so $\\cos\\theta=4/9\\approx0.444$."),
   },
@@ -188,7 +189,7 @@ export const exercises: Exercise[] = [
   {
     id: "what-is-ode-1", concept: "what-is-ode", kind: "numeric",
     statement: b("解初值问题 $y'=2y,\\ y(0)=3$，求 $y(1)$（保留两位小数）。", "Solve $y'=2y,\\ y(0)=3$ and give $y(1)$ to two decimals."),
-    answer: 3 * Math.exp(2), tolerance: 0.05,
+    answer: 3 * Math.exp(2), tolerance: 6e-3,
     hint: b("先猜 $y=Ce^{kt}$，代入确定 $k$ 与 $C$。", "Guess $y=Ce^{kt}$ and substitute to fix $k$ and $C$."),
     solution: b("$y=3e^{2t}$，$y(1)=3e^2\\approx22.17$。", "$y=3e^{2t}$, so $y(1)=3e^2\\approx22.17$."),
   },
@@ -248,6 +249,66 @@ export const exercises: Exercise[] = [
     hint: b("$(h/2)^4=h^4/16$。", "$(h/2)^4=h^4/16$."),
     solution: b("误差与 $h^4$ 成比例，所以减半后约为 $1/16$。", "Error scales like $h^4$, so halving $h$ divides it by about 16."),
   },
+  // ---- probability space ----
+  {
+    id: "probability-space-1", concept: "probability-space", kind: "numeric",
+    statement: b("掷两颗均匀骰子，点数之和为 $7$ 的概率是多少？（可以填分数）", "Roll two fair dice. What is the probability that the sum is $7$? (A fraction is fine.)"),
+    answer: 1 / 6, tolerance: 1e-3,
+    hint: b("样本空间是有序对 $(i,j)$，共 $36$ 个，等可能。", "The sample space is the $36$ equally likely ordered pairs $(i,j)$."),
+    solution: b("和为 $7$ 的有序对是 $(1,6),(2,5),\\dots,(6,1)$，共 $6$ 个，概率 $\\frac6{36}=\\frac16$。注意 $(1,6)$ 与 $(6,1)$ 是不同的样本点。", "The ordered pairs with sum $7$ are $(1,6),(2,5),\\dots,(6,1)$: six of them, so the probability is $\\frac6{36}=\\frac16$. Note that $(1,6)$ and $(6,1)$ are different outcomes."),
+  },
+  {
+    id: "probability-space-2", concept: "probability-space", kind: "numeric",
+    statement: b("已知 $P(A)=0.5$，$P(B)=0.4$，$P(A\\cup B)=0.7$。求 $P(A\\cap B)$。", "Given $P(A)=0.5$, $P(B)=0.4$ and $P(A\\cup B)=0.7$, find $P(A\\cap B)$."),
+    answer: 0.2, tolerance: 1e-6,
+    hint: b("用加法公式 $P(A\\cup B)=P(A)+P(B)-P(A\\cap B)$。", "Use $P(A\\cup B)=P(A)+P(B)-P(A\\cap B)$."),
+    solution: b("$P(A\\cap B)=0.5+0.4-0.7=0.2$。$P(A)+P(B)=0.9>0.7$，多出的 $0.2$ 正是交集被数了两次的部分。", "$P(A\\cap B)=0.5+0.4-0.7=0.2$. The sum $P(A)+P(B)=0.9$ exceeds $0.7$ by exactly the intersection, which was counted twice."),
+  },
+  {
+    id: "probability-space-3", concept: "probability-space", kind: "numeric",
+    statement: b("$3$ 个人中至少两人同一天生日的概率是多少？（按 $365$ 天均匀计，保留四位小数）", "What is the probability that among $3$ people at least two share a birthday? (Uniform over $365$ days; four decimals.)"),
+    answer: 1 - (364 * 363) / (365 * 365), tolerance: 6e-5,
+    hint: b("先算补事件\"三人生日两两不同\"。", "Compute the complement first: all three birthdays different."),
+    solution: b("$1-\\frac{365\\cdot364\\cdot363}{365^3}=1-\\frac{364\\cdot363}{365^2}\\approx0.0082$。和 $\\binom32\\cdot\\frac1{365}\\approx0.0082$ 几乎一样：人少时，概率约等于\"对数 × 每对撞上的概率\"。", "$1-\\frac{365\\cdot364\\cdot363}{365^3}=1-\\frac{364\\cdot363}{365^2}\\approx0.0082$, almost exactly $\\binom32\\cdot\\frac1{365}\\approx0.0082$: for small groups the probability is about \"pairs × chance per pair\"."),
+  },
+  {
+    id: "probability-space-4", concept: "probability-space", kind: "choice",
+    statement: b("一个 $23$ 人的班里，**有人和你同一天生日**（你是其中之一）的概率约为？", "In a class of $23$ that includes you, the probability that **someone shares your birthday** is about"),
+    options: [b("$6\\%$", "$6\\%$"), b("$25\\%$", "$25\\%$"), b("$51\\%$", "$51\\%$"), b("$94\\%$", "$94\\%$")],
+    correct: 0,
+    hint: b("这里只有 $22$ 对：你和其他每个人。", "Only $22$ pairs matter here: you and each other person."),
+    solution: b("$1-\\bigl(\\frac{364}{365}\\bigr)^{22}\\approx0.059$。$51\\%$ 是\"任意两人同一天\"的概率，那里有 $253$ 对。", "$1-\\bigl(\\frac{364}{365}\\bigr)^{22}\\approx0.059$. The $51\\%$ is for \"some two people share\", which involves $253$ pairs."),
+  },
+  // ---- conditional probability ----
+  {
+    id: "conditional-probability-1", concept: "conditional-probability", kind: "numeric",
+    statement: b("掷两颗均匀骰子，已知点数之和为 $8$，求第一颗是 $6$ 的条件概率。（可以填分数）", "Roll two fair dice. Given that the sum is $8$, what is the probability that the first die shows $6$? (A fraction is fine.)"),
+    answer: 1 / 5, tolerance: 1e-3,
+    hint: b("已知条件把样本空间缩小成和为 $8$ 的那些有序对。", "The condition shrinks the sample space to the ordered pairs with sum $8$."),
+    solution: b("和为 $8$ 的有序对是 $(2,6),(3,5),(4,4),(5,3),(6,2)$，共 $5$ 个，其中第一颗是 $6$ 的只有 $(6,2)$，所以是 $\\frac15$。它比无条件的 $\\frac16$ 大：知道和较大，第一颗大的可能性就上升了。", "The ordered pairs with sum $8$ are $(2,6),(3,5),(4,4),(5,3),(6,2)$: five of them, and only $(6,2)$ has a $6$ first, so the answer is $\\frac15$. It exceeds the unconditional $\\frac16$: a large sum makes a large first die more likely."),
+  },
+  {
+    id: "conditional-probability-2", concept: "conditional-probability", kind: "numeric",
+    statement: b("甲、乙两台机器分别生产 $60\\%$ 和 $40\\%$ 的零件，次品率分别为 $2\\%$ 和 $5\\%$。随机抽到一个次品，它来自乙的概率是多少？（保留三位小数）", "Machines A and B make $60\\%$ and $40\\%$ of the parts, with defect rates $2\\%$ and $5\\%$. A randomly chosen part is defective. What is the probability it came from B? (Three decimals.)"),
+    answer: 0.625, tolerance: 6e-4,
+    hint: b("先用全概率公式算出次品的总概率。", "First find the total probability of a defect with the law of total probability."),
+    solution: b("$P(\\text{次})=0.6\\times0.02+0.4\\times0.05=0.032$，$P(\\text{乙}\\mid\\text{次})=\\frac{0.4\\times0.05}{0.032}=0.625$。乙只生产四成，却贡献了六成多的次品。", "$P(\\text{defect})=0.6\\times0.02+0.4\\times0.05=0.032$, so $P(B\\mid\\text{defect})=\\frac{0.4\\times0.05}{0.032}=0.625$. B makes only 40% of the parts but over 60% of the defects."),
+  },
+  {
+    id: "conditional-probability-3", concept: "conditional-probability", kind: "choice",
+    statement: b("设 $P(A)>0$，$P(B)>0$，且 $A$ 与 $B$ 互斥。那么 $A$ 与 $B$：", "Let $P(A)>0$, $P(B)>0$, and let $A$ and $B$ be mutually exclusive. Then $A$ and $B$ are"),
+    options: [b("一定独立", "always independent"), b("一定不独立", "never independent"), b("可能独立也可能不独立", "sometimes independent, sometimes not"), b("独立当且仅当 $P(A)=P(B)$", "independent exactly when $P(A)=P(B)$")],
+    correct: 1,
+    hint: b("比较 $P(A\\cap B)$ 与 $P(A)P(B)$。", "Compare $P(A\\cap B)$ with $P(A)P(B)$."),
+    solution: b("互斥给出 $P(A\\cap B)=0$，而 $P(A)P(B)>0$，所以乘积公式不成立。直观上，$A$ 发生就排除了 $B$，这是最强的相关。", "Exclusivity gives $P(A\\cap B)=0$ while $P(A)P(B)>0$, so the product rule fails. Intuitively, $A$ occurring rules $B$ out: the strongest kind of dependence."),
+  },
+  {
+    id: "conditional-probability-4", concept: "conditional-probability", kind: "numeric",
+    statement: b("沿用正文的检测：患病率 $1\\%$，灵敏度 $95\\%$，误报率 $8\\%$。某人连续两次检测都呈阳性（两次检测在是否患病已知时条件独立），他患病的概率是多少？（保留两位小数）", "Use the test from the article: prevalence $1\\%$, sensitivity $95\\%$, false-positive rate $8\\%$. Someone tests positive twice (the tests are conditionally independent given the true state). What is the probability that they are ill? (Two decimals.)"),
+    answer: (0.95 * 0.95 * 0.01) / (0.95 * 0.95 * 0.01 + 0.08 * 0.08 * 0.99), tolerance: 0.006,
+    hint: b("把第一次的后验当作第二次的先验；或者直接用 $P(++\\mid\\text{病})=0.95^2$。", "Use the first posterior as the second prior, or directly $P(++\\mid\\text{ill})=0.95^2$."),
+    solution: b("$\\frac{0.95^2\\times0.01}{0.95^2\\times0.01+0.08^2\\times0.99}=\\frac{0.009025}{0.009025+0.006336}\\approx0.59$。分两步算（$0.01\\to0.107\\to0.59$）结果相同：条件独立时，Bayes 更新可以一条一条地做。", "$\\frac{0.95^2\\times0.01}{0.95^2\\times0.01+0.08^2\\times0.99}=\\frac{0.009025}{0.009025+0.006336}\\approx0.59$. Doing it in two steps ($0.01\\to0.107\\to0.59$) gives the same result: with conditional independence, Bayesian updates can be done one piece of evidence at a time."),
+  },
 ];
 
 export function exercisesForConcept(slug: string): Exercise[] {
@@ -266,6 +327,43 @@ export function checkAnswer(exercise: Exercise, answer: string): boolean {
     return Math.abs(value - exercise.answer) <= exercise.tolerance;
   }
   return Number(answer) === exercise.correct;
+}
+
+/** Why an answer is wrong (or, for a choice, why the chosen option is right), for the coach-style feedback. */
+export type Diagnosis =
+  | { kind: "note"; note: Bilingual }
+  | { kind: "unreadable" }
+  | { kind: "sign" }
+  | { kind: "reciprocal" }
+  | { kind: "scale"; factor: number }
+  | { kind: "near"; tolerance: number };
+
+/** Answers whose value matches a known mistake to within 5% (users round). */
+const matches = (v: number, target: number, tolerance: number) => Math.abs(v - target) <= Math.max(tolerance, 0.05 * Math.abs(target));
+
+export function diagnose(exercise: Exercise, answer: string): Diagnosis | null {
+  if (exercise.kind === "choice") {
+    const note = optionFeedback[exercise.id]?.[Number(answer)];
+    return note ? { kind: "note", note } : null;
+  }
+  const v = parseNumeric(answer);
+  if (v === null) return { kind: "unreadable" };
+  const a = exercise.answer;
+  const tol = exercise.tolerance;
+  if (Math.abs(v - a) <= tol) return null;
+  for (const m of numericMistakes[exercise.id] ?? []) {
+    if (matches(v, m.value, tol)) return { kind: "note", note: m.feedback };
+  }
+  if (a !== 0 && Math.abs(v + a) <= Math.max(tol, 1e-9)) return { kind: "sign" };
+  if (a !== 0 && v !== 0 && Math.abs(1 / a) !== Math.abs(a) && Math.abs(v - 1 / a) <= Math.max(tol, 1e-3 * Math.abs(1 / a))) return { kind: "reciprocal" };
+  if (a !== 0) {
+    for (const factor of [100, 10, 1000, 0.1, 0.01, 0.001]) {
+      // Allow for rounding: 1/6 written as 16.7 (%) should still be recognised.
+      if (Math.abs(v - factor * a) <= factor * Math.max(tol, 0.005 * Math.abs(a))) return { kind: "scale", factor };
+    }
+  }
+  if (Math.abs(v - a) <= 20 * tol) return { kind: "near", tolerance: tol };
+  return null;
 }
 
 /** Accepts decimals and simple fractions such as "1/3" or "-1/6". */

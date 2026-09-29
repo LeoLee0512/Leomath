@@ -1,6 +1,6 @@
 import type { ComponentType, ReactNode } from "react";
 import type { Locale } from "@/i18n/config";
-import { ExperimentEmbed } from "./experiments/ExperimentEmbed";
+import { ExperimentEmbed, type SearchParams } from "./experiments/ExperimentEmbed";
 import { getExperiment, getTool } from "@/content/graph";
 import Link from "next/link";
 
@@ -28,7 +28,7 @@ interface BlockProps {
  * Semantic mathematical blocks. Definitions, results (theorem/proposition/lemma/corollary)
  * and examples are numbered `chapter.n` within an article, in render order.
  */
-export function mdxComponents(locale: Locale, chapter: number): Record<string, ComponentType<unknown>> {
+export function mdxComponents(locale: Locale, chapter: number, searchParams?: SearchParams): Record<string, ComponentType<unknown>> {
   const L = labels[locale];
   const counters = { definition: 0, result: 0, example: 0 };
   const next = (key: keyof typeof counters) => `${chapter}.${++counters[key]}`;
@@ -85,7 +85,7 @@ export function mdxComponents(locale: Locale, chapter: number): Record<string, C
           <b>{L.experiment}</b>
           {exp ? <span className="mblock-title">{exp.title[locale]}</span> : null}
         </figcaption>
-        <ExperimentEmbed slug={slug} locale={locale} preset={preset} />
+        <ExperimentEmbed slug={slug} locale={locale} preset={preset} searchParams={searchParams} />
       </figure>
     );
   }
@@ -100,7 +100,13 @@ export function mdxComponents(locale: Locale, chapter: number): Record<string, C
     );
   }
 
+  /** A formula pre-rendered by rehypeTex in src/lib/mdx.ts. */
+  function Tex({ html, display }: { html: string; display?: boolean }) {
+    return display ? <div dangerouslySetInnerHTML={{ __html: html }} /> : <span dangerouslySetInnerHTML={{ __html: html }} />;
+  }
+
   return {
+    Tex,
     Tool,
     Problem: plain("problem", "mblock-problem"),
     Observe: plain("observe", "mblock-observe"),

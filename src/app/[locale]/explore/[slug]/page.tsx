@@ -6,6 +6,7 @@ import { getDictionary } from "@/i18n/dictionaries";
 import { experiments, getExperiment, getConcept, concepts } from "@/content/graph";
 import { ExperimentEmbed } from "@/components/experiments/ExperimentEmbed";
 import { Comments } from "@/components/Comments";
+import { pageMeta } from "@/lib/seo";
 
 export function generateStaticParams() {
   return experiments.map((e) => ({ slug: e.slug }));
@@ -14,11 +15,12 @@ export function generateStaticParams() {
 export async function generateMetadata({ params }: { params: Promise<{ locale: string; slug: string }> }): Promise<Metadata> {
   const { locale, slug } = await params;
   const e = getExperiment(slug);
-  return e && isLocale(locale) ? { title: e.title[locale], description: e.summary[locale] } : {};
+  return e && isLocale(locale) ? pageMeta(locale, `/explore/${slug}`, { title: e.title[locale], description: e.summary[locale] }) : {};
 }
 
-export default async function ExperimentPage({ params }: { params: Promise<{ locale: string; slug: string }> }) {
+export default async function ExperimentPage({ params, searchParams }: { params: Promise<{ locale: string; slug: string }>; searchParams: Promise<Record<string, string | string[] | undefined>> }) {
   const { locale, slug } = await params;
+  const query = await searchParams;
   if (!isLocale(locale)) notFound();
   const e = getExperiment(slug);
   if (!e) notFound();
@@ -31,10 +33,10 @@ export default async function ExperimentPage({ params }: { params: Promise<{ loc
       <h1 className="display text-4xl font-semibold mt-3">{e.title[locale]}</h1>
       <p className="mt-3 text-ink-2 max-w-2xl">{e.summary[locale]}</p>
       <div className="mt-10">
-        <ExperimentEmbed slug={slug} locale={locale} />
+        <ExperimentEmbed slug={slug} locale={locale} searchParams={query} backHref={main.status === "published" ? `/${locale}/concepts/${main.slug}#exp-${slug}` : undefined} />
       </div>
       <div className="mt-8 text-sm">
-        <span className="text-muted">{t.explore.relatedConcept}: </span>
+        <span className="text-muted">{t.explore.relatedConcept}{t.common.colon}</span>
         {(related.length ? related : [main]).map((c, i) => (
           <span key={c.slug}>
             {i > 0 && <span className="text-muted"> · </span>}

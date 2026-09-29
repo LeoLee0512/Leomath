@@ -28,12 +28,13 @@ export function CommentForm({ type, slug, path, locale, t, maxLength }: {
         maxLength={maxLength}
         rows={4}
         placeholder={t.placeholder}
+        aria-label={t.title}
         className="field w-full resize-y leading-relaxed"
       />
       <div className="mt-2 flex flex-wrap items-center gap-3 text-sm">
         <button className="btn btn-primary btn-small" disabled={pending}>{pending ? t.posting : t.submit}</button>
         <span className="text-muted">{t.hint}</span>
-        {state.error && <span className="text-e1">{state.error}</span>}
+        {state.error && <span className="text-e1" role="alert">{state.error}</span>}
       </div>
     </form>
   );

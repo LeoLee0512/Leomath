@@ -10,9 +10,12 @@ import { hasDatabase } from "@/lib/db";
 import { recordAttempt, setProgress, type ProgressStatus } from "@/lib/progress";
 import { addComment, deleteComment, isAdmin, postedRecently, COMMENT_MAX_LENGTH, type CommentTarget } from "@/lib/comments";
 import { normaliseBody } from "@/lib/comments-format";
-import { checkAnswer, getExercise } from "@/content/exercises";
+import { checkAnswer, diagnose, getExercise, type Diagnosis } from "@/content/exercises";
 import { getConcept, getExperiment } from "@/content/graph";
 import { getSoftware } from "@/content/software";
+import { deleteAccount, passwordMatches } from "@/lib/account";
+import { richHtml } from "@/lib/rich";
+import { clear, clientIp, isLimited, record, FIFTEEN_MINUTES, ONE_HOUR } from "@/lib/rate-limit";
 
 export interface FormState {
   error?: string;
@@ -47,6 +50,9 @@ export async function registerAction(_prev: FormState, form: FormData): Promise<
     displayName: form.get("displayName") || undefined,
   });
   const echo = String(form.get("email") ?? "");
+  const ipKey = `register:${await clientIp()}`;
+  if (isLimited(ipKey, 10)) return { error: t.tooMany, email: echo };
+  record(ipKey, ONE_HOUR);
   if (!parsed.success) {
     const issue = parsed.error.issues[0];
     return { error: issue.path[0] === "email" ? t.invalidEmail : t.shortPassword, email: echo };
@@ -68,14 +74,45 @@ export async function loginAction(_prev: FormState, form: FormData): Promise<For
   const email = String(form.get("email") ?? "");
   const password = String(form.get("password") ?? "");
   if (!email || !password) return { error: t.badCredentials, email };
+  const ipKey = `login-ip:${await clientIp()}`;
+  const accountKey = `login-account:${email.trim().toLowerCase()}`;
+  if (isLimited(ipKey, 20) || isLimited(accountKey, 5)) return { error: t.tooMany, email };
   try {
     const user = await verifyUser(email, password);
-    if (!user) return { error: t.badCredentials, email };
+    if (!user) {
+      record(ipKey, FIFTEEN_MINUTES);
+      record(accountKey, FIFTEEN_MINUTES);
+      return { error: t.badCredentials, email };
+    }
+    clear(accountKey);
     await startSession(user.id);
   } catch {
     return { error: t.generic, email };
   }
   redirect(safeNext(form, locale));
+}
+
+/** Self-service account deletion: the password confirms it is really the owner, then everything is deleted. */
+export async function deleteAccountAction(_prev: FormState, form: FormData): Promise<FormState> {
+  const locale = localeFrom(form);
+  const t = getDictionary(locale).auth.data;
+  const user = await currentUser();
+  if (!user) redirect(`/${locale}/login`);
+  if (form.get("confirm") !== "yes") return { error: t.needConfirm };
+  const password = String(form.get("password") ?? "");
+  const key = `delete:${user.id}`;
+  if (isLimited(key, 5)) return { error: getDictionary(locale).auth.errors.tooMany };
+  try {
+    if (!(await passwordMatches(user.id, password))) {
+      record(key, FIFTEEN_MINUTES);
+      return { error: t.wrongPassword };
+    }
+    await deleteAccount(user.id);
+  } catch {
+    return { error: getDictionary(locale).auth.errors.generic };
+  }
+  await endSession();
+  redirect(`/${locale}/account/deleted`);
 }
 
 export async function logoutAction(form: FormData): Promise<void> {
@@ -98,6 +135,28 @@ export interface AnswerState {
   checked: boolean;
   correct: boolean;
   answer: string;
+  /** Coach-style note (server-rendered HTML): why this answer is wrong, or why the chosen option is right. */
+  feedback?: string;
+}
+
+function feedbackText(d: Diagnosis | null, locale: Locale): string | undefined {
+  if (!d) return undefined;
+  const t = getDictionary(locale).diagnosis;
+  switch (d.kind) {
+    case "note": return d.note[locale];
+    case "unreadable": return t.unreadable;
+    case "sign": return t.sign;
+    case "reciprocal": return t.reciprocal;
+    case "scale": return t.scale(d.factor);
+    case "near": return t.near(String(d.tolerance));
+  }
+}
+
+/** A hint or solution as HTML, fetched when the reader opens it. */
+export async function exerciseTextAction(id: string, part: "hint" | "solution", locale: string): Promise<string> {
+  const exercise = getExercise(id);
+  if (!exercise || (part !== "hint" && part !== "solution")) return "";
+  return richHtml(exercise[part][isLocale(locale) ? locale : "zh"]);
 }
 
 export async function checkAnswerAction(_prev: AnswerState, form: FormData): Promise<AnswerState> {
@@ -106,11 +165,13 @@ export async function checkAnswerAction(_prev: AnswerState, form: FormData): Pro
   const exercise = getExercise(id);
   if (!exercise || !answer) return { checked: false, correct: false, answer };
   const correct = checkAnswer(exercise, answer);
+  const note = feedbackText(diagnose(exercise, answer), localeFrom(form));
+  const feedback = note ? richHtml(note) : undefined;
   const user = await currentUser();
   if (user) {
     await recordAttempt(user.id, id, answer, correct).catch(() => undefined);
   }
-  return { checked: true, correct, answer };
+  return { checked: true, correct, answer, feedback };
 }
 
 // ---- Comments -------------------------------------------------------------
@@ -168,7 +229,7 @@ export async function deleteCommentAction(form: FormData): Promise<void> {
   const user = await currentUser();
   const id = String(form.get("id") ?? "");
   if (!user || !/^\d{1,18}$/.test(id) || !hasDatabase()) return;
-  await deleteComment(id, user.id, isAdmin(user.email)).catch(() => undefined);
+  await deleteComment(id, user.id, isAdmin(user)).catch(() => undefined);
   const path = pagePath(form, locale);
   if (path) revalidatePath(path);
 }

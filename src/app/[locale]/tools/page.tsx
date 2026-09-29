@@ -7,10 +7,13 @@ import { FormulaEditor } from "@/components/tools/FormulaEditor";
 import { Plotter } from "@/components/tools/Plotter";
 import { MatrixTool } from "@/components/tools/MatrixTool";
 import { concepts, type Tool } from "@/content/graph";
+import { pageMeta } from "@/lib/seo";
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
   const { locale } = await params;
-  return { title: isLocale(locale) ? getDictionary(locale).tools.title : "Tools" };
+  if (!isLocale(locale)) return {};
+  const t = getDictionary(locale);
+  return pageMeta(locale, "/tools", { title: t.tools.title, description: t.tools.subtitle });
 }
 
 function Related({ id, locale, label }: { id: Tool["id"]; locale: "zh" | "en"; label: string }) {
@@ -18,7 +21,7 @@ function Related({ id, locale, label }: { id: Tool["id"]; locale: "zh" | "en"; l
   if (list.length === 0) return null;
   return (
     <p className="mt-3 text-sm text-muted">
-      {label}:{" "}
+      {label}
       {list.map((c, i) => (
         <span key={c.slug}>{i > 0 && " · "}<Link href={`/${locale}/concepts/${c.slug}`} className="text-leo hover:underline">{c.title[locale]}</Link></span>
       ))}
@@ -40,9 +43,9 @@ export default async function ToolsPage({ params }: { params: Promise<{ locale: 
         <a href="#matrix" className="text-leo hover:underline">{t.tools.matrix}</a>
       </nav>
       <div className="mt-10 space-y-10">
-        <div><FormulaEditor locale={locale} /><Related id="formula" locale={locale} label={t.tools.related} /></div>
-        <div><Plotter locale={locale} /><Related id="plot" locale={locale} label={t.tools.related} /></div>
-        <div><MatrixTool locale={locale} /><Related id="matrix" locale={locale} label={t.tools.related} /></div>
+        <div><FormulaEditor locale={locale} /><Related id="formula" locale={locale} label={`${t.tools.related}${t.common.colon}`} /></div>
+        <div><Plotter locale={locale} /><Related id="plot" locale={locale} label={`${t.tools.related}${t.common.colon}`} /></div>
+        <div><MatrixTool locale={locale} /><Related id="matrix" locale={locale} label={`${t.tools.related}${t.common.colon}`} /></div>
       </div>
     </div>
   );

@@ -11,23 +11,26 @@ const positions: Record<string, [number, number]> = {
   analysis: [230, 140],
   algebra: [600, 140],
   geometry: [850, 140],
-  probability: [1020, 140],
+  probability: [1005, 140],
   functions: [120, 240],
   limit: [280, 240],
   vectors: [560, 240],
   "plane-geometry": [820, 240],
-  "conditional-probability": [1020, 240],
+  "probability-space": [1005, 240],
   "mean-value-theorem": [120, 340],
   derivative: [280, 340],
   "linear-maps": [520, 340],
   "inner-product": [745, 340],
-  "central-limit-theorem": [1020, 340],
+  "conditional-probability": [1005, 340],
   integral: [170, 440],
   "what-is-ode": [400, 440],
   matrices: [560, 440],
   "taylor-series": [95, 540],
   "first-order-ode": [400, 540],
   eigenvalues: [560, 540],
+  "random-variables": [1005, 440],
+  "expectation-variance": [1005, 540],
+  "central-limit-theorem": [1005, 640],
   "group-theory": [820, 540],
   "multivariable-calculus": [125, 640],
   "numerical-ode": [320, 640],
@@ -41,7 +44,7 @@ const treeEdges: [string, string][] = [
   ["mathematics", "algebra"],
   ["mathematics", "geometry"],
   ["mathematics", "probability"],
-  ["probability", "conditional-probability"],
+  ["probability", "probability-space"],
   ["analysis", "functions"],
   ["analysis", "limit"],
   ["algebra", "vectors"],
@@ -59,10 +62,10 @@ const copy = {
     planned: "规划中",
     published: "已发布",
     building: "正在建设",
-    min: (m: number) => `${m} min`,
+    min: (m: number) => `约 ${m} 分钟`,
     legendPub: "已发布",
     legendPlan: "规划中",
-    paths: "三条路线",
+    paths: "学习路线",
     inPath: "所属路线",
   },
   en: {
@@ -78,7 +81,7 @@ const copy = {
     min: (m: number) => `${m} min`,
     legendPub: "Published",
     legendPlan: "Planned",
-    paths: "Three paths",
+    paths: "Paths",
     inPath: "Part of",
   },
 };
@@ -127,7 +130,8 @@ export function KnowledgeTree({ locale, focus, minutes = {} }: KnowledgeTreeProp
     <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_19rem] lg:items-start">
       {/* Desktop: the map. */}
       <div className="hidden md:block">
-        <svg viewBox="0 0 1120 800" className="w-full h-auto select-none" role="img" aria-label={t.hover}>
+        {/* role="group", not "img": an image hides its children, and the nodes here are real buttons. */}
+        <svg viewBox="0 0 1120 800" className="w-full h-auto select-none" role="group" aria-label={t.hover}>
           <defs>
             <marker id="kt-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
               <path d="M 0 0 L 10 5 L 0 10 z" fill="var(--leo)" />
@@ -198,12 +202,20 @@ export function KnowledgeTree({ locale, focus, minutes = {} }: KnowledgeTreeProp
                 style={{ transition: "opacity 160ms", cursor: "pointer" }}
                 tabIndex={0}
                 role="button"
+                aria-pressed={pinned === c.slug}
                 aria-label={label}
                 onMouseEnter={() => setHover(c.slug)}
                 onMouseLeave={() => setHover(null)}
                 onFocus={() => setHover(c.slug)}
                 onBlur={() => setHover(null)}
                 onClick={() => setPinned((p) => (p === c.slug ? null : c.slug))}
+                onKeyDown={(e) => {
+                  // Keyboard users pin a node with Enter or Space, so the panel stays while they Tab to its link.
+                  if (e.key === "Enter" || e.key === " ") {
+                    e.preventDefault();
+                    setPinned((p) => (p === c.slug ? null : c.slug));
+                  }
+                }}
               >
                 <rect
                   x={-w / 2}

@@ -1,12 +1,13 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import type { Locale } from "@/i18n/config";
 import { Plot, fitCanvas } from "@/lib/plot";
 import { getPreset } from "@/lib/math/functions";
 import { format } from "@/lib/math/linear";
-import { tex } from "@/lib/katex";
+import { useTex } from "./texContext";
 import { useResizeVersion, useThemeColors } from "./useTheme";
+import { useUrlState } from "./urlState";
 
 const copy = {
   zh: { fn: "函数", x0: "观察点 x₀", h: "增量 h", secant: "割线斜率", tangent: "切线斜率 f′(x₀)", gap: "差", hint: "把 h 调小，割线转向切线。差商 → 导数。", domain: "ln x 只在 x > 0 有定义。" },
@@ -17,13 +18,14 @@ const IDS = ["exp", "sin", "square", "cubic", "ln"];
 
 export function SecantTangent({ locale }: { locale: Locale }) {
   const t = copy[locale];
+  const quotientHtml = useTex("quotient");
   const colors = useThemeColors();
   const wrapRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const resize = useResizeVersion(wrapRef);
-  const [fid, setFid] = useState("sin");
-  const [x0, setX0] = useState(1);
-  const [h, setH] = useState(1.2);
+  const [fid, setFid] = useUrlState("f", "sin", IDS);
+  const [x0, setX0] = useUrlState("x0", 1, { min: -3, max: 3 });
+  const [h, setH] = useUrlState("h", 1.2, { min: 0.001, max: 2.5 });
   const p = getPreset(fid);
   const lo = p.domain ? Math.max(p.domain[0], -4) : -4;
   const xa = Math.max(lo, x0);
@@ -64,16 +66,16 @@ export function SecantTangent({ locale }: { locale: Locale }) {
       <div className="border-t border-rule px-4 py-3 grid gap-x-6 gap-y-3 md:grid-cols-2">
         <label className="exp-control block">
           <div className="flex justify-between"><span>{t.x0}</span><span className="mono">{xa.toFixed(2)}</span></div>
-          <input type="range" min={-3} max={3} step={0.01} value={x0} onChange={(e) => setX0(Number(e.target.value))} />
+          <input type="range" aria-valuetext={xa.toFixed(2)} min={-3} max={3} step={0.01} value={x0} onChange={(e) => setX0(Number(e.target.value))} />
         </label>
         <label className="exp-control block">
           <div className="flex justify-between"><span>{t.h}</span><span className="mono">{h.toFixed(3)}</span></div>
-          <input type="range" className="e1" min={0.001} max={2.5} step={0.001} value={h} onChange={(e) => setH(Number(e.target.value))} />
+          <input type="range" aria-valuetext={h.toFixed(3)} className="e1" min={0.001} max={2.5} step={0.001} value={h} onChange={(e) => setH(Number(e.target.value))} />
         </label>
       </div>
       <div className="border-t border-rule px-4 py-3 flex flex-wrap items-center gap-x-6 gap-y-2 exp-control">
-        <span dangerouslySetInnerHTML={{ __html: tex(`\\frac{f(x_0+h)-f(x_0)}{h}`) }} />
-        <span><span className="text-muted">{t.secant}</span> <span className="mono" style={{ color: colors.e1 }}>{format(secant, 4)}</span></span>
+        <span dangerouslySetInnerHTML={{ __html: quotientHtml }} />
+        <span><span className="text-muted">{t.secant}</span> <span className="mono text-e1">{format(secant, 4)}</span></span>
         <span><span className="text-muted">{t.tangent}</span> <span className="mono text-leo">{format(tangent, 4)}</span></span>
         <span><span className="text-muted">{t.gap}</span> <span className="mono text-ink">{format(Math.abs(secant - tangent), 4)}</span></span>
         {fid === "ln" && <span className="text-muted">{t.domain}</span>}

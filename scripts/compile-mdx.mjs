@@ -7,6 +7,8 @@ import remarkMath from "remark-math";
 import rehypeKatex from "rehype-katex";
 
 const root = path.resolve("content/concepts");
+// Same rewrite as displayMathBlocks in src/lib/mdx.ts: a line of only `$$…$$` is display math.
+const displayMathBlocks = (s) => s.replace(/^([ \t]*)\$\$(?!\$)(.+?)\$\$[ \t]*$/gm, "$1$$$$\n$1$2\n$1$$$$");
 let failed = 0;
 let count = 0;
 for (const slug of await readdir(root)) {
@@ -15,7 +17,7 @@ for (const slug of await readdir(root)) {
     count++;
     const src = await readFile(path.join(root, slug, file), "utf8");
     try {
-      const out = String(await compile(src, {
+      const out = String(await compile(displayMathBlocks(src), {
         remarkPlugins: [remarkGfm, remarkMath],
         rehypePlugins: [[rehypeKatex, { strict: "error", throwOnError: true }]],
       }));

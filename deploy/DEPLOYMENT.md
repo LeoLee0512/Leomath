@@ -50,7 +50,6 @@ cp .env.example .env
 #   POSTGRES_PASSWORD=<随机强密码>
 #   SITE_URL=https://leomath.cn
 #   WEB_PORT=3000   （只在本机监听时，把 docker-compose.yml 的 ports 改成 "127.0.0.1:3000:3000"）
-#   ADMIN_EMAILS=<你的登录邮箱>   （可删除任何评论；多个用逗号分隔）
 
 # 4. 启动（自动执行数据库迁移）
 docker compose up -d --build
@@ -79,10 +78,42 @@ docker compose up -d --build
 
 新的 SQL 迁移放在 `db/migrations/` 下，容器启动时自动应用。
 
-## 备份
+## 管理员（可删除任何评论）
+
+管理员权限记在数据库里，不再按邮箱判断（邮箱没有验证，按邮箱判断会被抢注）。先用该邮箱在网站上注册，然后：
 
 ```bash
-docker compose exec db pg_dump -U leomath leomath | gzip > leomath-$(date +%F).sql.gz
+docker compose exec db psql -U leomath -c "UPDATE users SET is_admin = true WHERE email = '你的邮箱';"
+```
+
+取消：把 `true` 换成 `false`。账户注销后权限随账户一起消失，重新注册同一邮箱不会恢复。
+
+## 安全响应头、备案号
+
+- **CSP**：生产构建默认发送 `Content-Security-Policy-Report-Only`，违规会以 `[csp] ...` 写进 web 容器日志。观察一段时间：
+  ```bash
+  docker compose logs web | grep "\[csp\]"
+  ```
+  日志干净后，在 `.env` 里设 `CSP_ENFORCE=1` 并 `docker compose up -d` 重启即可。脚本只有带上每次请求随机生成的 nonce 才能运行，所以强制模式能挡住注入的内联脚本。
+- **限流**：`deploy/nginx.leomath.conf` 对登录、注册、账户页面和 CSP 报告接口按 IP 限速（超出返回 429）；应用内另有按 IP 和按账户的失败计数（登录失败 5 次锁定该账户 15 分钟）。更新 nginx 配置后执行 `sudo nginx -t && sudo systemctl reload nginx`。应用依赖 nginx 设置的 `X-Real-IP` 识别访客，不要去掉这一行。
+- **日志上限**：`docker-compose.yml` 把每个容器的日志限制为 3 个 10 MB 文件。
+- **HSTS**：`SITE_URL` 以 `https://` 开头时自动发送 `Strict-Transport-Security: max-age=15552000`（180 天）。只在 HTTPS 已稳定可用后部署这一版；一旦浏览器收到 HSTS，180 天内都只会用 HTTPS 访问。
+- **ICP 备案号**：备案通过后在 `.env` 里设 `ICP_NUMBER=京ICP备xxxxxxxx号-1`，重启即可，页脚会显示并链接到 beian.miit.gov.cn。
+
+## 备份
+
+每天一次，只保留最近 30 天。隐私政策承诺“注销的数据 30 天内从所有备份中消失”，所以**不要**另外长期保存旧备份。
+
+```bash
+sudo mkdir -p /opt/leomath/backups
+# crontab -e（root），每天 03:30：
+30 3 * * * cd /opt/leomath && docker compose exec -T db pg_dump -U leomath leomath | gzip > backups/leomath-$(date +\%F).sql.gz && find backups -name 'leomath-*.sql.gz' -mtime +30 -delete
+```
+
+手动备份（同样放进 `backups/`，30 天后会被自动删除）：
+
+```bash
+docker compose exec -T db pg_dump -U leomath leomath | gzip > /opt/leomath/backups/leomath-$(date +%F).sql.gz
 ```
 
 ## 排错

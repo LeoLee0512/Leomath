@@ -88,6 +88,12 @@ docker compose up -d --build
 4. 在 `src/components/KnowledgeTree.tsx` 的 `positions` 中给节点一个坐标。
 5. `npm test` 会验证图谱完整性（无环、引用存在、路线只含已发布节点）。
 
+## 致谢 · Acknowledgements
+
+概率路线借鉴了 [github.com/huzhuofan1020-svg](https://github.com/huzhuofan1020-svg) 中公开的概率论交互演示的思路（例如生日问题实验、章节规划）。内容与代码均在 LeoMath 中按自己的写法重写；每个借鉴处都在页面上标注了对应仓库的链接。
+
+The probability path draws on ideas from the public probability demos at [github.com/huzhuofan1020-svg](https://github.com/huzhuofan1020-svg). Everything is rewritten in LeoMath's own style; each borrowed idea links to its source repository on the page.
+
 ## 前身 · Predecessor
 
 MathForge（[LeoLee0512/MathLearn](https://github.com/LeoLee0512/MathLearn)，v0.3.1）是 LeoMath 的前身，已归档。它的实验、工具和两篇内容已在 LeoMath 中重写；迁移记录见 [ROADMAP.md](./ROADMAP.md)。

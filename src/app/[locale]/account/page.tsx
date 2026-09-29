@@ -8,10 +8,14 @@ import { getExerciseSummary, getProgress } from "@/lib/progress";
 import { getConcept, paths } from "@/content/graph";
 import { getExercise } from "@/content/exercises";
 import { logoutAction } from "@/app/actions";
+import { pageMeta } from "@/lib/seo";
+import { DeleteAccountForm } from "@/components/DeleteAccountForm";
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
   const { locale } = await params;
-  return { title: isLocale(locale) ? getDictionary(locale).auth.accountTitle : "Account" };
+  if (!isLocale(locale)) return {};
+  const t = getDictionary(locale);
+  return pageMeta(locale, "/account", { title: t.auth.accountTitle, description: t.tagline, noindex: true });
 }
 
 export default async function AccountPage({ params }: { params: Promise<{ locale: string }> }) {
@@ -70,6 +74,19 @@ export default async function AccountPage({ params }: { params: Promise<{ locale
             <li key={e.id}><Link href={`/${locale}/concepts/${e.concept}`} className="hover:text-leo">{getConcept(e.concept)!.title[locale]} · <span className="mono text-muted">{e.id}</span></Link></li>
           ))}
         </ul>
+      </section>
+
+      <section className="mt-16 border-t border-rule pt-8">
+        <h2 className="eyebrow mb-6">{t.auth.data.title}</h2>
+        <div className="grid gap-8">
+          <div>
+            <h3 className="font-medium">{t.auth.data.exportTitle}</h3>
+            <p className="mt-1 text-sm text-ink-2">{t.auth.data.exportDesc}</p>
+            {/* A plain link: the route answers with a file download. */}
+            <a href="/api/account/export" download className="btn btn-ghost btn-small mt-3 inline-flex">{t.auth.data.exportButton}</a>
+          </div>
+          <DeleteAccountForm locale={locale} t={t.auth.data} />
+        </div>
       </section>
     </div>
   );

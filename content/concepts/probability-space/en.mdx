@@ -1,0 +1,135 @@
+## Start from a problem
+
+<Problem>
+In a class of $30$ people, what is the probability that **at least two share a birthday**?
+
+Most people's first answer: a year has $365$ days and $30$ people fill less than a tenth of it, so perhaps $8\%$.
+
+The true answer is above $70\%$. An intuition this far off means we have not yet said what "probability" is computing: what are all the possible outcomes? Which part of them is "some two share a day"? By what rule do chances add up? The answers to these three questions, taken together, are a **probability space**.
+</Problem>
+
+<Observe>
+Play first, read later. Drag the group size $n$: the black curve is the theoretical probability. Then press "Simulate" to draw a whole class's birthdays at random; the red dot is the frequency so far. **At what size does the probability first pass one half?**
+
+<Experiment slug="birthday-problem" />
+</Observe>
+
+<Conjecture>
+The curve climbs much faster than the head count, because what can collide is not a "person" but a **pair**. $n$ people form $\binom n2=\tfrac{n(n-1)}2$ pairs; $23$ people already make $253$ pairs, each matching with chance $\tfrac1{365}$. Pairs grow like $n^2$, so we need nowhere near $365$ people: twenty-odd will do.
+
+To turn this guess into something provable, we first need a precise framework.
+</Conjecture>
+
+## Definition
+
+<Definition title="Sample space and events">
+The set $\Omega$ of all possible outcomes of a random experiment is its **sample space**; its elements $\omega$ are **outcomes**. Subsets of $\Omega$ are **events**. When the outcome $\omega$ lies in $A$, we say the event $A$ **occurs**.
+</Definition>
+
+Events are sets, so set operations are the logic of events: $A\cup B$ is "$A$ or $B$ occurs", $A\cap B$ is "both occur", $A^c=\Omega\setminus A$ is "$A$ does not occur". If $A\cap B=\varnothing$, the events are **mutually exclusive**.
+
+<Example title="The sample space of the birthday problem">
+Number the $n$ people; each birthday is one of the days $\{1,\dots,365\}$. An outcome is an ordered $n$-tuple $\omega=(d_1,\dots,d_n)$, so
+$$\Omega=\{1,\dots,365\}^n,\qquad |\Omega|=365^n.$$
+"Some two share a day" is the event $A=\{\omega:\ d_i=d_j \text{ for some } i\ne j\}$; its complement $A^c$ is "the $n$ birthdays are all different".
+</Example>
+
+<Definition title="Probability (Kolmogorov's axioms)">
+Let $\Omega$ be finite or countable. A function $P$ assigning a real number $P(A)$ to every event $A\subseteq\Omega$ is a **probability** if
+1. **non-negativity**: $P(A)\ge0$;
+2. **normalisation**: $P(\Omega)=1$;
+3. **countable additivity**: if $A_1,A_2,\dots$ are pairwise mutually exclusive, then $P\bigl(\bigcup_i A_i\bigr)=\sum_i P(A_i)$.
+
+The pair $(\Omega,P)$ is then a **probability space**.
+</Definition>
+
+The axioms say what a probability **satisfies**, not what any particular event's probability **is**. The numbers come from a model. The simplest model is "every outcome is equally likely":
+
+<Definition title="Classical probability">
+If $\Omega$ is finite and all outcomes have the same probability, then for every event $A$
+$$P(A)=\frac{|A|}{|\Omega|}.$$
+</Definition>
+
+In the classical model, a probability question becomes a **counting** question: how many outcomes does $A$ contain?
+
+## Theorems and proofs
+
+There are only three axioms, but every everyday rule follows from them.
+
+<Theorem title="Basic properties of probability">
+For all events $A,B$:
+1. $P(\varnothing)=0$;
+2. $P(A^c)=1-P(A)$;
+3. if $A\subseteq B$ then $P(A)\le P(B)$;
+4. $P(A\cup B)=P(A)+P(B)-P(A\cap B)$.
+</Theorem>
+
+<Proof>
+(1) Take $A_1=\Omega$ and $A_2=A_3=\dots=\varnothing$. They are pairwise exclusive, so countable additivity gives $P(\Omega)=P(\Omega)+\sum_{i\ge2}P(\varnothing)$, hence $\sum_{i\ge2}P(\varnothing)=0$; every term is non-negative, so $P(\varnothing)=0$.
+
+With (1), additivity also holds for **finitely many** exclusive events (pad the list with empty sets).
+
+(2) $A$ and $A^c$ are exclusive with union $\Omega$, so $P(A)+P(A^c)=P(\Omega)=1$.
+
+(3) $B=A\cup(B\setminus A)$, an exclusive union, so $P(B)=P(A)+P(B\setminus A)\ge P(A)$.
+
+(4) $A\cup B=A\cup(B\setminus A)$ and $B=(A\cap B)\cup(B\setminus A)$ are both exclusive unions. Hence $P(A\cup B)=P(A)+P(B\setminus A)=P(A)+P(B)-P(A\cap B)$.
+</Proof>
+
+Property (2) looks trivial, yet it is the key to the birthday problem. "Some two share a day" splits into many cases (two match, three match, two separate pairs match, ...), while its complement "all different" is a single case and far easier to count.
+
+<Proposition title="The birthday problem">
+In the classical model ($n\le365$ people, birthdays independent and uniform over $365$ days),
+$$P(\text{some two share a day})=1-\frac{365\cdot364\cdots(365-n+1)}{365^n}=1-\prod_{k=1}^{n-1}\Bigl(1-\frac{k}{365}\Bigr).$$
+</Proposition>
+
+<Proof>
+Count the outcomes in $A^c$: the first person's birthday has $365$ choices, the second must avoid it and has $364$, ..., the $n$-th has $365-n+1$. So $|A^c|=365\cdot364\cdots(365-n+1)$. The classical model gives $P(A^c)=|A^c|/365^n$, and property (2) gives $P(A)=1-P(A^c)$. The second equality just writes each factor as $\frac{365-k}{365}=1-\frac k{365}$.
+</Proof>
+
+At $n=23$ this is $0.5073$; at $n=30$, $0.7063$. The formula is exact but does not show *why* the answer is in the twenties. Turning the product into an exponential reveals the structure.
+
+<Lemma title="1 − x ≤ e^{−x}">
+For every real $x$, $1-x\le e^{-x}$, with equality only at $x=0$.
+</Lemma>
+
+<Proof>
+Let $g(x)=e^{-x}-(1-x)$. Then $g(0)=0$ and $g'(x)=1-e^{-x}$, which is positive for $x>0$ and negative for $x<0$. So $g$ has its minimum $0$ at $x=0$. This is the sign of the error when the [Taylor expansion](/en/concepts/taylor-series) of $e^{-x}$ is cut after two terms: the curve always lies above its tangent line.
+</Proof>
+
+<Corollary title="Twenty-three people are enough">
+$$P(\text{some two share a day})\ \ge\ 1-\exp\Bigl(-\frac{n(n-1)}{2\cdot365}\Bigr).$$
+In particular the probability exceeds $\tfrac12$ at $n=23$.
+</Corollary>
+
+<Proof>
+Apply the lemma to each factor: $1-\frac k{365}\le e^{-k/365}$. All factors are positive, so multiplying gives
+$$\prod_{k=1}^{n-1}\Bigl(1-\frac k{365}\Bigr)\le\exp\Bigl(-\frac{1+2+\cdots+(n-1)}{365}\Bigr)=\exp\Bigl(-\frac{n(n-1)}{730}\Bigr).$$
+Taking complements gives the inequality. At $n=23$, $\frac{23\cdot22}{730}=\frac{506}{730}\approx0.693151>\ln2\approx0.693147$, so the right-hand side exceeds $1-\tfrac12=\tfrac12$.
+</Proof>
+
+The exponent is exactly the number of **pairs** $\binom n2$ divided by $365$: that is what the conjecture was saying. For probability one half we need $\binom n2\approx365\ln2$, i.e. $n\approx\sqrt{2\cdot365\ln2}\approx22.5$. The group only needs to be on the order of the **square root** of the number of days.
+
+<Warning>
+"**Some two people** share a birthday" and "**someone shares mine**" are different events. The second involves only $n-1$ pairs (me with each other person), with probability $1-\bigl(\tfrac{364}{365}\bigr)^{n-1}$: about $5.9\%$ at $n=23$, and it takes $253$ people besides me to pass one half. The intuitive $8\%$ is really an answer to the second question. In the experiment, compare the dotted curve with the black one: near $n=23$ it is almost ten times lower.
+</Warning>
+
+<Remark>
+The classical model assumes birthdays are uniform over $365$ days; real ones are not (there are seasonal effects). One can prove that, as long as birthdays stay independent and the year has $365$ days, the uniform distribution gives the **smallest** chance of a match among all distributions, for every $n$. So within this model the numbers above are lower bounds, and the conclusion only gets stronger. (Twins break independence and February 29 adds a day; neither is in the model.)
+</Remark>
+
+## Applications
+
+<Application title="Hash collisions and the birthday attack">
+A hash function with $m$-bit output has $d=2^m$ possible values. Replacing "days" by $d$, the same argument shows that trying about
+$$n\approx\sqrt{2d\ln2}\approx1.18\cdot2^{m/2}$$
+random inputs gives an even chance of two inputs with the same hash. For a $64$-bit hash that is about five billion tries, not $2^{64}$. So an $m$-bit hash resists collisions with only $m/2$ bits of strength: $128$-bit security needs a $256$-bit output.
+</Application>
+
+<Tool id="plot" />
+
+In the plotter, draw $1-\exp(-x(x-1)/730)$, then replace $730$ by $2d$ for other numbers of "days": the shape stays almost the same and stretches horizontally by roughly $\sqrt{d/365}$.
+
+<Remark>
+This section only needed counting outcomes. In many problems, though, we **first learn something** and then ask for a probability: given a positive test, how likely is the disease? New information changes the sample space. That is the question of the next section, [conditional probability and Bayes' theorem](/en/concepts/conditional-probability).
+</Remark>

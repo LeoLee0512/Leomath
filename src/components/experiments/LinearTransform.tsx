@@ -4,8 +4,8 @@ import { useCallback, useEffect, useMemo, useRef, useState, useSyncExternalStore
 import type { Locale } from "@/i18n/config";
 import { Plot, fitCanvas } from "@/lib/plot";
 import { apply, det, eigen, format, fromColumns, type Mat2, type Vec2 } from "@/lib/math/linear";
-import { tex } from "@/lib/katex";
 import { useResizeVersion, useThemeColors } from "./useTheme";
+import { useUrlState } from "./urlState";
 
 const RANGE = 3.2;
 const GRID_EXTENT = 8;
@@ -68,13 +68,24 @@ export interface LinearTransformProps {
   onChange?: (m: Mat2) => void;
 }
 
+const matText = (m: Mat2) => m.map((v) => String(Math.round(v * 1000) / 1000)).join(",");
+function parseMat(text: string, fallback: Mat2): Mat2 {
+  const v = text.split(",").map(Number);
+  if (v.length !== 4 || !v.every(Number.isFinite)) return fallback;
+  return v.map((x) => Math.max(-10, Math.min(10, x))) as unknown as Mat2;
+}
+
 export function LinearTransform({ locale, compact = false, initial = [1, 0, 0, 1], onChange }: LinearTransformProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const wrapRef = useRef<HTMLDivElement>(null);
   const colors = useThemeColors();
   const resizeVersion = useResizeVersion(wrapRef);
-  const [m, setM] = useState<Mat2>(initial);
-  const [showEigen, setShowEigen] = useState(!compact);
+  const [mText, setMText] = useUrlState("m", matText(initial));
+  const m = useMemo(() => parseMat(mText, initial), [mText, initial]);
+  const setM = useCallback((next: Mat2 | ((prev: Mat2) => Mat2)) => {
+    setMText((prev) => matText(typeof next === "function" ? next(parseMat(prev, initial)) : next));
+  }, [setMText, initial]);
+  const [showEigen, setShowEigen] = useUrlState("eigen", !compact);
   // Zero-cost onboarding: 0 = drag e1, 1 = look at the grid, 2 = drag e2, 3 = done.
   const [guideState, setGuide] = useState<0 | 1 | 2 | 3>(compact ? 0 : 3);
   const guideDone = useSyncExternalStore(noopSubscribe, readGuideDone, () => false);
@@ -222,9 +233,6 @@ export function LinearTransform({ locale, compact = false, initial = [1, 0, 0, 1
     animRef.current = requestAnimationFrame(step);
   }
 
-  const c1 = `\\textcolor{${colors.e1}}{`;
-  const c2 = `\\textcolor{${colors.e2}}{`;
-  const matrixTex = `A=\\begin{pmatrix}${c1}${format(m[0])}}&${c2}${format(m[1])}}\\\\${c1}${format(m[2])}}&${c2}${format(m[3])}}\\end{pmatrix}`;
   const showControls = !compact || guide === 3;
 
   return (
@@ -236,7 +244,7 @@ export function LinearTransform({ locale, compact = false, initial = [1, 0, 0, 1
       )}
       <canvas
         ref={canvasRef}
-        className="exp-canvas cursor-grab active:cursor-grabbing"
+        className="exp-canvas exp-canvas-drag cursor-grab active:cursor-grabbing"
         onPointerDown={onDown}
         onPointerMove={onMove}
         onPointerUp={onUp}
@@ -245,7 +253,7 @@ export function LinearTransform({ locale, compact = false, initial = [1, 0, 0, 1
         role="img"
       />
       <div className="border-t border-rule px-4 py-3 flex flex-wrap items-center gap-x-6 gap-y-2">
-        <div className="text-lg" dangerouslySetInnerHTML={{ __html: tex(matrixTex) }} />
+        <MatrixView m={m} />
         {showControls && (
           <div className="exp-control">
             <span className="text-muted">{t.det}</span>{" "}
@@ -289,4 +297,25 @@ export function LinearTransform({ locale, compact = false, initial = [1, 0, 0, 1
 function snap(v: number): number {
   const r = Math.round(v * 2) / 2;
   return Math.abs(v - r) < 0.08 ? r : Math.round(v * 100) / 100;
+}
+
+/**
+ * A = (2×2 matrix), columns coloured like the basis vectors they are. Laid out in HTML rather than
+ * KaTeX because it changes on every drag, and so the page needs no maths library in the browser.
+ */
+function MatrixView({ m }: { m: Mat2 }) {
+  const cell = (v: number, col: 0 | 1) => (
+    <span className={`text-right tabular-nums ${col === 0 ? "text-e1" : "text-e2"}`}>{format(v).replace(/^-/, "−")}</span>
+  );
+  return (
+    <div className="inline-flex items-center gap-2 text-lg" style={{ fontFamily: "KaTeX_Main, var(--font-serif)" }} aria-label={`A = [[${format(m[0])}, ${format(m[1])}], [${format(m[2])}, ${format(m[3])}]]`}>
+      <span style={{ fontFamily: "KaTeX_Math, var(--font-serif)", fontStyle: "italic" }}>A</span>
+      <span>=</span>
+      <span className="relative inline-grid grid-cols-2 gap-x-3 px-2.5 py-0.5 leading-tight" aria-hidden="true">
+        <span className="absolute left-0 inset-y-0 w-2 border-l-[1.5px] border-y-0 rounded-l-[50%] border-ink" />
+        {cell(m[0], 0)}{cell(m[1], 1)}{cell(m[2], 0)}{cell(m[3], 1)}
+        <span className="absolute right-0 inset-y-0 w-2 border-r-[1.5px] border-y-0 rounded-r-[50%] border-ink" />
+      </span>
+    </div>
+  );
 }

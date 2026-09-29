@@ -1,0 +1,125 @@
+## Start from a problem
+
+<Problem>
+A disease affects $1\%$ of a population. A test is positive for $95\%$ of the ill, and also, falsely, for $8\%$ of the healthy. Your result is **positive**. What is the probability that you are ill?
+
+Many people, doctors included, answer "about $95\%$". The true answer is about $11\%$.
+
+"The test was positive" is new information. It does not change the world; it changes which part of the world we should look at. How to write "we know this event occurred" into a [probability space](/en/concepts/probability-space) is the question of this section.
+</Problem>
+
+<Observe>
+Play first, read later. Below are a thousand people: red squares are ill, grey circles healthy; filled means a positive test, hollow a negative one. **Count how many of the filled marks are red squares.**
+
+<Experiment slug="bayes-screening" />
+</Observe>
+
+<Conjecture>
+Among the positives only about $10$ are really ill, while about $79$ are healthy people with a false alarm. So the answer should be the share of the ill among the positives:
+$$\frac{\text{true positives}}{\text{true positives}+\text{false positives}}\approx\frac{10}{89}.$$
+Knowing "positive", we have in effect shrunk the thousand people to these $89$ and recomputed proportions **inside that smaller group**.
+</Conjecture>
+
+## Definition
+
+<Definition title="Conditional probability">
+Let $P(B)>0$. The **conditional probability** of $A$ given $B$ is
+$$P(A\mid B)=\frac{P(A\cap B)}{P(B)}.$$
+</Definition>
+
+Read it exactly as in the conjecture: given that $B$ occurred, the sample space shrinks from $\Omega$ to $B$; what remains of $A$ is $A\cap B$; dividing by $P(B)$ makes the new whole space $B$ have probability $1$ again.
+
+<Experiment slug="conditioning" />
+
+What we get after this renormalisation is again a probability satisfying every axiom.
+
+<Proposition title="Conditional probability is a probability">
+If $P(B)>0$, then $Q(A)=P(A\mid B)$ satisfies Kolmogorov's axioms.
+</Proposition>
+
+<Proof>
+Non-negativity: $P(A\cap B)\ge0$ and $P(B)>0$. Normalisation: $Q(\Omega)=P(\Omega\cap B)/P(B)=1$. Countable additivity: if $A_1,A_2,\dots$ are pairwise exclusive, so are $A_1\cap B,\,A_2\cap B,\dots$, and $\bigl(\bigcup_iA_i\bigr)\cap B=\bigcup_i(A_i\cap B)$, hence
+$$Q\Bigl(\bigcup_iA_i\Bigr)=\frac{\sum_iP(A_i\cap B)}{P(B)}=\sum_iQ(A_i).$$
+</Proof>
+
+So every property proved in the previous section (complements, monotonicity, the addition rule) holds for $P(\cdot\mid B)$ with no new proof. Multiplying the definition by $P(B)$ gives the form used most often:
+
+<Corollary title="Multiplication rule">
+$P(A\cap B)=P(B)\,P(A\mid B)=P(A)\,P(B\mid A)$ (whenever the conditional probabilities are defined).
+</Corollary>
+
+<Definition title="Independence">
+Events $A$ and $B$ are **independent** if $P(A\cap B)=P(A)\,P(B)$.
+</Definition>
+
+When $P(B)>0$ this is equivalent to $P(A\mid B)=P(A)$: knowing that $B$ occurred does not change our judgement of $A$ at all. In the experiment this is the case where $B$ has the same height inside and outside $A$ and forms a horizontal band. The definition uses a product rather than a conditional probability because the product is symmetric in $A,B$ and still makes sense when $P(B)=0$.
+
+<Warning>
+**Independent is not mutually exclusive.** Exclusive means $A\cap B=\varnothing$: if one occurs, the other **cannot**. That is strong dependence. If $P(A),P(B)>0$ and $A,B$ are exclusive, then $P(A\cap B)=0\ne P(A)P(B)$, so they are never independent. Press "Mutually exclusive" in the experiment: $B$ has zero height in the column of $A$, nothing like a horizontal band.
+</Warning>
+
+## Theorems and proofs
+
+Back to the opening problem: we know $P(+\mid\text{ill})$ and want $P(\text{ill}\mid+)$. Two theorems connect them.
+
+<Theorem title="Law of total probability">
+Let $B_1,\dots,B_n$ be pairwise exclusive with $\bigcup_iB_i=\Omega$ and every $P(B_i)>0$. Then for every event $A$,
+$$P(A)=\sum_{i=1}^nP(A\mid B_i)\,P(B_i).$$
+</Theorem>
+
+<Proof>
+$A=\bigcup_i(A\cap B_i)$, a union of pairwise exclusive events, so $P(A)=\sum_iP(A\cap B_i)$. Apply the multiplication rule $P(A\cap B_i)=P(A\mid B_i)P(B_i)$ to each term.
+</Proof>
+
+The law of total probability is "splitting into cases": to find the total chance of $A$, split by non-overlapping causes $B_i$, compute each, and take the weighted sum.
+
+<Theorem title="Bayes' theorem">
+Under the same assumptions, if $P(A)>0$, then for each $k$
+$$P(B_k\mid A)=\frac{P(A\mid B_k)\,P(B_k)}{\sum_{i=1}^nP(A\mid B_i)\,P(B_i)}.$$
+</Theorem>
+
+<Proof>
+By the definition and the multiplication rule, $P(B_k\mid A)=\dfrac{P(B_k\cap A)}{P(A)}=\dfrac{P(A\mid B_k)P(B_k)}{P(A)}$; expand the denominator by the law of total probability.
+</Proof>
+
+Bayes' theorem turns a "cause → effect" probability $P(A\mid B_k)$ into an "effect → cause" probability $P(B_k\mid A)$. The turn requires multiplying by $P(B_k)$, our estimate of the cause **before** seeing the effect, called the **prior**; the result $P(B_k\mid A)$ is the **posterior**.
+
+<Example title="Solving the opening problem">
+Take $B_1=$ "ill", $B_2=$ "healthy", $A=$ "positive". The prior is $P(B_1)=0.01$, with $P(A\mid B_1)=0.95$ and $P(A\mid B_2)=0.08$.
+$$P(\text{ill}\mid+)=\frac{0.95\times0.01}{0.95\times0.01+0.08\times0.99}=\frac{0.0095}{0.0887}\approx0.107.$$
+The false-alarm term $0.0792$ in the denominator is more than eight times the true-positive term $0.0095$: the ill are so rare that the **absolute number** of false alarms swamps the true ones.
+</Example>
+
+<Warning>
+$P(A\mid B)$ and $P(B\mid A)$ are in general different, and confusing them is the most common and most dangerous mistake. "An ill person tests positive with probability $95\%$" is $P(+\mid\text{ill})$, not $P(\text{ill}\mid+)$. Courts see the same error, the "prosecutor's fallacy": "an innocent person matches this evidence with probability one in a million" does not mean "a person who matches is innocent with probability one in a million". The latter also depends on how many people could match, that is, on the prior.
+</Warning>
+
+## Applications
+
+<Application title="Retesting: the posterior becomes the new prior">
+After a first positive, take the same test again and get another positive. Now the "prior" is no longer the population's $1\%$ but the $0.107$ from the first test:
+$$P(\text{ill}\mid++)=\frac{0.95\times0.107}{0.95\times0.107+0.08\times0.893}\approx0.59.$$
+One test moves $1\%$ to $11\%$; two move it to $59\%$. This assumes the two tests are **conditionally independent** given the true state (false alarms are not caused by some persistent trait of the person); if false alarms tend to repeat, retesting is worth much less. Turn on "Retest the positives" in the experiment to see this step.
+</Application>
+
+<Tool id="plot" />
+
+In the plotter, draw $\dfrac{0.95x}{0.95x+0.08(1-x)}$ with the prior (prevalence) $x$ on the horizontal axis and the posterior after a positive on the vertical one. Near $x=0$ the posterior is about $12x$: the curve rises quickly at first, but as long as the prevalence is around $1\%$ or below, the posterior stays small. That is why a positive screen for a rare disease must be confirmed.
+
+## Further: Bayesian neural networks
+
+Replace "ill or not" by a neural network's **weights** $w$ and "the test result" by the **training data** $D$. Bayes' theorem does not change by a single symbol:
+$$p(w\mid D)=\frac{p(D\mid w)\,p(w)}{p(D)}.$$
+(Here $p$ is a probability density; for now read it as "probability for continuous quantities". The section on random variables will define it.)
+
+Ordinary training finds **one** best set of weights. A Bayesian neural network keeps the whole posterior $p(w\mid D)$: the weights are no longer one fixed set of numbers but a joint distribution over all of them, saying how plausible each setting is. Predictions average over all plausible weights,
+$$p(y\mid x,D)=\int p(y\mid x,w)\,p(w\mid D)\,dw,$$
+so where data are scarce the predictions spread out: the model **knows when it does not know**. That matters wherever "I'm not sure" beats a confident mistake, as in medicine or self-driving cars.
+
+An unexpected connection: take only the single most probable set of weights and give each weight an independent normal prior $N(0,\sigma^2)$. Then maximising $\log p(D\mid w)+\log p(w)$ is the same as minimising $-\log p(D\mid w)+\frac1{2\sigma^2}\|w\|^2$: the negative log-likelihood plus an **L2 penalty**. (If the loss is averaged over examples or otherwise rescaled, the coefficient changes accordingly; with plain SGD, L2 regularisation is weight decay.) **Regularisation is a prior.**
+
+The real difficulty is that the posterior cannot be computed: both the denominator $p(D)$ and the predictive integral run over all weights, often millions of dimensions. In practice the posterior is approximated by variational inference or Monte Carlo dropout, or sampled directly with MCMC. That is a story for another course.
+
+<Remark>
+In this section events have only two states, occurring or not. The next section, **random variables and distributions** (in progress), turns outcomes into numbers: counts of tests, numbers of positives, waiting times. The law of total probability and Bayes' theorem become sums and integrals over distributions there.
+</Remark>

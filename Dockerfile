@@ -8,7 +8,9 @@ FROM node:22-alpine AS build
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
-ENV NEXT_TELEMETRY_DISABLED=1
+# Static response headers (HSTS) are fixed at build time from the site URL (see next.config.ts).
+ARG NEXT_PUBLIC_SITE_URL=https://leomath.cn
+ENV NEXT_TELEMETRY_DISABLED=1 NEXT_PUBLIC_SITE_URL=$NEXT_PUBLIC_SITE_URL
 RUN npm run build
 
 FROM node:22-alpine AS runtime

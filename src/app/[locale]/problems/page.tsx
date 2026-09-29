@@ -8,10 +8,14 @@ import { exercisesForConcept } from "@/content/exercises";
 import { currentUser } from "@/lib/auth";
 import { getExerciseSummary } from "@/lib/progress";
 import { ExerciseCard } from "@/components/ExerciseCard";
+import { exerciseView } from "@/lib/exercise-view";
+import { pageMeta } from "@/lib/seo";
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
   const { locale } = await params;
-  return { title: isLocale(locale) ? getDictionary(locale).problems.title : "Problems" };
+  if (!isLocale(locale)) return {};
+  const t = getDictionary(locale);
+  return pageMeta(locale, "/problems", { title: t.problems.title, description: t.problems.subtitle });
 }
 
 export default async function ProblemsPage({ params }: { params: Promise<{ locale: string }> }) {
@@ -39,7 +43,7 @@ export default async function ProblemsPage({ params }: { params: Promise<{ local
                   </h3>
                   <div className="space-y-4">
                     {exs.map((e) => (
-                      <ExerciseCard key={e.id} exercise={e} index={++n} locale={locale} t={t.problems} summary={(summary as Record<string, { attempts: number; solved: boolean }>)[e.id]} />
+                      <ExerciseCard key={e.id} exercise={exerciseView(e, locale)} index={++n} locale={locale} t={t.problems} summary={(summary as Record<string, { attempts: number; solved: boolean }>)[e.id]} />
                     ))}
                   </div>
                 </div>

@@ -1,23 +1,40 @@
 import Link from "next/link";
+import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { isLocale } from "@/i18n/config";
 import { getDictionary } from "@/i18n/dictionaries";
-import { paths, getConcept, experimentsForConcept } from "@/content/graph";
-import { exercisesForConcept } from "@/content/exercises";
+import { paths, experiments } from "@/content/graph";
+import { exercises } from "@/content/exercises";
 import { software } from "@/content/software";
 import { SoftwareCard } from "@/components/SoftwareCard";
+import { PathCard } from "@/components/PathCard";
+import { pathStats } from "@/lib/paths";
 import { LinearTransform } from "@/components/experiments/LinearTransform";
 import { ExponentialDerivative } from "@/components/experiments/ExponentialDerivative";
 import { KnowledgeTree } from "@/components/KnowledgeTree";
 import { M, MB } from "@/components/Math";
 import { readingMinutesMap } from "@/lib/reading";
 import { publishedConcepts } from "@/content/graph";
+import { pageMeta } from "@/lib/seo";
+import { TexProvider } from "@/components/experiments/texContext";
+import { formulasFor } from "@/content/experiment-tex";
+import { tex } from "@/lib/katex";
+import { VERSION } from "@/content/site";
+
+export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
+  const { locale } = await params;
+  if (!isLocale(locale)) return {};
+  return pageMeta(locale, "", { description: getDictionary(locale).home.heroSubtitle });
+}
 
 export default async function Home({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
   if (!isLocale(locale)) notFound();
   const t = getDictionary(locale);
   const minutes = await readingMinutesMap(publishedConcepts().map((c) => c.slug), locale);
+  const stats = await Promise.all(paths.map((p) => pathStats(p, locale)));
+  // Unreleased software stays on the software page; the home page is for learning.
+  const released = software.filter((s) => s.status !== "coming-soon");
 
   return (
     <>
@@ -29,9 +46,14 @@ export default async function Home({ params }: { params: Promise<{ locale: strin
             <h1 className="display text-[2.4rem] leading-[1.15] md:text-[3.2rem] font-semibold">{t.home.heroTitle}</h1>
             <p className="mt-6 text-lg text-ink-2 leading-relaxed">{t.home.heroSubtitle}</p>
             <div className="mt-9 flex flex-wrap gap-3">
-              <Link href={`/${locale}/learn`} className="btn btn-primary">{t.home.ctaExplore} →</Link>
-              <Link href={`/${locale}/software`} className="btn btn-ghost">{t.home.ctaSoftware}</Link>
+              <a href="#paths" className="btn btn-primary">{t.home.ctaExplore}</a>
+              <Link href={`/${locale}/concepts/derivative`} className="btn btn-ghost">{t.home.ctaTry}</Link>
             </div>
+            <p className="mt-5 text-sm text-muted">
+              {t.paths.stats(paths.length, publishedConcepts().length, experiments.length, exercises.length)}
+              <span className="mx-1.5">·</span>
+              {t.paths.free}
+            </p>
             <div className="mt-14 hidden lg:block">
               <p className="display text-xl text-ink">{t.home.heroCaptionA}</p>
               <p className="display text-xl text-ink-2 mt-1">{t.home.heroCaptionB}</p>
@@ -40,6 +62,7 @@ export default async function Home({ params }: { params: Promise<{ locale: strin
           </div>
           <div className="min-w-0">
             <LinearTransform locale={locale} compact />
+            <p className="mt-3 text-sm text-muted">↑ {t.home.heroDemoNote}</p>
             <div className="mt-6 lg:hidden">
               <p className="display text-lg text-ink">{t.home.heroCaptionA}</p>
               <p className="display text-lg text-ink-2">{t.home.heroCaptionB}</p>
@@ -49,7 +72,21 @@ export default async function Home({ params }: { params: Promise<{ locale: strin
         </div>
       </section>
 
-      {/* 2. The knowledge tree: mathematics is connected. */}
+      {/* 2. Where to start: every path with who it is for, what it needs and what it gives. */}
+      <section id="paths" className="section hairline scroll-mt-16">
+        <div className="container">
+          <div className="max-w-2xl">
+            <h2 className="display text-3xl md:text-4xl font-semibold">{t.home.pathsTitle}</h2>
+            <p className="mt-4 text-ink-2 leading-relaxed">{t.home.pathsSubtitle}</p>
+            <p className="mt-3 text-sm text-muted leading-relaxed">{t.paths.choose}</p>
+          </div>
+          <div className="mt-10 grid gap-px bg-rule md:grid-cols-2 border border-rule">
+            {paths.map((p, i) => <PathCard key={p.slug} p={p} stats={stats[i]} locale={locale} t={t.paths} />)}
+          </div>
+        </div>
+      </section>
+
+      {/* 3. The knowledge tree: mathematics is connected. */}
       <section className="section hairline">
         <div className="container">
           <div className="max-w-2xl">
@@ -62,7 +99,7 @@ export default async function Home({ params }: { params: Promise<{ locale: strin
         </div>
       </section>
 
-      {/* 3. How LeoMath teaches: one real example. */}
+      {/* 4. How LeoMath teaches: one real example. */}
       <section className="section hairline">
         <div className="container grid gap-10 lg:grid-cols-2 lg:items-start">
           <div>
@@ -88,37 +125,7 @@ export default async function Home({ params }: { params: Promise<{ locale: strin
             <p className="mt-3 text-ink-2 leading-relaxed max-w-md">{t.home.methodBoth}</p>
             <Link href={`/${locale}/concepts/derivative`} className="mt-5 inline-block text-sm text-leo hover:underline">{t.home.methodLink}</Link>
           </div>
-          <ExponentialDerivative locale={locale} compact />
-        </div>
-      </section>
-
-      {/* 4. What to learn today: three complete paths, honest counts. */}
-      <section className="section hairline">
-        <div className="container">
-          <div className="max-w-2xl">
-            <h2 className="display text-3xl md:text-4xl font-semibold">{t.home.pathsTitle}</h2>
-            <p className="mt-4 text-ink-2 leading-relaxed">{t.home.pathsSubtitle}</p>
-          </div>
-          <div className="mt-10 grid gap-px bg-rule md:grid-cols-3 border border-rule">
-            {paths.map((p) => {
-              const nExp = new Set(p.concepts.flatMap((c) => experimentsForConcept(c).map((e) => e.slug))).size;
-              const nEx = p.concepts.reduce((s, c) => s + exercisesForConcept(c).length, 0);
-              return (
-                <Link key={p.slug} href={`/${locale}/learn/${p.slug}`} className="group bg-paper p-7 hover:bg-paper-2 transition-colors flex flex-col">
-                  <h3 className="display text-xl font-semibold">{p.title[locale]}</h3>
-                  <p className="mt-4 text-sm text-muted">{t.home.pathsIntent}</p>
-                  <p className="display text-lg text-ink mt-1 leading-snug">{p.intent[locale]}</p>
-                  <ol className="mt-5 space-y-1 text-sm text-ink-2">
-                    {p.concepts.map((c, i) => (
-                      <li key={c} className="flex gap-2"><span className="mono text-muted w-4">{i + 1}</span>{getConcept(c)!.title[locale]}</li>
-                    ))}
-                  </ol>
-                  <p className="mt-6 pt-4 border-t border-rule text-xs mono text-muted">{t.home.pathsCounts(p.concepts.length, nExp, nEx)}</p>
-                  <p className="mt-3 text-sm text-leo group-hover:underline">{t.home.pathsStart}</p>
-                </Link>
-              );
-            })}
-          </div>
+          <TexProvider html={{ quotient: tex(formulasFor("exponential-derivative", locale).quotient) }}><ExponentialDerivative locale={locale} compact /></TexProvider>
         </div>
       </section>
 
@@ -133,7 +140,7 @@ export default async function Home({ params }: { params: Promise<{ locale: strin
             {[
               { title: t.home.labExperiments, desc: t.home.labExperimentsDesc, formula: "\\dot{x}=\\sigma(y-x)", href: `/${locale}/explore`, live: true },
               { title: t.home.labComputing, desc: t.home.labComputingDesc, formula: "\\|y_n-y(t_n)\\|=O(h^4)", href: `/${locale}/explore/ode-explorer`, live: true },
-              { title: t.home.labDevlog, desc: t.home.labDevlogDesc, formula: "\\text{v}0.1.3", href: `/${locale}/about`, live: false },
+              { title: t.home.labDevlog, desc: t.home.labDevlogDesc, formula: `\\text{v}${VERSION}`, href: `/${locale}/about`, live: false },
             ].map((card) => (
               <Link key={card.title} href={card.href} className="group block border-t border-ink-2 pt-5">
                 <div className="text-muted text-lg h-8"><M>{card.formula}</M></div>
@@ -154,7 +161,7 @@ export default async function Home({ params }: { params: Promise<{ locale: strin
             <p className="mt-4 text-ink-2 leading-relaxed">{t.home.softwareSubtitle}</p>
           </div>
           <div className="mt-10 grid gap-4 md:grid-cols-3">
-            {software.map((s) => (
+            {released.map((s) => (
               <SoftwareCard key={s.slug} s={s} locale={locale} t={t.software} learnLabel={t.home.softwareLearn} />
             ))}
           </div>

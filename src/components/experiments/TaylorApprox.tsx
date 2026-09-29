@@ -1,12 +1,13 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef } from "react";
 import type { Locale } from "@/i18n/config";
 import { Plot, fitCanvas } from "@/lib/plot";
 import { getPreset, taylor } from "@/lib/math/functions";
 import { format } from "@/lib/math/linear";
-import { tex } from "@/lib/katex";
+import { useTex } from "./texContext";
 import { useResizeVersion, useThemeColors } from "./useTheme";
+import { useUrlState } from "./urlState";
 
 const copy = {
   zh: { fn: "函数", order: "阶数 n", center: "展开点 a", maxerr: "窗口 [a−2, a+2] 内最大误差", radius: "收敛半径", hint: "提高阶数，多项式在展开点附近越贴越紧；误差向外增长。ln(1+x) 与 1/(1−x) 在 |x| ≥ 1 处无论多少阶都不收敛。" },
@@ -17,13 +18,14 @@ const IDS = ["sin", "cos", "exp", "ln1p", "geom"];
 
 export function TaylorApprox({ locale }: { locale: Locale }) {
   const t = copy[locale];
+  const polyHtml = useTex("poly");
   const colors = useThemeColors();
   const wrapRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const resize = useResizeVersion(wrapRef);
-  const [fid, setFid] = useState("sin");
-  const [n, setN] = useState(3);
-  const [a, setA] = useState(0);
+  const [fid, setFid] = useUrlState("f", "sin", IDS);
+  const [n, setN] = useUrlState("n", 3, { min: 0, max: 14, integer: true });
+  const [a, setA] = useUrlState("a", 0, { min: -3, max: 3 });
   const p = getPreset(fid);
   const fixedCentre = p.radius !== undefined && p.radius !== Infinity; // series about 0 only
   const aa = fixedCentre ? 0 : a;
@@ -77,11 +79,11 @@ export function TaylorApprox({ locale }: { locale: Locale }) {
         </label>
         <label className="exp-control block">
           <div className="flex justify-between"><span>{t.center}</span><span className="mono">{aa.toFixed(2)}</span></div>
-          <input type="range" className="e1" min={-3} max={3} step={0.05} value={aa} disabled={fixedCentre} onChange={(e) => setA(Number(e.target.value))} />
+          <input type="range" aria-valuetext={aa.toFixed(2)} className="e1" min={-3} max={3} step={0.05} value={aa} disabled={fixedCentre} onChange={(e) => setA(Number(e.target.value))} />
         </label>
       </div>
       <div className="border-t border-rule px-4 py-3 flex flex-wrap items-center gap-x-6 gap-y-2 exp-control">
-        <span dangerouslySetInnerHTML={{ __html: tex(`P_{${n}}(x)=\\sum_{k=0}^{${n}}\\frac{f^{(k)}(a)}{k!}(x-a)^{k}`) }} />
+        <span dangerouslySetInnerHTML={{ __html: polyHtml }} />
         <span><span className="text-muted">{t.maxerr}</span> <span className="mono text-ink">{maxErr < 1e-3 ? maxErr.toExponential(2) : format(maxErr, 4)}</span></span>
         {fixedCentre && <span><span className="text-muted">{t.radius}</span> <span className="mono text-ink">{p.radius}</span></span>}
       </div>

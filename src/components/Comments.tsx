@@ -25,7 +25,7 @@ export async function Comments({ type, slug, path, locale, t }: {
   const tc = t.comments;
   const user = await currentUser();
   const comments = hasDatabase() ? await listComments({ type, slug }).catch(() => []) : [];
-  const admin = user ? isAdmin(user.email) : false;
+  const admin = isAdmin(user);
   return (
     <section id="comments" className="mt-16 border-t border-rule pt-8 scroll-mt-24">
       <h2 className="display text-2xl font-semibold">{tc.title}</h2>
@@ -66,7 +66,7 @@ export async function Comments({ type, slug, path, locale, t }: {
         <CommentForm type={type} slug={slug} path={path} locale={locale} t={tc} maxLength={COMMENT_MAX_LENGTH} />
       ) : (
         <p className="mt-6 text-sm text-muted">
-          <Link href={`/${locale}/login?next=${encodeURIComponent(path)}`} className="text-leo hover:underline">{t.nav.login}</Link> · {tc.loginToComment}
+          <Link href={`/${locale}/login?next=${encodeURIComponent(path)}`} className="text-leo hover:underline">{t.nav.login}</Link>{tc.loginToComment}
         </p>
       )}
     </section>
