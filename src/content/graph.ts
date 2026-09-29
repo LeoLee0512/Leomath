@@ -37,6 +37,14 @@ export interface LearningPath {
   subtitle: Bilingual;
   /** What you will understand: shown as “If you want to understand … start here.” */
   intent: Bilingual;
+  /** "intro": needs only school mathematics; "intermediate": builds on another path. */
+  level: "intro" | "intermediate";
+  /** What you should already know, in one line. */
+  requires: Bilingual;
+  /** Who the path is written for. */
+  audience: Bilingual;
+  /** What you can do after finishing it: only what the published concepts actually teach. */
+  outcome: Bilingual;
   concepts: string[];
   credits?: Credit[];
 }
@@ -135,6 +143,10 @@ export const paths: LearningPath[] = [
     title: b("微积分基础", "Foundations of calculus"),
     subtitle: b("极限 → 导数 → 中值定理 → 积分 → Taylor 展开", "Limits → Derivative → Mean value theorem → Integral → Taylor expansion"),
     intent: b("变化、极限、连续与累积", "change, limits, continuity and accumulation"),
+    level: "intro",
+    requires: b("高中的函数与代数", "school functions and algebra"),
+    audience: b("学过高中数学、想把微积分真正弄懂的人", "anyone with school maths who wants to really understand calculus"),
+    outcome: b("用 ε–δ 说清极限；推导导数、中值定理和微积分基本定理；用 Taylor 展开估计误差。", "state limits precisely with ε–δ; derive the derivative, the mean value theorem and the fundamental theorem; bound errors with Taylor expansions."),
     concepts: ["limit", "derivative", "mean-value-theorem", "integral", "taylor-series"],
   },
   {
@@ -142,6 +154,10 @@ export const paths: LearningPath[] = [
     title: b("线性代数基础", "Foundations of linear algebra"),
     subtitle: b("向量 → 内积 → 线性映射 → 矩阵 → 特征值", "Vectors → Inner products → Linear maps → Matrices → Eigenvalues"),
     intent: b("空间、变换与结构", "space, transformation and structure"),
+    level: "intro",
+    requires: b("高中的平面向量", "school vectors in the plane"),
+    audience: b("第一次学线性代数，或者学过但只会算、不知道为什么的人", "first-time learners, or anyone who can compute but not say why"),
+    outcome: b("把矩阵看成空间的变换；理解基与坐标、内积与 Cauchy–Schwarz、矩阵乘法的定义，以及特征值的几何意义。", "see matrices as transformations of space; understand bases and coordinates, inner products and Cauchy–Schwarz, why matrix multiplication is defined as it is, and what eigenvalues mean geometrically."),
     concepts: ["vectors", "inner-product", "linear-maps", "matrices", "eigenvalues"],
   },
   {
@@ -149,6 +165,10 @@ export const paths: LearningPath[] = [
     title: b("微分方程入门", "Introduction to differential equations"),
     subtitle: b("ODE 是什么 → 一阶方程 → 二阶线性方程 → 数值解", "What is an ODE → First-order → Second-order linear → Numerical solutions"),
     intent: b("一个系统如何随时间演化", "how a system evolves in time"),
+    level: "intermediate",
+    requires: b("「微积分基础」，以及「线性代数基础」里的特征值", "Foundations of calculus, and eigenvalues from Foundations of linear algebra"),
+    audience: b("学完微积分、想知道方程怎样描述变化的人", "anyone who has finished calculus and wants to see equations describe change"),
+    outcome: b("理解解的存在与唯一；会解一阶方程和二阶线性方程；知道 Euler 法和 RK4 的误差从哪里来。", "understand existence and uniqueness; solve first-order and second-order linear equations; know where the errors of Euler's method and RK4 come from."),
     concepts: ["what-is-ode", "first-order-ode", "second-order-linear-ode", "numerical-ode"],
   },
   {
@@ -156,6 +176,10 @@ export const paths: LearningPath[] = [
     title: b("概率论基础", "Foundations of probability"),
     subtitle: b("概率空间 → 条件概率 → 随机变量 → 期望与方差 → 中心极限定理（建设中）", "Probability spaces → Conditional probability → Random variables → Mean & variance → Central limit theorem (in progress)"),
     intent: b("不确定性、计数与规律", "uncertainty, counting and regularity"),
+    level: "intro",
+    requires: b("高中的排列组合", "school counting (permutations and combinations)"),
+    audience: b("想弄懂“概率到底在算什么”的人。这条路线正在建设，已完成前两节。", "anyone who wants to know what probability actually computes. The path is being built; the first two sections are done."),
+    outcome: b("理解概率空间与三条公理；会用补事件和计数算概率；掌握条件概率、独立性与 Bayes 公式。", "understand probability spaces and the three axioms; compute probabilities by counting and complements; use conditional probability, independence and Bayes' theorem."),
     concepts: ["probability-space", "conditional-probability"],
     credits: [{ url: `${PROB_DEMOS}/probability-stats-hub`, note: b("路线规划参考", "Path outline informed by") }],
   },
@@ -384,6 +408,13 @@ export function neighboursInPath(slug: string): { prev?: Concept; next?: Concept
     prev: i > 0 ? conceptMap.get(p.concepts[i - 1]) : undefined,
     next: i < p.concepts.length - 1 ? conceptMap.get(p.concepts[i + 1]) : undefined,
   };
+}
+
+/** Where to go next in a path: the first concept not yet marked done (the first one for a new visitor). */
+export function nextInPath(p: LearningPath, progress: Record<string, string>): { concept: Concept; index: number; done: number } {
+  const done = p.concepts.filter((c) => progress[c] === "done").length;
+  const index = Math.max(0, p.concepts.findIndex((c) => progress[c] !== "done"));
+  return { concept: conceptMap.get(p.concepts[index])!, index, done };
 }
 
 /**

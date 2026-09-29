@@ -12,6 +12,13 @@ Depth over breadth.
 - Feedback address in the footer, on the About page and under every discussion.
 - The site publishes no links to source repositories: footer, About page and software pages drop their GitHub links; `repoUrl`/`releasesUrl` are replaced by an `openSource` flag.
 - New path: Foundations of probability (Probability spaces → Conditional probability → Random variables → Mean & variance → Central limit theorem). First concept published: Probability spaces, from the birthday problem through Kolmogorov's axioms to a proof that 23 people suffice via 1 − x ≤ e^{−x}; four exercises. The remaining four nodes are planned, with Mean & variance linked to Inner products.
+- Learning first, from reader feedback:
+  - Every path states its level, what it needs, who it is for and what you can do afterwards (only what its published concepts teach), with total reading time and the date its articles last changed (`scripts/content-dates.mjs` reads git history before each build into `src/content/updated.json`).
+  - Home page: path cards directly under the hero; the hero buttons lead to the paths and to a sample section instead of the software page; a line of real counts (paths, concepts, experiments, exercises) and "free, no account needed"; the matrix demo is labelled as the kind of experiment every concept has; unreleased software no longer appears on the home page.
+  - Path page: a "next step" box with the first concept not yet mastered and, when signed in, a progress bar; mastered concepts are ticked.
+  - Concept page: the sidebar leads with the path (section k of n, ticks, next section, "check yourself" link to the exercises); prerequisites, follow-ups, tools and experiments fold into "Related"; the sign-in prompt says what an account gives. On phones the eyebrow shows the section number.
+  - Login and sign-up pages list what an account is for and say that everything works without one.
+  - Software page: products not yet available are listed briefly under "In development" instead of as full cards.
 - Self-service data rights on the My learning page: "Download my data" exports account, progress, every exercise answer and every comment as JSON (`/api/account/export`); "Delete account" asks for the password and a confirmation, then deletes the user row, which removes sessions, progress, attempts and all comments through ON DELETE CASCADE. The privacy policy and terms describe this instead of an email-only process.
 - Database tests run the real migrations on PGlite (Postgres in WebAssembly, dev dependency): export contents, password check, deletion removing exactly one user's rows, and a guard that every table referencing users cascades.
 - Site foundations, from reader feedback:

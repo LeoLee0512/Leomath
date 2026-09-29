@@ -23,6 +23,12 @@ export default async function Page({ params, searchParams }: { params: Promise<{
     <div className="container py-16">
       <div className="mx-auto max-w-sm">
         <h1 className="display text-3xl font-semibold mb-8">{t.auth.loginTitle}</h1>
+        <ul className="mb-8 -mt-4 space-y-1.5 text-sm text-ink-2">
+          {t.paths.loginBullets.map((b) => (
+            <li key={b} className="flex gap-2"><span className="text-e2" aria-hidden="true">✓</span>{b}</li>
+          ))}
+          <li className="pt-1 text-xs text-muted">{t.paths.loginNote}</li>
+        </ul>
         <AuthForm mode="login" locale={locale} t={t.auth} next={next} />
       </div>
     </div>

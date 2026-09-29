@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { concepts, getConcept, paths, prerequisiteChain, prerequisiteClosure, experiments } from "@/content/graph";
+import { concepts, getConcept, getPath, nextInPath, paths, prerequisiteChain, prerequisiteClosure, experiments } from "@/content/graph";
 import { exercises, checkAnswer, parseNumeric } from "@/content/exercises";
 
 describe("knowledge graph integrity", () => {
@@ -42,5 +42,22 @@ describe("knowledge graph integrity", () => {
     expect(checkAnswer(e, "0.5")).toBe(false);
     expect(parseNumeric("-1/6")).toBeCloseTo(-1 / 6);
     expect(parseNumeric("abc")).toBeNull();
+  });
+  it("every path describes who it is for and what it gives", () => {
+    for (const p of paths) {
+      for (const field of [p.requires, p.audience, p.outcome]) {
+        expect(field.zh.length, p.slug).toBeGreaterThan(0);
+        expect(field.en.length, p.slug).toBeGreaterThan(0);
+      }
+    }
+  });
+  it("the next step is the first concept not yet done", () => {
+    const p = getPath("calculus")!;
+    expect(nextInPath(p, {})).toMatchObject({ index: 0, done: 0 });
+    expect(nextInPath(p, { limit: "done", derivative: "learning" })).toMatchObject({ index: 1, done: 1 });
+    // Skipping ahead does not hide an unfinished earlier concept.
+    expect(nextInPath(p, { derivative: "done" }).index).toBe(0);
+    const all = Object.fromEntries(p.concepts.map((c) => [c, "done"]));
+    expect(nextInPath(p, all).done).toBe(p.concepts.length);
   });
 });

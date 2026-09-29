@@ -55,6 +55,7 @@ export default async function ConceptPage({ params }: { params: Promise<{ locale
       <article className="min-w-0">
         <p className="eyebrow">
           {path && <Link href={`/${locale}/learn/${path.slug}`} className="hover:text-ink">{path.title[locale]}</Link>}
+          {path && <span className="lg:hidden"> · {t.paths.step(chapter, path.concepts.length)}</span>}
         </p>
         <h1 className="display text-4xl md:text-[2.75rem] leading-tight font-semibold mt-3">{c.title[locale]}</h1>
         <p className="mt-3 text-lg text-ink-2 font-serif">{c.summary[locale]}</p>
@@ -101,14 +102,52 @@ export default async function ConceptPage({ params }: { params: Promise<{ locale
         <Comments type="concept" slug={slug} path={`/${locale}/concepts/${slug}`} locale={locale} t={t} />
       </article>
 
-      <aside className="min-w-0 lg:sticky lg:top-20 self-start space-y-8 text-sm">
+      <aside className="min-w-0 lg:sticky lg:top-20 self-start space-y-7 text-sm">
+        {/* Where you are, where to go next, how to check yourself. */}
+        {path && (
+          <div className="border border-ink-2 rounded-[4px] p-4 bg-paper-2">
+            <p className="eyebrow">
+              <Link href={`/${locale}/learn/${path.slug}`} className="hover:text-ink">{path.title[locale]}</Link>
+              <span className="mx-1.5">·</span>{t.paths.step(chapter, path.concepts.length)}
+            </p>
+            <ol className="mt-3 space-y-1">
+              {path.concepts.map((s, i) => {
+                const pc = getConcept(s)!;
+                const here = s === slug;
+                const isDone = (progress as Record<string, string>)[s] === "done";
+                return (
+                  <li key={s} className="flex gap-2">
+                    <span className={`mono w-5 shrink-0 ${isDone ? "text-e2" : here ? "text-ink" : "text-muted"}`}>{isDone ? "✓" : here ? "◐" : i + 1}</span>
+                    {here ? (
+                      <span className="font-semibold text-ink" aria-current="step">{pc.title[locale]}</span>
+                    ) : (
+                      <Link href={`/${locale}/concepts/${s}`} className="text-ink-2 hover:text-leo">{pc.title[locale]}</Link>
+                    )}
+                  </li>
+                );
+              })}
+            </ol>
+            {exs.length > 0 && (
+              <a href="#exercises" className="mt-4 block text-leo hover:underline">{t.paths.check(exs.length)}</a>
+            )}
+            {next ? (
+              <Link href={`/${locale}/concepts/${next.slug}`} className="btn btn-primary btn-small mt-3 w-full justify-center">
+                {t.paths.nextConcept}：{next.title[locale]} →
+              </Link>
+            ) : (
+              <p className="mt-3 text-xs text-muted">{t.paths.lastInPath}</p>
+            )}
+          </div>
+        )}
+
         <div className="hidden lg:block">
           <ArticleNav headings={navHeadings} label={t.learn.sections} />
         </div>
-        <div>
-          <p className="eyebrow mb-2">{t.auth.progressTitle}</p>
-          {user ? (
-            <form action={setProgressAction} className="flex flex-wrap gap-2">
+
+        {user ? (
+          <div>
+            <p className="eyebrow mb-2">{t.auth.progressTitle}</p>
+            <form action={setProgressAction} className="flex flex-wrap items-center gap-2">
               <input type="hidden" name="slug" value={slug} />
               <input type="hidden" name="locale" value={locale} />
               <p className="w-full text-ink-2">{t.learn.status[status]}</p>
@@ -116,70 +155,78 @@ export default async function ConceptPage({ params }: { params: Promise<{ locale
               {status !== "done" && <button name="status" value="done" className="btn btn-primary btn-small">{t.learn.markDone}</button>}
               {status !== "none" && <button name="status" value="none" className="btn btn-ghost btn-small">{t.learn.markReset}</button>}
             </form>
-          ) : (
-            <p className="text-muted">
-              <Link href={`/${locale}/login?next=/${locale}/concepts/${slug}`} className="text-leo hover:underline">{t.nav.login}</Link> · {t.learn.loginToTrack}
-            </p>
-          )}
-        </div>
-
-        {chain.length > 0 && (
-          <div>
-            <p className="eyebrow mb-2">{t.learn.prerequisites}</p>
-            <ol className="space-y-1">
-              {chain.map((s) => {
-                const pc = getConcept(s)!;
-                return (
-                  <li key={s}>
-                    {pc.status === "published" ? (
-                      <Link href={`/${locale}/concepts/${s}`} className="hover:text-leo">{pc.title[locale]}</Link>
-                    ) : (
-                      <span className="text-muted">{pc.title[locale]}</span>
-                    )}
-                  </li>
-                );
-              })}
-            </ol>
           </div>
+        ) : (
+          <p className="text-xs text-muted leading-relaxed">
+            {t.paths.loginValue}{" "}
+            <Link href={`/${locale}/login?next=/${locale}/concepts/${slug}`} className="text-leo hover:underline">{t.nav.login} →</Link>
+          </p>
         )}
 
-        {after.length > 0 && (
-          <div>
-            <p className="eyebrow mb-2">{t.learn.leadsTo}</p>
-            <ul className="space-y-1">
-              {after.map((d) => (
-                <li key={d.slug}>
-                  {d.status === "published" ? (
-                    <Link href={`/${locale}/concepts/${d.slug}`} className="hover:text-leo">{d.title[locale]}</Link>
-                  ) : (
-                    <span className="text-muted">{d.title[locale]} · {t.common.planned}</span>
-                  )}
-                </li>
-              ))}
-            </ul>
-          </div>
-        )}
+        {(chain.length > 0 || after.length > 0 || (c.tools?.length ?? 0) > 0 || exps.length > 0) && (
+          <details className="group border-t border-rule pt-4">
+            <summary className="cursor-pointer select-none eyebrow hover:text-ink">{t.paths.more}</summary>
+            <div className="mt-4 space-y-6">
+              {chain.length > 0 && (
+                <div>
+                  <p className="eyebrow mb-2">{t.learn.prerequisites}</p>
+                  <ol className="space-y-1">
+                    {chain.map((s) => {
+                      const pc = getConcept(s)!;
+                      return (
+                        <li key={s}>
+                          {pc.status === "published" ? (
+                            <Link href={`/${locale}/concepts/${s}`} className="hover:text-leo">{pc.title[locale]}</Link>
+                          ) : (
+                            <span className="text-muted">{pc.title[locale]}</span>
+                          )}
+                        </li>
+                      );
+                    })}
+                  </ol>
+                </div>
+              )}
 
-        {c.tools && c.tools.length > 0 && (
-          <div>
-            <p className="eyebrow mb-2">{t.learn.tools}</p>
-            <ul className="space-y-1">
-              {c.tools.map((id) => { const tool = getTool(id)!; return (
-                <li key={id}><Link href={`/${locale}${tool.href}`} className="text-leo hover:underline">{tool.cta[locale]}</Link></li>
-              ); })}
-            </ul>
-          </div>
-        )}
+              {after.length > 0 && (
+                <div>
+                  <p className="eyebrow mb-2">{t.learn.leadsTo}</p>
+                  <ul className="space-y-1">
+                    {after.map((d) => (
+                      <li key={d.slug}>
+                        {d.status === "published" ? (
+                          <Link href={`/${locale}/concepts/${d.slug}`} className="hover:text-leo">{d.title[locale]}</Link>
+                        ) : (
+                          <span className="text-muted">{d.title[locale]} · {t.common.planned}</span>
+                        )}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
 
-        {exps.length > 0 && (
-          <div>
-            <p className="eyebrow mb-2">{t.learn.experiments}</p>
-            <ul className="space-y-1">
-              {exps.map((e) => (
-                <li key={e.slug}><Link href={`/${locale}/explore/${e.slug}`} className="hover:text-leo">{e.title[locale]}</Link></li>
-              ))}
-            </ul>
-          </div>
+              {c.tools && c.tools.length > 0 && (
+                <div>
+                  <p className="eyebrow mb-2">{t.learn.tools}</p>
+                  <ul className="space-y-1">
+                    {c.tools.map((id) => { const tool = getTool(id)!; return (
+                      <li key={id}><Link href={`/${locale}${tool.href}`} className="text-leo hover:underline">{tool.cta[locale]}</Link></li>
+                    ); })}
+                  </ul>
+                </div>
+              )}
+
+              {exps.length > 0 && (
+                <div>
+                  <p className="eyebrow mb-2">{t.learn.experiments}</p>
+                  <ul className="space-y-1">
+                    {exps.map((e) => (
+                      <li key={e.slug}><Link href={`/${locale}/explore/${e.slug}`} className="hover:text-leo">{e.title[locale]}</Link></li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+            </div>
+          </details>
         )}
       </aside>
     </div>
