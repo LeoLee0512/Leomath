@@ -31,6 +31,8 @@ function describe(err: unknown, t: (typeof copy)["zh"]): string {
 
 interface Curve { src: string; compiled?: Compiled; error?: string }
 
+const PROBE_RANGE = 10;
+
 function PlotterIsland({ locale }: { locale: Locale }) {
   const t = copy[locale];
   const colors = useThemeColors();
@@ -41,6 +43,7 @@ function PlotterIsland({ locale }: { locale: Locale }) {
   const [params, setParams] = useState<Record<string, number>>({});
   const [view, setView] = useState({ cx: 0, cy: 0, w: 12 });
   const [probe, setProbe] = useState(1);
+  const [probeText, setProbeText] = useState("1");
   const [calcSrc, setCalcSrc] = useState("sqrt(2) * 10^3");
 
   const curves: Curve[] = useMemo(() => srcs.map((src) => {
@@ -163,10 +166,18 @@ function PlotterIsland({ locale }: { locale: Locale }) {
             </div>
           )}
           <div className="pt-2 border-t border-rule">
-            <label className="exp-control block">
-              <div className="flex justify-between"><span>{t.at}</span><span className="mono">{probe.toFixed(2)}</span></div>
-              <input type="range" aria-valuetext={probe.toFixed(2)} min={view.cx - view.w / 2} max={view.cx + view.w / 2} step={view.w / 400} value={probe} onChange={(e) => setProbe(Number(e.target.value))} />
-            </label>
+            <div className="exp-control">
+              <div className="flex items-center justify-between gap-2">
+                <label htmlFor="plot-probe">{t.at}</label>
+                <input id="plot-probe" type="number" className="field mono text-sm text-right w-24 py-0.5" step={0.01} value={probeText} onChange={(e) => {
+                  setProbeText(e.target.value);
+                  const v = Number(e.target.value);
+                  if (e.target.value.trim() && Number.isFinite(v)) setProbe(v);
+                }} onBlur={() => setProbeText(trim(probe))} />
+              </div>
+              {/* A fixed range, so panning or zooming the plane does not move the thumb; other x can be typed above. */}
+              <input type="range" aria-label={t.at} aria-valuetext={trim(probe)} min={-PROBE_RANGE} max={PROBE_RANGE} step={0.01} value={Math.min(PROBE_RANGE, Math.max(-PROBE_RANGE, probe))} onChange={(e) => { const v = Number(e.target.value); setProbe(v); setProbeText(trim(v)); }} />
+            </div>
             <ul className="mono text-xs mt-1 space-y-0.5">
               {curves.map((cv, i) => {
                 if (!cv.compiled) return null;

@@ -28,6 +28,15 @@ math * {
   border-color: currentColor;
 }
 
+/* Tailwind's preflight sets padding: 0 on every element, which also removes the MathML Core user-agent
+   padding below; without it the rows of a matrix touch or overlap in Chromium. */
+mtd {
+  padding: 0.5ex 0.4em;
+}
+mfrac {
+  padding-inline: 1px;
+}
+
 /* display: block is necessary in Firefox and Safari.
  * Not in Chromium, which recognizes display: "block math" written inline. */
  math.tml-display {
