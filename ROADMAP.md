@@ -37,6 +37,8 @@ No new nodes until the existing ones are complete. `node scripts/audit-chain.mjs
 - [x] A definition block for the mean value theorem article: local extrema and stationary points, with Fermat's lemma proved on its own.
 - [ ] Observation questions reviewed against what the experiments actually show.
 
+- [x] Lighter pages: Astro islands instead of Next.js hydration, MathML (Temml) instead of KaTeX.
+
 ## After launch
 
 - Search across concepts and exercises.

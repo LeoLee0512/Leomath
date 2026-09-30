@@ -1,0 +1,32 @@
+---
+/** Compact product card used on the home page and the software index. */
+import { getDictionary } from "@/i18n/dictionaries";
+import type { Software } from "@/content/software";
+import { statusLabel } from "@/lib/software";
+
+interface Props {
+  s: Software;
+  learnLabel: string;
+}
+const { s, learnLabel } = Astro.props;
+const locale = Astro.locals.locale;
+const t = getDictionary(locale).software;
+const version = s.latest?.version ?? s.version;
+---
+<div class="border border-rule p-6 md:p-7 bg-paper flex flex-col">
+  <div class="flex flex-wrap items-baseline gap-x-3 gap-y-1">
+    <h3 class="display text-2xl font-semibold">{s.name}</h3>
+    {version && <span class="mono text-xs text-muted">v{version}</span>}
+    <span class={`text-xs rounded-[3px] px-1.5 py-0.5 border ${s.status === "coming-soon" || s.status === "beta" ? "text-accent-2 border-accent-2/40" : "text-muted border-rule-2"}`}>
+      {statusLabel(s, t)}
+    </span>
+    <span class="text-xs text-muted">{s.kind === "web" ? t.web : t.desktop}{s.openSource ? ` · ${t.openSource}` : ""}</span>
+  </div>
+  <p class="mt-2 text-ink-2 flex-1">{s.tagline[locale]}</p>
+  <div class="mt-6 flex flex-wrap gap-3">
+    <a href={`/${locale}/software/${s.slug}`} class="btn btn-ghost btn-small">{learnLabel}</a>
+    {s.kind === "web" && s.useUrl && <a href={s.useUrl} class="btn btn-primary btn-small" rel="noopener">{t.open}</a>}
+    {s.latest && <a href={s.latest.downloadUrl} class="btn btn-primary btn-small" rel="noopener">{t.download} ↓</a>}
+  </div>
+</div>
+  

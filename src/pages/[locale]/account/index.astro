@@ -1,0 +1,109 @@
+---
+import { actions } from "astro:actions";
+import Base from "@/layouts/Base.astro";
+import { getDictionary } from "@/i18n/dictionaries";
+import { getExerciseSummary, getProgress, type ProgressStatus } from "@/lib/progress";
+import { getConcept, paths } from "@/content/graph";
+import { getExercise } from "@/content/exercises";
+import { pageMeta } from "@/lib/seo";
+import { redirectAfterForms } from "@/lib/forms";
+import type { FormResult } from "@/actions";
+
+const redirect = redirectAfterForms(Astro, [actions.logout, actions.deleteAccount]);
+if (redirect) return redirect;
+const locale = Astro.locals.locale;
+const user = Astro.locals.user;
+if (!user) return Astro.redirect(`/${locale}/login`);
+const t = getDictionary(locale);
+const progress: Record<string, ProgressStatus> = await getProgress(user.id).catch(() => ({}));
+const summary: Record<string, { attempts: number; solved: boolean }> = await getExerciseSummary(user.id).catch(() => ({}));
+const solved = Object.entries(summary).filter(([, s]) => s.solved).map(([id]) => getExercise(id)).filter((e) => e !== undefined);
+const hasAny = Object.keys(progress).length > 0 || solved.length > 0;
+const deletion = Astro.getActionResult(actions.deleteAccount)?.data as FormResult | undefined;
+const deleteError = deletion && !deletion.ok ? deletion.error : undefined;
+const meta = pageMeta(locale, "/account", t.tagline, { title: t.auth.accountTitle, description: t.tagline, noindex: true });
+---
+<Base meta={meta}>
+  <div class="container py-14 max-w-3xl">
+    <div class="flex items-baseline justify-between gap-4">
+      <div>
+        <h1 class="display text-4xl font-semibold">{t.auth.accountTitle}</h1>
+        <p class="mt-2 text-muted text-sm">{user.displayName ?? user.email}</p>
+      </div>
+      <form method="POST" action={actions.logout}>
+        <input type="hidden" name="locale" value={locale} />
+        <button class="btn btn-ghost btn-small">{t.nav.logout}</button>
+      </form>
+    </div>
+
+    {!hasAny && <p class="mt-10 text-ink-2">{t.auth.empty} <a href={`/${locale}/learn`} class="text-leo hover:underline">{t.nav.learn} →</a></p>}
+
+    <section class="mt-12">
+      <h2 class="eyebrow mb-4">{t.auth.progressTitle}</h2>
+      <div class="grid gap-6 md:grid-cols-3">
+        {paths.map((p) => (
+          <div class="border-t border-ink-2 pt-4">
+            <h3 class="display text-lg font-semibold"><a href={`/${locale}/learn/${p.slug}`} class="hover:text-leo">{p.title[locale]}</a></h3>
+            <ul class="mt-3 space-y-1.5 text-sm">
+              {p.concepts.map((slug) => {
+                const st = progress[slug] ?? "none";
+                return (
+                  <li class="flex items-center gap-2">
+                    <span class:list={["inline-block w-2 h-2 rounded-full", st === "done" ? "bg-e2" : st === "learning" ? "bg-leo" : "bg-rule-2"]}></span>
+                    <a href={`/${locale}/concepts/${slug}`} class="hover:text-leo">{getConcept(slug)!.title[locale]}</a>
+                    <span class="ml-auto text-xs text-muted">{t.learn.status[st]}</span>
+                  </li>
+                );
+              })}
+            </ul>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <section class="mt-12">
+      <h2 class="eyebrow mb-4">{t.auth.solvedTitle} · {solved.length}</h2>
+      <ul class="text-sm space-y-1">
+        {solved.map((e) => (
+          <li><a href={`/${locale}/concepts/${e.concept}`} class="hover:text-leo">{getConcept(e.concept)!.title[locale]} · <span class="mono text-muted">{e.id}</span></a></li>
+        ))}
+      </ul>
+    </section>
+
+    <section class="mt-16 border-t border-rule pt-8">
+      <h2 class="eyebrow mb-6">{t.auth.data.title}</h2>
+      <div class="grid gap-8">
+        <div>
+          <h3 class="font-medium">{t.auth.data.exportTitle}</h3>
+          <p class="mt-1 text-sm text-ink-2">{t.auth.data.exportDesc}</p>
+          <!-- A plain link: the endpoint answers with a file download. -->
+          <a href="/api/account/export" download class="btn btn-ghost btn-small mt-3 inline-flex">{t.auth.data.exportButton}</a>
+        </div>
+        <!-- Folded away until opened, so it cannot be triggered by a stray click; open again if the password was wrong. -->
+        <details class="border border-e1/40 rounded-[4px]" open={Boolean(deleteError)}>
+          <summary class="cursor-pointer select-none px-4 py-3 text-e1 font-medium">{t.auth.data.deleteTitle}</summary>
+          <form method="POST" action={actions.deleteAccount} class="px-4 pb-4 space-y-4 text-sm">
+            <input type="hidden" name="locale" value={locale} />
+            <div>
+              <p class="text-ink-2">{t.auth.data.deleteDesc}</p>
+              <ul class="mt-2 list-disc pl-5 text-ink-2 space-y-0.5">
+                {t.auth.data.deleteList.map((item) => <li>{item}</li>)}
+              </ul>
+              <p class="mt-2 text-muted">{t.auth.data.deleteHint}</p>
+            </div>
+            <label class="block">
+              <span class="text-ink-2">{t.auth.data.password}</span>
+              <input name="password" type="password" required autocomplete="current-password" class="field mt-1" />
+            </label>
+            <label class="flex items-center gap-2">
+              <input name="confirm" type="checkbox" value="yes" required />
+              <span>{t.auth.data.confirm}</span>
+            </label>
+            {deleteError && <p class="text-e1" role="alert">{deleteError}</p>}
+            <button class="btn btn-small border-e1 text-e1 hover:bg-e1 hover:text-paper">{t.auth.data.deleteButton}</button>
+          </form>
+        </details>
+      </div>
+    </section>
+  </div>
+</Base>

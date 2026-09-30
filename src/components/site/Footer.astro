@@ -1,0 +1,24 @@
+---
+import { getDictionary } from "@/i18n/dictionaries";
+import { FEEDBACK_EMAIL, ICP_NUMBER, VERSION } from "@/content/site";
+
+const locale = Astro.locals.locale;
+const t = getDictionary(locale);
+---
+<footer class="hairline mt-24">
+  <div class="container py-10 flex flex-col md:flex-row gap-4 md:items-center justify-between text-sm text-muted">
+    <div>
+      <span class="display text-ink">Leo<span class="text-leo">Math</span></span>
+      <span class="mx-2">·</span>
+      <span>{t.footer.built(VERSION)}</span>
+    </div>
+    <div class="flex flex-wrap gap-x-5 gap-y-2">
+      <span>{t.footer.license}</span>
+      <a href={`mailto:${FEEDBACK_EMAIL}`} class="hover:text-ink">{t.footer.feedback} · <span class="mono">{FEEDBACK_EMAIL}</span></a>
+      <a href={`/${locale}/about`} class="hover:text-ink">{t.nav.about}</a>
+      <a href={`/${locale}/privacy`} class="hover:text-ink">{t.footer.privacy}</a>
+      <a href={`/${locale}/terms`} class="hover:text-ink">{t.footer.terms}</a>
+      {ICP_NUMBER && <a href="https://beian.miit.gov.cn/" target="_blank" rel="noopener noreferrer" class="hover:text-ink">{ICP_NUMBER}</a>}
+    </div>
+  </div>
+</footer>

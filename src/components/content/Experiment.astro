@@ -1,0 +1,73 @@
+---
+/**
+ * An experiment in an article or on its own page: the figure frame, the experiment as a React island
+ * (hydrated when it scrolls into view), the credits and the observation questions as plain HTML.
+ */
+import { getExperiment } from "@/content/graph";
+import { formulasFor } from "@/content/experiment-tex";
+import { tex } from "@/lib/tex";
+import CreditLine from "./CreditLine.astro";
+import ObservationPanel from "./ObservationPanel.astro";
+import LinearTransform from "@/components/experiments/islands/LinearTransform";
+import OdeExplorer from "@/components/experiments/islands/OdeExplorer";
+import ExponentialDerivative from "@/components/experiments/islands/ExponentialDerivative";
+import SecantTangent from "@/components/experiments/islands/SecantTangent";
+import RiemannSums from "@/components/experiments/islands/RiemannSums";
+import TaylorApprox from "@/components/experiments/islands/TaylorApprox";
+import BirthdayProblem from "@/components/experiments/islands/BirthdayProblem";
+import Conditioning from "@/components/experiments/islands/Conditioning";
+import BayesScreening from "@/components/experiments/islands/BayesScreening";
+import BinomialPoisson from "@/components/experiments/islands/BinomialPoisson";
+import EpsilonBand from "@/components/experiments/islands/EpsilonBand";
+import BasisCoordinates from "@/components/experiments/islands/BasisCoordinates";
+import ProjectionSlack from "@/components/experiments/islands/ProjectionSlack";
+
+interface Props {
+  slug: string;
+  preset?: string;
+  /** Standalone page: no figure caption, and a link back to the article. */
+  standalone?: boolean;
+  backHref?: string;
+}
+const { slug, preset, standalone = false, backHref } = Astro.props;
+const locale = Astro.locals.locale;
+const exp = getExperiment(slug);
+const label = locale === "zh" ? "交互实验" : "Interactive experiment";
+// This experiment's own parameters from the page URL (`<slug>.<key>=…`), prefix removed; values are validated by the experiment.
+const query: Record<string, string> = {};
+for (const [k, v] of Astro.url.searchParams) if (k.startsWith(`${slug}.`)) query[k.slice(slug.length + 1)] = v.slice(0, 64);
+const props = exp && {
+  slug,
+  locale,
+  preset,
+  backHref,
+  query,
+  formulas: Object.fromEntries(Object.entries(formulasFor(exp.kind, locale)).map(([k, v]) => [k, tex(v)])),
+};
+---
+{exp && props && (
+  <figure class:list={[!standalone && "mblock mblock-experiment"]}>
+    {!standalone && (
+      <figcaption class="mblock-head">
+        <svg width="14" height="14" viewBox="0 0 16 16" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M6 1.5h4M7 1.5v5L2.5 13a1 1 0 0 0 .9 1.5h9.2a1 1 0 0 0 .9-1.5L9 6.5v-5"></path><path d="M4.5 10.5h7"></path></svg>
+        <b>{label}</b>
+        <span class="mblock-title">{exp.title[locale]}</span>
+      </figcaption>
+    )}
+  {exp.kind === "linear-transform" && <LinearTransform client:visible {...props} />}
+  {exp.kind === "ode-explorer" && <OdeExplorer client:visible {...props} />}
+  {exp.kind === "exponential-derivative" && <ExponentialDerivative client:visible {...props} />}
+  {exp.kind === "secant-tangent" && <SecantTangent client:visible {...props} />}
+  {exp.kind === "riemann-sums" && <RiemannSums client:visible {...props} />}
+  {exp.kind === "taylor-approx" && <TaylorApprox client:visible {...props} />}
+  {exp.kind === "birthday-problem" && <BirthdayProblem client:visible {...props} />}
+  {exp.kind === "conditioning" && <Conditioning client:visible {...props} />}
+  {exp.kind === "bayes-screening" && <BayesScreening client:visible {...props} />}
+  {exp.kind === "binomial-poisson" && <BinomialPoisson client:visible {...props} />}
+  {exp.kind === "epsilon-band" && <EpsilonBand client:visible {...props} />}
+  {exp.kind === "basis-coordinates" && <BasisCoordinates client:visible {...props} />}
+  {exp.kind === "projection-slack" && <ProjectionSlack client:visible {...props} />}
+    <CreditLine credits={exp.credits} class="mt-1" />
+    {exp.observe && <ObservationPanel observe={exp.observe} />}
+  </figure>
+)}

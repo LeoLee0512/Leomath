@@ -1,0 +1,44 @@
+---
+/**
+ * Experiment → observation → conjecture → theory: the questions that turn a visualisation into an experiment.
+ * The explanation is in the page from the start, hidden until the reader asks for it.
+ */
+import type { Observation } from "@/content/graph";
+import { richHtml } from "@/lib/rich";
+
+interface Props {
+  observe: Observation;
+}
+const copy = {
+  zh: { title: "你观察到了什么？", lead: "先动手，再回答。想清楚之后再看解释。", show: "查看解释", hide: "收起解释" },
+  en: { title: "What did you observe?", lead: "Play first, then answer. Read the explanation only after you have thought it through.", show: "Show explanation", hide: "Hide explanation" },
+};
+const locale = Astro.locals.locale;
+const t = copy[locale];
+const { observe } = Astro.props;
+---
+<section class="mt-4 border-l-2 border-dotted border-accent-2 pl-5 py-1" data-observation>
+  <p class="mblock-head"><b>{t.title}</b><span class="mblock-title">{t.lead}</span></p>
+  <ol class="mt-2 space-y-2 text-[0.97rem] leading-relaxed prose-math">
+    {observe.questions.map((q, i) => (
+      <li class="flex gap-3"><span class="mono text-muted shrink-0">{i + 1}.</span><span set:html={richHtml(q[locale])} /></li>
+    ))}
+  </ol>
+  <button type="button" class="btn btn-ghost btn-small mt-4" aria-expanded="false" data-show={t.show} data-hide={t.hide}>{t.show}</button>
+  <div class="mt-3 prose-math text-[0.97rem] border-t border-rule pt-3" hidden>
+    <div set:html={richHtml(observe.explanation[locale])} />
+  </div>
+</section>
+
+<script>
+  for (const panel of document.querySelectorAll<HTMLElement>("[data-observation]")) {
+    const button = panel.querySelector("button")!;
+    const body = button.nextElementSibling as HTMLElement;
+    button.addEventListener("click", () => {
+      const open = body.hidden;
+      body.hidden = !open;
+      button.setAttribute("aria-expanded", String(open));
+      button.textContent = open ? button.dataset.hide! : button.dataset.show!;
+    });
+  }
+</script>

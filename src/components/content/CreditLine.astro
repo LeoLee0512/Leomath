@@ -1,0 +1,18 @@
+---
+/** “Idea from …” lines: the note, then the public source as a bare link. */
+import type { Credit } from "@/content/graph";
+
+interface Props {
+  credits?: Credit[];
+  class?: string;
+}
+const { credits, class: className } = Astro.props;
+const locale = Astro.locals.locale;
+---
+{credits?.length ? (
+  <div class:list={["credit-line", className]}>
+    {credits.map((c) => (
+      <p>{c.note[locale]}{locale === "zh" ? "：" : ": "}<a href={c.url} target="_blank" rel="noopener noreferrer">{c.url.replace(/^https?:\/\//, "")}</a></p>
+    ))}
+  </div>
+) : null}

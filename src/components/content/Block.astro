@@ -1,0 +1,29 @@
+---
+/**
+ * The semantic blocks of the articles (Definition, Theorem, Proof, Example, …), one visual signature each.
+ * `kind` and the number `n` (chapter.index) are set at compile time by src/lib/mdx-plugins.ts.
+ */
+const labels = {
+  zh: { Problem: "问题", Observe: "观察", Conjecture: "猜想", Definition: "定义", Theorem: "定理", Proposition: "命题", Lemma: "引理", Corollary: "推论", Proof: "证明", Example: "例", Application: "应用", Remark: "注", Warning: "常见错误" },
+  en: { Problem: "Problem", Observe: "Observe", Conjecture: "Conjecture", Definition: "Definition", Theorem: "Theorem", Proposition: "Proposition", Lemma: "Lemma", Corollary: "Corollary", Proof: "Proof", Example: "Example", Application: "Application", Remark: "Remark", Warning: "Common mistake" },
+} as const;
+const classes = {
+  Problem: "mblock-problem", Observe: "mblock-observe", Conjecture: "mblock-conjecture", Definition: "mblock-definition",
+  Theorem: "mblock-theorem", Proposition: "mblock-theorem", Lemma: "mblock-theorem", Corollary: "mblock-theorem",
+  Proof: "mblock-proof", Example: "mblock-example", Application: "mblock-application", Remark: "mblock-remark", Warning: "mblock-warning",
+} as const;
+type Kind = keyof typeof classes;
+
+interface Props {
+  kind: Kind;
+  n?: string;
+  title?: string;
+}
+const { kind, n, title } = Astro.props;
+const label = labels[Astro.locals.locale][kind];
+---
+<section class={`mblock ${classes[kind]}`} aria-label={n ? `${label} ${n}` : undefined}>
+  <div class="mblock-head"><b>{label}{n ? ` ${n}` : ""}</b>{title && <span class="mblock-title">{title}</span>}</div>
+  <div class="mblock-body"><slot /></div>
+  {kind === "Proof" && <div class="mblock-qed" aria-hidden="true">□</div>}
+</section>

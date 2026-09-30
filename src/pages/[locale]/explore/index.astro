@@ -1,0 +1,36 @@
+---
+import Base from "@/layouts/Base.astro";
+import Formula from "@/components/content/Formula.astro";
+import { getDictionary } from "@/i18n/dictionaries";
+import { experiments, getConcept } from "@/content/graph";
+import { pageMeta } from "@/lib/seo";
+
+/** A formula that stands for each experiment on its card. */
+const formulas: Record<string, string> = {
+  "linear-transform": "A\\mathbf e_1,\\ A\\mathbf e_2",
+  "ode-explorer": "y_{n+1}=y_n+h\\,\\Phi(t_n,y_n)",
+  "exponential-derivative": "\\lim_{h\\to0}\\frac{a^h-1}{h}",
+  "secant-tangent": "\\frac{f(x_0+h)-f(x_0)}{h}\\to f'(x_0)",
+  "riemann-sums": "\\sum f(\\xi_i)\\,\\Delta x_i\\to\\int_a^b f",
+  "taylor-approx": "\\sum_{k\\le n}\\frac{f^{(k)}(a)}{k!}(x-a)^k",
+};
+const locale = Astro.locals.locale;
+const t = getDictionary(locale);
+const meta = pageMeta(locale, "/explore", t.tagline, { title: t.explore.title, description: t.explore.subtitle });
+---
+<Base meta={meta}>
+  <div class="container py-14">
+    <h1 class="display text-4xl font-semibold">{t.explore.title}</h1>
+    <p class="mt-3 text-ink-2 max-w-2xl">{t.explore.subtitle}</p>
+    <div class="mt-12 grid gap-px bg-rule md:grid-cols-3 border border-rule">
+      {experiments.map((e) => (
+        <a href={`/${locale}/explore/${e.slug}`} class="bg-paper p-7 hover:bg-paper-2 transition-colors flex flex-col">
+          <div class="text-muted text-lg h-8">{formulas[e.slug] && <Formula tex={formulas[e.slug]} />}</div>
+          <h2 class="display text-xl font-semibold mt-3">{e.title[locale]}</h2>
+          <p class="mt-2 text-sm text-ink-2 leading-relaxed flex-1">{e.summary[locale]}</p>
+          <p class="mt-5 text-xs text-muted">{t.explore.relatedConcept}{t.common.colon}{getConcept(e.concept)!.title[locale]}</p>
+        </a>
+      ))}
+    </div>
+  </div>
+</Base>

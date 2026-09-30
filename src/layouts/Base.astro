@@ -1,0 +1,29 @@
+---
+import "@/styles/global.css";
+import Head from "@/components/site/Head.astro";
+import Nav from "@/components/site/Nav.astro";
+import Footer from "@/components/site/Footer.astro";
+import { getDictionary } from "@/i18n/dictionaries";
+import { htmlLang, type PageMeta } from "@/lib/seo";
+
+interface Props {
+  meta: PageMeta;
+}
+const { meta } = Astro.props;
+const locale = Astro.locals.locale;
+const t = getDictionary(locale);
+---
+<!doctype html>
+<html lang={htmlLang[locale]}>
+  <head>
+    <Head meta={meta} />
+    <!-- Runs before paint, so the page never flashes the wrong theme. -->
+    <script is:inline>(() => { try { const t = localStorage.getItem("leomath_theme"); const d = t ? t === "dark" : matchMedia("(prefers-color-scheme: dark)").matches; if (d) document.documentElement.classList.add("dark"); } catch {} })();</script>
+  </head>
+  <body class="flex min-h-dvh flex-col">
+    <a href="#main" class="skip-link">{t.nav.skip}</a>
+    <Nav />
+    <main id="main" tabindex="-1" class="flex-1 outline-none"><slot /></main>
+    <Footer />
+  </body>
+</html>

@@ -1,0 +1,27 @@
+---
+import Base from "@/layouts/Base.astro";
+import { pageMeta } from "@/lib/seo";
+import { getDictionary } from "@/i18n/dictionaries";
+
+const copy = {
+  zh: { title: "页面不存在", body: "这个地址没有内容。可能是链接写错了，或者页面已经移动。", home: "回到首页", learn: "看看学习路线" },
+  en: { title: "Page not found", body: "There is nothing at this address. The link may be wrong, or the page may have moved.", home: "Back to the home page", learn: "Browse the learning paths" },
+};
+// Pages that do not exist (and pages that rewrite here) keep the language of the address that was asked for.
+const locale = (Astro.originPathname ?? Astro.url.pathname).startsWith("/en") ? "en" : "zh";
+Astro.locals.locale = locale;
+Astro.response.status = 404;
+const t = copy[locale];
+const meta = pageMeta(locale, "", getDictionary(locale).tagline, { title: t.title, description: t.body, noindex: true });
+---
+<Base meta={meta}>
+  <div class="container section text-center">
+    <p class="eyebrow">404</p>
+    <h1 class="display text-3xl mt-3">{t.title}</h1>
+    <p class="mt-4 text-ink-2">{t.body}</p>
+    <p class="mt-8 flex justify-center gap-4">
+      <a href={`/${locale}`} class="btn btn-primary btn-small">{t.home}</a>
+      <a href={`/${locale}/learn`} class="btn btn-ghost btn-small">{t.learn}</a>
+    </p>
+  </div>
+</Base>

@@ -1,13 +1,19 @@
-import "server-only";
 import { readFile } from "node:fs/promises";
 import path from "node:path";
-import { cache } from "react";
 import type { Locale } from "@/i18n/config";
 
 const CONTENT_ROOT = path.join(process.cwd(), "content", "concepts");
 
-/** Estimated reading time in minutes for a concept article (falls back to zh). Cached per request. */
-export const readingMinutes = cache(async (slug: string, locale: Locale): Promise<number | null> => {
+const cache = new Map<string, Promise<number | null>>();
+
+/** Estimated reading time in minutes for a concept article (falls back to zh). Articles ship with the build, so it is computed once. */
+export function readingMinutes(slug: string, locale: Locale): Promise<number | null> {
+  const key = `${slug}/${locale}`;
+  if (!cache.has(key)) cache.set(key, estimate(slug, locale));
+  return cache.get(key)!;
+}
+
+async function estimate(slug: string, locale: Locale): Promise<number | null> {
   for (const l of [locale, "zh"] as Locale[]) {
     try {
       const src = await readFile(path.join(CONTENT_ROOT, slug, `${l}.mdx`), "utf8");
@@ -23,7 +29,7 @@ export const readingMinutes = cache(async (slug: string, locale: Locale): Promis
     }
   }
   return null;
-});
+}
 
 export async function readingMinutesMap(slugs: string[], locale: Locale): Promise<Record<string, number>> {
   const entries = await Promise.all(slugs.map(async (s) => [s, await readingMinutes(s, locale)] as const));

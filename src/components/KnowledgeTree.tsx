@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import { useMemo, useState } from "react";
 import type { Locale } from "@/i18n/config";
 import { concepts, getConcept, paths, prerequisiteChain, prerequisiteClosure, type Concept } from "@/content/graph";
@@ -320,7 +319,7 @@ export function KnowledgeTree({ locale, focus, minutes = {} }: KnowledgeTreeProp
                   return (
                     <li key={s}>
                       {pc.status === "published" ? (
-                        <Link href={`/${locale}/concepts/${s}`} className="text-sm border border-ink-2 rounded-[3px] px-1.5 py-0.5 hover:border-leo hover:text-leo">{pc.title[locale]}</Link>
+                        <a href={`/${locale}/concepts/${s}`} className="text-sm border border-ink-2 rounded-[3px] px-1.5 py-0.5 hover:border-leo hover:text-leo">{pc.title[locale]}</a>
                       ) : (
                         <span className="text-sm border border-dashed border-rule-2 rounded-[3px] px-1.5 py-0.5 text-muted">{pc.title[locale]}</span>
                       )}
@@ -346,7 +345,7 @@ export function KnowledgeTree({ locale, focus, minutes = {} }: KnowledgeTreeProp
 
             <div className="mt-6">
               {activeConcept.status === "published" ? (
-                <Link href={`/${locale}/concepts/${activeConcept.slug}`} className="btn btn-primary btn-small">{t.start}</Link>
+                <a href={`/${locale}/concepts/${activeConcept.slug}`} className="btn btn-primary btn-small">{t.start}</a>
               ) : (
                 <span className="text-sm text-muted">{t.planned}</span>
               )}

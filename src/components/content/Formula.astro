@@ -1,0 +1,12 @@
+---
+/** LaTeX written directly in a page (not in an article), rendered on the server. */
+import { tex } from "@/lib/tex";
+
+interface Props {
+  tex: string;
+  display?: boolean;
+  class?: string;
+}
+const { tex: source, display = false, class: className } = Astro.props;
+---
+{display ? <div class:list={["math-display", className]} set:html={tex(source, true)} /> : <span class={className} set:html={tex(source, false)} />}

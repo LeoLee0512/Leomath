@@ -2,29 +2,34 @@
 FROM node:22-alpine AS deps
 WORKDIR /app
 COPY package.json package-lock.json ./
-RUN npm ci --legacy-peer-deps
+RUN npm ci
+
+FROM node:22-alpine AS prod-deps
+WORKDIR /app
+COPY package.json package-lock.json ./
+RUN npm ci --omit=dev
 
 FROM node:22-alpine AS build
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
-# Static response headers (HSTS) are fixed at build time from the site URL (see next.config.ts).
-ARG NEXT_PUBLIC_SITE_URL=https://leomath.cn
-ENV NEXT_TELEMETRY_DISABLED=1 NEXT_PUBLIC_SITE_URL=$NEXT_PUBLIC_SITE_URL
+# The site URL decides which host the app trusts behind nginx (security.allowedDomains in astro.config.mjs).
+ARG SITE_URL=https://leomath.cn
+ENV ASTRO_TELEMETRY_DISABLED=1 SITE_URL=$SITE_URL
 RUN npm run build
 
 FROM node:22-alpine AS runtime
 WORKDIR /app
-ENV NODE_ENV=production NEXT_TELEMETRY_DISABLED=1 PORT=3000 HOSTNAME=0.0.0.0
+ENV NODE_ENV=production ASTRO_TELEMETRY_DISABLED=1 HOST=0.0.0.0 PORT=3000
 RUN addgroup -S leomath && adduser -S leomath -G leomath
-COPY --from=build /app/public ./public
-COPY --from=build /app/.next/standalone ./
-COPY --from=build /app/.next/static ./.next/static
-# MDX articles are read from disk at request time.
+COPY --from=prod-deps /app/node_modules ./node_modules
+COPY --from=build /app/dist ./dist
+COPY package.json ./
+# Reading times are computed from the MDX sources at request time.
 COPY --from=build /app/content ./content
-# Migration runner needs pg (already in standalone node_modules) and the SQL files.
+# Migration runner and SQL files.
 COPY --from=build /app/db ./db
 COPY --from=build /app/scripts/migrate.mjs ./scripts/migrate.mjs
 USER leomath
 EXPOSE 3000
-CMD ["sh", "-c", "node scripts/migrate.mjs && node server.js"]
+CMD ["sh", "-c", "node scripts/migrate.mjs && node dist/server/entry.mjs"]

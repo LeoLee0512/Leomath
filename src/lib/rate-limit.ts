@@ -1,6 +1,3 @@
-import "server-only";
-import { headers } from "next/headers";
-
 /**
  * Failure counters for password checks, kept in memory (the site runs as one Node process).
  * They stop password guessing and keep bcrypt, which is CPU-heavy, from being used to slow the site.
@@ -52,8 +49,8 @@ export function clear(key: string): void {
  * The client's address. nginx sets X-Real-IP to the connecting address; X-Forwarded-For's leftmost
  * entries can be forged by the client, so only its last hop is used as a fallback.
  */
-export async function clientIp(): Promise<string> {
-  const h = await headers();
+export function clientIp(request: Request): string {
+  const h = request.headers;
   const real = h.get("x-real-ip")?.trim();
   if (real) return real;
   const forwarded = h.get("x-forwarded-for")?.split(",").map((s) => s.trim()).filter(Boolean);

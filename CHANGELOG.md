@@ -4,6 +4,13 @@
 
 Depth over breadth.
 
+- The site now runs on Astro instead of Next.js, and formulas are MathML instead of KaTeX. Measured on a production build (random-variables, the longest article): HTML 939 KB → 96 KB (71 → 21 KB compressed), DOM nodes 9266 → 3333, JavaScript 170 → 81 KB compressed; pages without experiments (learn, about, privacy) no longer load a JavaScript file.
+  - Pages are plain HTML rendered on the server; only experiments, tools and the knowledge tree are React islands, each downloaded when it scrolls into view. The article body is no longer sent a second time as a hydration payload.
+  - Formulas are rendered by Temml to MathML and laid out by the browser in STIX Two Math, subset to the characters the site uses (about 40 KB, one file; `npm run font:subset`, checked by a test). Digits separated by commas stay a list (`[0,1]` is not the number “0,1”), punctuation next to an inline formula no longer starts a line, and a long inline formula breaks after its relations (and + / −) on narrow screens, as TeX would; no page scrolls sideways at 375 px.
+  - Header controls (theme, language, phone menu), the section navigator, observation panels, exercises and the concept search are small scripts instead of React.
+  - Forms are Astro Actions: sign-in, sign-up, progress, comments, account deletion and exercise checking all work without JavaScript (the page posts and shows the result); with JavaScript, exercises are checked in place and hints load on demand. Form posts from other sites are rejected; behind nginx the site's own domain is trusted for X-Forwarded-Proto (`security.allowedDomains`).
+  - The middleware builds the Content-Security-Policy header from the SHA-256 hashes of each page's inline scripts, so the policy keeps report-only mode, report-uri and frame-ancestors.
+  - Deployment: same Docker Compose setup; `SITE_URL` replaces `NEXT_PUBLIC_SITE_URL`; nginx caches `/_astro/` and rate-limits `/_actions/login`, `/_actions/register` and `/_actions/deleteAccount` (deploy/DEPLOYMENT.md has the one-time upgrade steps).
 - Every published concept now has the full chain (`scripts/audit-chain.mjs` reports no gaps):
   - New experiment for Limits: ε–N band. Four sequences (n/(n+1), 1 + (−1)ⁿ/n, 1 + sin n/√n, (−1)ⁿ), a band of half-width ε around a candidate limit L, and the last term outside it; shrink ε to watch N grow (and jump, for sin n/√n), move L to a wrong value or pick (−1)ⁿ to see that no N exists; zoom on the band.
   - New experiment for Vectors: bases and coordinates. Drag b₁, b₂ and v over the grid the basis spans; coordinates change with the basis while v stays put, blow up as the basis becomes nearly collinear, and fail to exist or to be unique when it is collinear.

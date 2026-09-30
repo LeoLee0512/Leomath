@@ -3,7 +3,7 @@ import type { ExperimentKind } from "./graph";
 
 /**
  * The formulas each experiment shows, as TeX. They are rendered on the server and handed to the
- * experiment as HTML (see ExperimentEmbed and useTex), so the browser never loads KaTeX for them.
+ * experiment as MathML (see src/components/content/Experiment.astro and useTex), so the browser needs no maths library.
  * Formulas must not depend on slider values; anything numeric is shown next to them as text.
  */
 type Formula = string | Record<Locale, string>;

@@ -24,14 +24,14 @@ services:
     build:
       context: .
       args:
-        NEXT_PUBLIC_SITE_URL: ${SITE_URL:-https://leomath.cn}
+        SITE_URL: ${SITE_URL:-https://leomath.cn}
     restart: unless-stopped
     depends_on:
       db:
         condition: service_healthy
     environment:
       DATABASE_URL: postgres://leomath:${POSTGRES_PASSWORD:-change-me}@db:5432/leomath
-      NEXT_PUBLIC_SITE_URL: ${SITE_URL:-https://leomath.cn}
+      SITE_URL: ${SITE_URL:-https://leomath.cn}
       ICP_NUMBER: ${ICP_NUMBER:-}
       CSP_ENFORCE: ${CSP_ENFORCE:-}
     ports:
