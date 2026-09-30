@@ -4,6 +4,8 @@
 
 Depth over breadth.
 
+- Third probability concept: Random variables. Random variables as functions on the sample space, mass functions, mutual independence, the binomial law with its most likely value ⌊(n+1)p⌋ (tied when (n+1)p is whole), the Poisson law, and the Poisson limit theorem with proof; total variation distance and Le Cam's bound λ²/n; why small p matters and not only large n. Applications: call-centre lines, the birthday problem as a Poisson count (recovering the previous section's exponential), and thinning of a Poisson count via the law of total probability and Bayes. A short extension on waiting times defines distribution functions and densities (the exponential law), as promised in Conditional probability. Four exercises with coached feedback.
+- New experiment: From binomial to Poisson. Binomial bars against Poisson dots with the peak marked, one run of n trials drawn cell by cell (the ω behind X(ω)), sampled frequencies, and the distance against n on a log–log plot next to Le Cam's bound. λ and n are kept in the URL; presets for n = 10, 100, 1000 and a tied peak; the log-scale n slider steps through whole numbers from the keyboard.
 - Learn ↔ Explore ↔ Tools are one system: concepts declare their tools; concept pages show "Try it in the matrix calculator →" inline and in the sidebar; each tool lists the concepts that use it.
 - Every experiment ends with "What did you observe?": three questions and an explanation revealed on demand, so a visualisation becomes experiment → observation → conjecture → theory.
 - `scripts/audit-chain.mjs` lists, for each published concept, which links of problem → observe → definition → proof → experiment → exercises → tool are missing.

@@ -1,4 +1,4 @@
-/** Classical probability helpers: the birthday problem. */
+/** Classical probability helpers: the birthday problem, Bayes, and the binomial and Poisson laws. */
 
 /** P(at least two of n people share a birthday), with d equally likely days. Exact product form. */
 export function birthdayExact(n: number, d = 365): number {
@@ -78,4 +78,69 @@ export function conditionals(pA: number, pB: number, pAB: number) {
 /** The admissible range of P(A∩B) for given P(A), P(B) (Fréchet bounds). */
 export function intersectionRange(pA: number, pB: number): [number, number] {
   return [Math.max(0, pA + pB - 1), Math.min(pA, pB)];
+}
+
+/** P(X = k) for X ~ B(n, p), k = 0 … n. Computed in logs, so n in the thousands is fine. */
+export function binomialPmf(n: number, p: number): number[] {
+  const out = new Array<number>(n + 1).fill(0);
+  if (p <= 0) {
+    out[0] = 1;
+    return out;
+  }
+  if (p >= 1) {
+    out[n] = 1;
+    return out;
+  }
+  const lp = Math.log(p);
+  const lq = Math.log1p(-p);
+  // ln C(n, k) built up term by term: C(n, k+1) = C(n, k)·(n−k)/(k+1).
+  let lc = 0;
+  for (let k = 0; k <= n; k++) {
+    out[k] = Math.exp(lc + k * lp + (n - k) * lq);
+    lc += Math.log(n - k) - Math.log(k + 1);
+  }
+  return out;
+}
+
+/** P(Y = k) for Y ~ Poisson(λ), k = 0 … kMax, by π₀ = e^{−λ}, π_{k+1} = π_k·λ/(k+1). */
+export function poissonPmf(lambda: number, kMax: number): number[] {
+  const out = new Array<number>(kMax + 1);
+  out[0] = Math.exp(-lambda);
+  for (let k = 0; k < kMax; k++) out[k + 1] = (out[k] * lambda) / (k + 1);
+  return out;
+}
+
+/**
+ * The most likely values of B(n, p). The ratio P(k)/P(k−1) = (n−k+1)p / (k(1−p)) exceeds 1 exactly
+ * when k < (n+1)p, so the peak is at ⌊(n+1)p⌋, shared with the value below when (n+1)p is a whole number.
+ */
+export function binomialMode(n: number, p: number): number[] {
+  if (p <= 0) return [0];
+  if (p >= 1) return [n];
+  const m = (n + 1) * p;
+  const r = Math.round(m);
+  if (Math.abs(m - r) < 1e-9 && r >= 1 && r <= n) return [r - 1, r];
+  return [Math.min(n, Math.floor(m))];
+}
+
+/**
+ * Total variation distance ½·Σ|P(X=k) − P(Y=k)| between X ~ B(n, λ/n) and Y ~ Poisson(λ):
+ * the largest amount by which the two laws can disagree on any event. Needs n ≥ λ.
+ */
+export function binomialPoissonDistance(n: number, lambda: number): number {
+  const b = binomialPmf(n, lambda / n);
+  const q = poissonPmf(lambda, n);
+  let sum = 0;
+  let poissonMass = 0;
+  for (let k = 0; k <= n; k++) {
+    sum += Math.abs(b[k] - q[k]);
+    poissonMass += q[k];
+  }
+  // Beyond n the binomial is 0, so the Poisson tail counts in full.
+  return (sum + Math.max(0, 1 - poissonMass)) / 2;
+}
+
+/** One outcome of n independent trials with success probability p. */
+export function sampleTrials(n: number, p: number, rng: () => number = Math.random): boolean[] {
+  return Array.from({ length: n }, () => rng() < p);
 }

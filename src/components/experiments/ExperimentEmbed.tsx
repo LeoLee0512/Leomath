@@ -24,6 +24,7 @@ const TaylorApprox = dynamic(() => import("./TaylorApprox").then((m) => m.Taylor
 const BirthdayProblem = dynamic(() => import("./BirthdayProblem").then((m) => m.BirthdayProblem));
 const BayesScreening = dynamic(() => import("./BayesScreening").then((m) => m.BayesScreening));
 const Conditioning = dynamic(() => import("./Conditioning").then((m) => m.Conditioning));
+const BinomialPoisson = dynamic(() => import("./BinomialPoisson").then((m) => m.BinomialPoisson));
 
 export type SearchParams = Record<string, string | string[] | undefined>;
 
@@ -90,5 +91,7 @@ function renderExperiment(kind: ExperimentKind, locale: Locale, preset?: string,
       return <BayesScreening locale={locale} />;
     case "conditioning":
       return <Conditioning locale={locale} />;
+    case "binomial-poisson":
+      return <BinomialPoisson locale={locale} />;
   }
 }

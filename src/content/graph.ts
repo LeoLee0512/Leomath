@@ -78,7 +78,7 @@ export interface Observation {
   explanation: Bilingual;
 }
 
-export type ExperimentKind = "linear-transform" | "ode-explorer" | "exponential-derivative" | "secant-tangent" | "riemann-sums" | "taylor-approx" | "birthday-problem" | "conditioning" | "bayes-screening";
+export type ExperimentKind = "linear-transform" | "ode-explorer" | "exponential-derivative" | "secant-tangent" | "riemann-sums" | "taylor-approx" | "birthday-problem" | "conditioning" | "bayes-screening" | "binomial-poisson";
 
 export interface Experiment {
   slug: string;
@@ -102,7 +102,7 @@ export const concepts: Concept[] = [
   // ---- probability path ----
   { slug: "probability-space", title: b("概率空间", "Probability spaces"), summary: b("样本空间、事件与三条公理；生日问题为什么反直觉。", "Sample space, events and three axioms; why the birthday problem defies intuition."), parent: "probability", prerequisites: [], status: "published", level: "undergrad", path: "probability", experiments: ["birthday-problem"], tools: ["plot"], credits: [{ url: `${PROB_DEMOS}/GDGX`, note: b("生日问题实验的思路参考", "Birthday-problem experiment idea from") }], },
   { slug: "conditional-probability", title: b("条件概率与 Bayes", "Conditioning & Bayes"), summary: b("知道一件事发生了，就把样本空间缩小到它；再用结果反推原因。", "Knowing an event occurred shrinks the sample space to it; then reason from effects back to causes."), parent: "probability", prerequisites: ["probability-space"], status: "published", level: "undergrad", path: "probability", experiments: ["bayes-screening", "conditioning"], tools: ["plot"], credits: [{ url: `${PROB_DEMOS}/ybs`, note: b("筛查实验的思路参考", "Screening experiment idea from") }, { url: `${PROB_DEMOS}/Venn`, note: b("事件关系实验的思路参考", "Event-relations experiment idea from") }] },
-  { slug: "random-variables", title: b("随机变量与分布", "Random variables"), summary: b("把结果变成数；二项分布的极限是 Poisson。", "Turning outcomes into numbers; the Poisson law as a limit of binomials."), parent: "probability", prerequisites: ["conditional-probability"], status: "planned", level: "undergrad", experiments: [] },
+  { slug: "random-variables", title: b("随机变量与分布", "Random variables"), summary: b("把结果变成数；二项分布的极限是 Poisson。", "Turning outcomes into numbers; the Poisson law as a limit of binomials."), parent: "probability", prerequisites: ["conditional-probability"], status: "published", level: "undergrad", path: "probability", experiments: ["binomial-poisson"], tools: ["plot"], credits: [{ url: `${PROB_DEMOS}/EXFB`, note: b("二项分布峰值分析的思路参考", "Binomial peak analysis idea from") }, { url: `${PROB_DEMOS}/PoissonDist`, note: b("Poisson 计数模拟的思路参考", "Poisson counting simulation idea from") }] },
   { slug: "expectation-variance", title: b("期望与方差", "Mean & variance"), summary: b("协方差是一种内积，所以相关系数落在 [−1, 1]。", "Covariance is an inner product, so correlation lies in [−1, 1]."), parent: "probability", prerequisites: ["random-variables", "inner-product"], status: "planned", level: "undergrad", experiments: [] },
   { slug: "central-limit-theorem", title: b("中心极限定理", "Central limit theorem"), summary: b("分布为什么走向钟形。", "Why distributions tend to the bell curve."), parent: "probability", prerequisites: ["expectation-variance"], status: "planned", level: "undergrad", experiments: [] },
 
@@ -178,9 +178,9 @@ export const paths: LearningPath[] = [
     intent: b("不确定性、计数与规律", "uncertainty, counting and regularity"),
     level: "intro",
     requires: b("高中的排列组合", "school counting (permutations and combinations)"),
-    audience: b("想弄懂“概率到底在算什么”的人。这条路线正在建设，已完成前两节。", "anyone who wants to know what probability actually computes. The path is being built; the first two sections are done."),
-    outcome: b("理解概率空间与三条公理；会用补事件和计数算概率；掌握条件概率、独立性与 Bayes 公式。", "understand probability spaces and the three axioms; compute probabilities by counting and complements; use conditional probability, independence and Bayes' theorem."),
-    concepts: ["probability-space", "conditional-probability"],
+    audience: b("想弄懂“概率到底在算什么”的人。这条路线正在建设，已完成前三节。", "anyone who wants to know what probability actually computes. The path is being built; the first three sections are done."),
+    outcome: b("理解概率空间与三条公理；会用补事件和计数算概率；掌握条件概率、独立性与 Bayes 公式；用随机变量和分布描述计数，知道二项分布何时可以用 Poisson 分布近似。", "understand probability spaces and the three axioms; compute probabilities by counting and complements; use conditional probability, independence and Bayes' theorem; describe counts with random variables and distributions, and know when a binomial law can be replaced by a Poisson law."),
+    concepts: ["probability-space", "conditional-probability", "random-variables"],
     credits: [{ url: `${PROB_DEMOS}/probability-stats-hub`, note: b("路线规划参考", "Path outline informed by") }],
   },
 ];
@@ -350,6 +350,25 @@ export const experiments: Experiment[] = [
       ),
     },
     credits: [{ url: `${PROB_DEMOS}/Venn`, note: b("实验思路参考", "Experiment idea from") }],
+  },
+  {
+    slug: "binomial-poisson",
+    kind: "binomial-poisson",
+    title: b("二项分布走向 Poisson", "From binomial to Poisson"),
+    summary: b("做 n 次独立试验，每次成功的概率是 λ/n。柱子是成功次数的分布，圆点是 Poisson 分布；保持平均次数 λ 不变、增大 n，看两者重合，并看距离缩小得多快。", "Run n independent trials, each succeeding with probability λ/n. The bars are the distribution of the number of successes, the dots the Poisson law; keep the average λ fixed, raise n, and watch the two merge and how fast the distance shrinks."),
+    concept: "random-variables",
+    observe: {
+      questions: [
+        b("保持 λ = 3，把 n 从 10 调到 100，再调到 1000。柱子和圆点怎样靠拢？距离 d 每次变成原来的多少？", "Keep λ = 3 and set n to 10, then 100, then 1000. How do the bars and dots come together? By what factor does the distance d shrink each time?"),
+        b("把 n 固定在 20，比较 λ = 1 与 λ = 10。n 一样大，为什么一个近似得很好、一个差得很远？", "Fix n = 20 and compare λ = 1 with λ = 10. The n is the same; why is one approximation good and the other poor?"),
+        b("按“峰值并列”（n = 9，λ = 4.5）：最高的柱子有几根？一般地，最可能的值在哪里？", "Press “tied peak” (n = 9, λ = 4.5). How many bars are tallest? In general, where is the most likely value?"),
+      ],
+      explanation: b(
+        "$\\lambda=3$ 时，$n=10,100,1000$ 对应的距离约为 $0.086,\\ 0.0076,\\ 0.00075$：$n$ 每大十倍，距离约缩小为十分之一，即 $d$ 与 $1/n$ 同阶；在双对数图上它是一条斜率为 $-1$ 的直线，与虚线表示的上界 $\\lambda^2/n$ 平行。$n=20$ 时，$\\lambda=1$ 对应 $p=0.05$，距离约 $0.014$；$\\lambda=10$ 对应 $p=0.5$，距离约 $0.17$。二项分布的方差是 $np(1-p)$，Poisson 分布的方差是 $\\lambda=np$，只有 $p$ 很小时两者才接近，所以要的是“$p$ 小”，不只是“$n$ 大”。$n=9,\\ p=\\tfrac12$ 时 $k=4$ 与 $k=5$ 两根柱子一样高：相邻两项之比 $\\dfrac{P(X=k)}{P(X=k-1)}=\\dfrac{(n-k+1)p}{k(1-p)}$ 大于 $1$ 当且仅当 $k<(n+1)p$，所以峰值在 $\\lfloor(n+1)p\\rfloor$，$(n+1)p$ 恰为整数时它和左边一项并列。Poisson 分布同理，$\\pi_k/\\pi_{k-1}=\\lambda/k$，峰值在 $\\lfloor\\lambda\\rfloor$；$\\lambda=3$ 时 $k=2$ 与 $k=3$ 的两个圆点一样高。",
+        "For $\\lambda=3$ the distances at $n=10,100,1000$ are about $0.086,\\ 0.0076,\\ 0.00075$: each tenfold increase of $n$ divides the distance by about ten, so $d$ is of order $1/n$. On the log–log plot it is a line of slope $-1$, parallel to the dashed bound $\\lambda^2/n$. At $n=20$, $\\lambda=1$ means $p=0.05$ and a distance of about $0.014$; $\\lambda=10$ means $p=0.5$ and about $0.17$. The binomial variance is $np(1-p)$ and the Poisson variance is $\\lambda=np$; they agree only when $p$ is small. What matters is “$p$ small”, not merely “$n$ large”. With $n=9,\\ p=\\tfrac12$ the bars at $k=4$ and $k=5$ are equally tall: the ratio $\\dfrac{P(X=k)}{P(X=k-1)}=\\dfrac{(n-k+1)p}{k(1-p)}$ exceeds $1$ exactly when $k<(n+1)p$, so the peak is at $\\lfloor(n+1)p\\rfloor$, tied with its left neighbour when $(n+1)p$ is a whole number. The Poisson law works the same way: $\\pi_k/\\pi_{k-1}=\\lambda/k$ puts the peak at $\\lfloor\\lambda\\rfloor$, and at $\\lambda=3$ the dots at $k=2$ and $k=3$ are equally tall."
+      ),
+    },
+    credits: [{ url: `${PROB_DEMOS}/EXFB`, note: b("峰值分析的思路参考", "Peak analysis idea from") }, { url: `${PROB_DEMOS}/PoissonDist`, note: b("计数模拟的思路参考", "Counting simulation idea from") }],
   },
 ];
 

@@ -19,6 +19,11 @@ export const experimentTex: Partial<Record<ExperimentKind, Record<string, Formul
       en: "P(\\text{ill}\\mid +)=\\frac{P(+\\mid\\text{ill})\\,P(\\text{ill})}{P(+)}",
     },
   },
+  "binomial-poisson": {
+    binomial: "\\tbinom{n}{k}p^{k}(1-p)^{n-k}",
+    poisson: "e^{-\\lambda}\\frac{\\lambda^{k}}{k!}",
+    distance: "d=\\tfrac12\\sum_{k}\\bigl|P(X=k)-P(Y=k)\\bigr|",
+  },
   "exponential-derivative": { quotient: "\\frac{a^{x+h}-a^{x}}{h}=a^{x}\\cdot\\frac{a^{h}-1}{h}" },
   "secant-tangent": { quotient: "\\frac{f(x_0+h)-f(x_0)}{h}" },
   "riemann-sums": { sum: "\\sum_{i=1}^{n} f(\\xi_i)\\,\\Delta x" },

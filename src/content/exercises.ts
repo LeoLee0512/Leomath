@@ -309,6 +309,37 @@ export const exercises: Exercise[] = [
     hint: b("把第一次的后验当作第二次的先验；或者直接用 $P(++\\mid\\text{病})=0.95^2$。", "Use the first posterior as the second prior, or directly $P(++\\mid\\text{ill})=0.95^2$."),
     solution: b("$\\frac{0.95^2\\times0.01}{0.95^2\\times0.01+0.08^2\\times0.99}=\\frac{0.009025}{0.009025+0.006336}\\approx0.59$。分两步算（$0.01\\to0.107\\to0.59$）结果相同：条件独立时，Bayes 更新可以一条一条地做。", "$\\frac{0.95^2\\times0.01}{0.95^2\\times0.01+0.08^2\\times0.99}=\\frac{0.009025}{0.009025+0.006336}\\approx0.59$. Doing it in two steps ($0.01\\to0.107\\to0.59$) gives the same result: with conditional independence, Bayesian updates can be done one piece of evidence at a time."),
   },
+  // ---- random variables ----
+  {
+    id: "random-variables-1", concept: "random-variables", kind: "numeric",
+    statement: b("抛一枚均匀硬币 $10$ 次，恰好出现 $3$ 次正面的概率是多少？（保留四位小数，也可以填分数）", "Toss a fair coin $10$ times. What is the probability of exactly $3$ heads? (Four decimals, or a fraction.)"),
+    answer: 120 / 1024, tolerance: 6e-5,
+    hint: b("$X\\sim B(10,\\tfrac12)$。先数有多少个正反序列恰好含 $3$ 个正面。", "$X\\sim B(10,\\tfrac12)$. First count the head–tail sequences with exactly $3$ heads."),
+    solution: b("$P(X=3)=\\binom{10}{3}\\bigl(\\tfrac12\\bigr)^{3}\\bigl(\\tfrac12\\bigr)^{7}=\\frac{120}{1024}\\approx0.1172$。每个具体的序列概率都是 $2^{-10}$，含 $3$ 个正面的序列有 $\\binom{10}3=120$ 个。", "$P(X=3)=\\binom{10}{3}\\bigl(\\tfrac12\\bigr)^{3}\\bigl(\\tfrac12\\bigr)^{7}=\\frac{120}{1024}\\approx0.1172$. Each particular sequence has probability $2^{-10}$, and $\\binom{10}3=120$ sequences contain exactly $3$ heads."),
+  },
+  {
+    id: "random-variables-2", concept: "random-variables", kind: "numeric",
+    statement: b("一本书有 $500$ 页，全书共有 $250$ 处印刷错误，每处错误独立、等可能地落在任何一页。用 Poisson 近似，求某一页**没有**错误的概率。（保留三位小数）", "A book has $500$ pages and $250$ misprints, each landing independently on a page chosen uniformly at random. Using the Poisson approximation, find the probability that a given page has **no** misprints. (Three decimals.)"),
+    answer: Math.exp(-0.5), tolerance: 6e-4,
+    hint: b("某一页上的错误数是 $B(250,\\tfrac1{500})$：$n$ 大、$p$ 小。$\\lambda=np$ 是多少？", "The number of misprints on one page is $B(250,\\tfrac1{500})$: large $n$, small $p$. What is $\\lambda=np$?"),
+    solution: b("$\\lambda=250\\times\\frac1{500}=0.5$，$P(Y=0)=e^{-0.5}\\approx0.607$。精确值 $\\bigl(1-\\tfrac1{500}\\bigr)^{250}\\approx0.606$，相差不到 $0.001$。", "$\\lambda=250\\times\\frac1{500}=0.5$ and $P(Y=0)=e^{-0.5}\\approx0.607$. The exact value $\\bigl(1-\\tfrac1{500}\\bigr)^{250}\\approx0.606$ differs by less than $0.001$."),
+  },
+  {
+    id: "random-variables-3", concept: "random-variables", kind: "choice",
+    statement: b("设 $X\\sim B(11,\\tfrac12)$。$X$ 最可能取哪个值？", "Let $X\\sim B(11,\\tfrac12)$. Which value is $X$ most likely to take?"),
+    options: [b("$5$", "$5$"), b("$6$", "$6$"), b("$5.5$", "$5.5$"), b("$5$ 和 $6$ 一样可能，都是最可能的值", "$5$ and $6$ are equally likely, and both are most likely")],
+    correct: 3,
+    hint: b("看相邻两项之比 $\\dfrac{P(X=k)}{P(X=k-1)}=\\dfrac{(n-k+1)p}{k(1-p)}$，并算出 $(n+1)p$。", "Look at the ratio $\\dfrac{P(X=k)}{P(X=k-1)}=\\dfrac{(n-k+1)p}{k(1-p)}$ and compute $(n+1)p$."),
+    solution: b("$(n+1)p=6$ 是整数。$k=6$ 时比值 $\\frac{6\\cdot\\frac12}{6\\cdot\\frac12}=1$，所以 $P(X=6)=P(X=5)=\\frac{462}{2048}$，两者并列最大；$k<6$ 时比值大于 $1$，$k>6$ 时小于 $1$。", "$(n+1)p=6$ is a whole number. At $k=6$ the ratio is $\\frac{6\\cdot\\frac12}{6\\cdot\\frac12}=1$, so $P(X=6)=P(X=5)=\\frac{462}{2048}$, tied for the maximum; the ratio exceeds $1$ for $k<6$ and is below $1$ for $k>6$."),
+  },
+  {
+    id: "random-variables-4", concept: "random-variables", kind: "choice",
+    statement: b("$B(10,\\,0.5)$ 与 $B(1000,\\,0.005)$ 的均值都是 $5$。哪一个更接近 Poisson 分布 $\\mathrm{Poisson}(5)$？", "$B(10,\\,0.5)$ and $B(1000,\\,0.005)$ both have mean $5$. Which is closer to $\\mathrm{Poisson}(5)$?"),
+    options: [b("$B(10,\\,0.5)$", "$B(10,\\,0.5)$"), b("$B(1000,\\,0.005)$", "$B(1000,\\,0.005)$"), b("一样接近，因为 $np$ 相同", "Equally close, since $np$ is the same"), b("两个都不接近", "Neither is close")],
+    correct: 1,
+    hint: b("比较二项分布的方差 $np(1-p)$ 与 Poisson 分布的方差 $\\lambda$。", "Compare the binomial variance $np(1-p)$ with the Poisson variance $\\lambda$."),
+    solution: b("Poisson 近似要求 $p$ 小。$B(1000,0.005)$ 的方差 $4.975$ 几乎就是 $5$，与 $\\mathrm{Poisson}(5)$ 的距离约 $0.0012$；$B(10,0.5)$ 的方差只有 $2.5$，而且取不到 $10$ 以上的值，距离约 $0.17$。", "The Poisson approximation needs small $p$. $B(1000,0.005)$ has variance $4.975$, almost exactly $5$, and lies about $0.0012$ from $\\mathrm{Poisson}(5)$; $B(10,0.5)$ has variance only $2.5$ and never exceeds $10$, and lies about $0.17$ away."),
+  },
 ];
 
 export function exercisesForConcept(slug: string): Exercise[] {
