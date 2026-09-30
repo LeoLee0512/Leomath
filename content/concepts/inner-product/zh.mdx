@@ -8,6 +8,10 @@
 
 <Observe>
 平面上，$u$ 在 $v$ 方向上的投影长度是 $\|u\|\,|\cos\theta|$。无论 $\theta$ 是多少，**投影不会比 $u$ 本身长**。这句话看起来太显然，但它就是本节整个不等式的来源。
+
+在下面拖动 $u$ 和 $v$。蓝色箭头是 $u$ 在 $v$ 所在直线上的投影，红色虚线是剩下的部分。**$|\langle u,v\rangle|$ 那根条什么时候能碰到 $\|u\|\|v\|$？两根条之间的差距和红色虚线有什么关系？**
+
+<Experiment slug="projection-slack" />
 </Observe>
 
 <Conjecture>
@@ -34,7 +38,7 @@ $\|v\|=\sqrt{\langle v,v\rangle}$ 称为 $v$ 的**长度**（范数）。若 $\l
 - $[0,1]$ 上的连续函数：$\langle f,g\rangle=\int_0^1f(x)g(x)\,dx$。
 - 有限方差的随机变量：$\langle X,Y\rangle=\mathbb E[XY]$。
 
-三条公理逐一验证都成立。第三个例子里 $\|X-\mathbb EX\|^2$ 就是方差。
+三条公理逐一验证都成立。就连 $\mathbb R^2$ 上的内积也不止一种：$\langle u,v\rangle=2u_1v_1+u_2v_2$ 同样是内积（实验里可以切换），它有自己的长度和直角。第三个例子里 $\|X-\mathbb EX\|^2$ 就是方差。
 </Example>
 
 ## 定理与证明
@@ -54,6 +58,10 @@ $$0\le\langle u,u\rangle-\frac{\langle u,v\rangle^2}{\langle v,v\rangle}.$$
 </Proof>
 
 整个证明只用了两件事：**长度非负**（公理 3）和**减去投影**（公理 1、2 做展开）。所以它在每一个内积空间里都成立，一字不改。
+
+把证明的第一行乘以 $\langle v,v\rangle$，还能精确地说出不等式"差了多少"：
+$$\|u\|^2\|v\|^2-\langle u,v\rangle^2=\|v\|^2\,\|u-tv\|^2.$$
+这就是实验里的"差额"：两根条之间的差距由红色虚线（剩下的部分）的长度决定，剩下的部分为零时，差距恰好消失。
 
 <Corollary title="三角不等式">
 $\|u+v\|\le\|u\|+\|v\|$。

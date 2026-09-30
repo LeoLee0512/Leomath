@@ -92,3 +92,34 @@ export function format(x: number, digits = 2): string {
   const r = Number(x.toFixed(digits));
   return Object.is(r, -0) ? "0" : r.toString();
 }
+
+/**
+ * Coordinates (c₁, c₂) of v in the basis b₁, b₂, i.e. v = c₁b₁ + c₂b₂ (Cramer's rule),
+ * or null when b₁, b₂ are (numerically) collinear and so not a basis.
+ */
+export function coordinates(b1: Vec2, b2: Vec2, v: Vec2): Vec2 | null {
+  const d = b1[0] * b2[1] - b2[0] * b1[1];
+  const scale = Math.hypot(b1[0], b1[1]) * Math.hypot(b2[0], b2[1]);
+  if (scale === 0 || Math.abs(d) < 1e-9 * Math.max(1, scale)) return null;
+  return [(v[0] * b2[1] - b2[0] * v[1]) / d, (b1[0] * v[1] - v[0] * b1[1]) / d];
+}
+
+/** The inner product uᵀGv for a symmetric positive definite G = [[a, b], [b, d]] given as a Mat2. */
+export function inner(g: Mat2, u: Vec2, v: Vec2): number {
+  return u[0] * (g[0] * v[0] + g[1] * v[1]) + u[1] * (g[2] * v[0] + g[3] * v[1]);
+}
+
+/**
+ * Projection of u onto the line of v in the inner product G: coefficient t = ⟨u,v⟩/⟨v,v⟩,
+ * the projection tv, the remainder u − tv (orthogonal to v in G), and the Cauchy–Schwarz slack
+ * ⟨u,u⟩⟨v,v⟩ − ⟨u,v⟩², which equals ⟨v,v⟩·⟨u−tv, u−tv⟩.
+ */
+export function projection(g: Mat2, u: Vec2, v: Vec2) {
+  const uv = inner(g, u, v);
+  const uu = inner(g, u, u);
+  const vv = inner(g, v, v);
+  const t = vv > 0 ? uv / vv : 0;
+  const p: Vec2 = [t * v[0], t * v[1]];
+  const r: Vec2 = [u[0] - p[0], u[1] - p[1]];
+  return { uv, uu, vv, t, p, r, slack: uu * vv - uv * uv };
+}

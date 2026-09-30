@@ -10,6 +10,10 @@ Without a precise definition, "tends to" is a feeling; it can be neither proved 
 Look at the sequence $a_n = \dfrac{n}{n+1}$: $\tfrac12,\ \tfrac23,\ \tfrac34,\ \tfrac45,\ \dots$
 
 It never reaches $1$, yet it gets ever closer. We want to say "$a_n$ tends to $1$". But what does "ever closer" mean? $b_n = 1-\tfrac1n$ also gets closer; $c_n = 1+\tfrac{(-1)^n}{n}$ jumps from side to side and also gets closer. What do these three kinds of "approaching" have in common?
+
+Try it in the experiment below: draw a line $\varepsilon$ above $1$ and one $\varepsilon$ below, forming a band. **As you shrink $\varepsilon$, can you always find a term after which every dot stays in the band?** Then see why $(-1)^n$ fails.
+
+<Experiment slug="epsilon-band" />
 </Observe>
 
 <Conjecture>
@@ -39,6 +43,8 @@ Show $\lim_{n\to\infty}\dfrac{n}{n+1}=1$.
 
 Let $\varepsilon>0$. We need $\left|\dfrac{n}{n+1}-1\right|=\dfrac1{n+1}<\varepsilon$, which holds when $n+1>\tfrac1\varepsilon$. Take $N=\lceil\tfrac1\varepsilon\rceil$; then for $n>N$, $\tfrac1{n+1}<\tfrac1N\le\varepsilon$.
 </Example>
+
+With $\varepsilon=0.1$ the experiment shows $N=9$, a little less than the $\lceil1/0.1\rceil=10$ chosen here. That does not matter: the definition only asks that **some** sufficient $N$ exist. A larger one always works; there is no need to find the smallest.
 
 The pattern is always the same: simplify $|a_n-L|$ to an expression in $n$, then solve for how large $n$ must be.
 

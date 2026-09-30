@@ -78,7 +78,7 @@ export interface Observation {
   explanation: Bilingual;
 }
 
-export type ExperimentKind = "linear-transform" | "ode-explorer" | "exponential-derivative" | "secant-tangent" | "riemann-sums" | "taylor-approx" | "birthday-problem" | "conditioning" | "bayes-screening" | "binomial-poisson";
+export type ExperimentKind = "linear-transform" | "ode-explorer" | "exponential-derivative" | "secant-tangent" | "riemann-sums" | "taylor-approx" | "birthday-problem" | "conditioning" | "bayes-screening" | "binomial-poisson" | "epsilon-band" | "basis-coordinates" | "projection-slack";
 
 export interface Experiment {
   slug: string;
@@ -111,15 +111,15 @@ export const concepts: Concept[] = [
   { slug: "plane-geometry", title: b("平面几何与变换", "Plane geometry"), summary: b("对称、旋转、相似。", "Symmetry, rotation, similarity."), parent: "geometry", prerequisites: [], status: "planned", level: "highschool", experiments: [] },
 
   // ---- calculus path ----
-  { slug: "limit", title: b("极限", "Limits"), summary: b("用 ε–δ 精确说出“无限接近”。", "Saying “arbitrarily close” precisely with ε–δ."), parent: "analysis", prerequisites: ["functions"], status: "published", level: "undergrad", path: "calculus", experiments: [], tools: ["plot"] },
+  { slug: "limit", title: b("极限", "Limits"), summary: b("用 ε–δ 精确说出“无限接近”。", "Saying “arbitrarily close” precisely with ε–δ."), parent: "analysis", prerequisites: ["functions"], status: "published", level: "undergrad", path: "calculus", experiments: ["epsilon-band"], tools: ["plot"] },
   { slug: "derivative", title: b("导数", "The derivative"), summary: b("变化率的极限，以及为什么 eˣ 的导数是自己。", "The limit of a rate of change, and why eˣ is its own derivative."), parent: "analysis", prerequisites: ["limit"], status: "published", level: "undergrad", path: "calculus", experiments: ["exponential-derivative", "secant-tangent"], tools: ["plot"] },
   { slug: "mean-value-theorem", title: b("中值定理", "Mean value theorem"), summary: b("整体平均变化率一定在某一瞬间出现；Rolle → Lagrange，以及每个条件为什么不能省。", "The overall average rate of change is attained at some instant; Rolle → Lagrange, and why no hypothesis can be dropped."), parent: "analysis", prerequisites: ["derivative"], status: "published", level: "undergrad", path: "calculus", experiments: ["secant-tangent"], tools: ["plot"] },
   { slug: "integral", title: b("积分", "The integral"), summary: b("Riemann 和的极限，与微积分基本定理。", "The limit of Riemann sums and the fundamental theorem."), parent: "analysis", prerequisites: ["limit", "derivative", "mean-value-theorem"], status: "published", level: "undergrad", path: "calculus", experiments: ["riemann-sums"], tools: ["plot"] },
   { slug: "taylor-series", title: b("Taylor 展开", "Taylor expansion"), summary: b("用多项式逼近函数，并控制误差。", "Approximating functions by polynomials, with error control."), parent: "analysis", prerequisites: ["derivative", "mean-value-theorem", "integral"], status: "published", level: "undergrad", path: "calculus", experiments: ["taylor-approx"], tools: ["plot"] },
 
   // ---- linear algebra path ----
-  { slug: "vectors", title: b("向量", "Vectors"), summary: b("向量空间的公理，以及基与坐标。", "Axioms of a vector space; bases and coordinates."), parent: "algebra", prerequisites: ["plane-geometry"], status: "published", level: "undergrad", path: "linear-algebra", experiments: [], tools: ["matrix"] },
-  { slug: "inner-product", title: b("内积与 Cauchy–Schwarz", "Inner products & Cauchy–Schwarz"), summary: b("长度与角度从哪里来；投影不会变长这一件事推出整个不等式。", "Where length and angle come from; the whole inequality follows from “a projection is never longer”."), parent: "algebra", prerequisites: ["vectors"], status: "published", level: "undergrad", path: "linear-algebra", experiments: [], tools: ["matrix"] },
+  { slug: "vectors", title: b("向量", "Vectors"), summary: b("向量空间的公理，以及基与坐标。", "Axioms of a vector space; bases and coordinates."), parent: "algebra", prerequisites: ["plane-geometry"], status: "published", level: "undergrad", path: "linear-algebra", experiments: ["basis-coordinates"], tools: ["matrix"] },
+  { slug: "inner-product", title: b("内积与 Cauchy–Schwarz", "Inner products & Cauchy–Schwarz"), summary: b("长度与角度从哪里来；投影不会变长这一件事推出整个不等式。", "Where length and angle come from; the whole inequality follows from “a projection is never longer”."), parent: "algebra", prerequisites: ["vectors"], status: "published", level: "undergrad", path: "linear-algebra", experiments: ["projection-slack"], tools: ["matrix"] },
   { slug: "linear-maps", title: b("线性映射", "Linear maps"), summary: b("保持加法与数乘的映射，由它对基的作用完全决定。", "Maps preserving addition and scaling, determined entirely by what they do to a basis."), parent: "algebra", prerequisites: ["vectors"], status: "published", level: "undergrad", path: "linear-algebra", experiments: ["linear-transform"], tools: ["matrix"] },
   { slug: "matrices", title: b("矩阵", "Matrices"), summary: b("线性映射的坐标表示；矩阵乘法为什么这样定义。", "Coordinate representation of linear maps; why matrix multiplication is defined the way it is."), parent: "algebra", prerequisites: ["linear-maps"], status: "published", level: "undergrad", path: "linear-algebra", experiments: ["linear-transform"], tools: ["matrix"] },
   { slug: "eigenvalues", title: b("特征值", "Eigenvalues"), summary: b("变换只是拉伸的方向。", "Directions along which a map is just a stretch."), parent: "algebra", prerequisites: ["matrices"], status: "published", level: "undergrad", path: "linear-algebra", experiments: ["linear-transform"], tools: ["matrix"] },
@@ -350,6 +350,60 @@ export const experiments: Experiment[] = [
       ),
     },
     credits: [{ url: `${PROB_DEMOS}/Venn`, note: b("实验思路参考", "Experiment idea from") }],
+  },
+  {
+    slug: "epsilon-band",
+    kind: "epsilon-band",
+    title: b("ε–N：把数列关进带子", "ε–N: trapping a sequence in a band"),
+    summary: b("在候选极限 L 上下各画出宽 ε 的带子，找出最后一个跑出带子的项。缩小 ε，看 N 怎样变大；换一个错误的 L，或一个没有极限的数列，看 N 为什么找不到。", "Draw a band of half-width ε around a candidate limit L and find the last term outside it. Shrink ε and watch N grow; move L to a wrong value, or pick a sequence with no limit, and see why no N exists."),
+    concept: "limit",
+    observe: {
+      questions: [
+        b("对 n/(n+1)，把 ε 从 0.1 缩到 0.05，再缩到 0.02，N 分别是多少？能写出 N 与 ε 的关系吗？", "For n/(n+1), shrink ε from 0.1 to 0.05 and then 0.02. What is N each time? Can you write N in terms of ε?"),
+        b("选 1 + sin n/√n，慢慢缩小 ε。N 是平稳增长的吗？定义要求我们找到“最小的” N 吗？", "Pick 1 + sin n/√n and shrink ε slowly. Does N grow smoothly? Does the definition ask for the smallest N?"),
+        b("选 (−1)ⁿ，把 L 拖到任何位置。能找到 N 吗？再选 n/(n+1)，把 L 拖到 0.95、ε 取 0.02 呢？", "Pick (−1)ⁿ and drag L anywhere. Is there an N? Now pick n/(n+1), set L to 0.95 and ε to 0.02."),
+      ],
+      explanation: b(
+        "对 $\\frac n{n+1}$，$|a_n-1|=\\frac1{n+1}$，它不小于 $\\varepsilon$ 当且仅当 $n\\le\\frac1\\varepsilon-1$，所以最后一个带外的项是 $N=\\lfloor1/\\varepsilon\\rfloor-1$：$\\varepsilon=0.1,0.05,0.02$ 时 $N=9,19,49$。$\\varepsilon$ 缩小一半，$N$ 约增大一倍。$1+\\frac{\\sin n}{\\sqrt n}$ 的 $N$ 会一跳一跳地变：$\\varepsilon$ 从 $0.102$ 缩到 $0.100$，$N$ 从 $83$ 跳到 $99$，因为 $\\sin n$ 不规则地回到 $\\pm1$ 附近。定义只要求**存在**一个够用的 $N$，不要求最小，也不要求公式好看：由 $\\bigl|\\frac{\\sin n}{\\sqrt n}\\bigr|\\le\\frac1{\\sqrt n}$，取 $N=\\lceil1/\\varepsilon^2\\rceil$ 永远够用，这正是证明里的做法。$(-1)^n$ 的项在 $1$ 与 $-1$ 之间来回跳，两者相距 $2$；若它们都无限多次落在 $(L-\\varepsilon,L+\\varepsilon)$ 里，就有 $2<2\\varepsilon$。所以 $\\varepsilon\\le1$ 时，无论 $L$ 放在哪里都找不到 $N$：没有极限。$L=0.95$ 同样失败：$\\varepsilon<0.05$ 时，后面所有的项都在带子上方。",
+        "For $\\frac n{n+1}$, $|a_n-1|=\\frac1{n+1}$, which is at least $\\varepsilon$ exactly when $n\\le\\frac1\\varepsilon-1$, so the last term outside is $N=\\lfloor1/\\varepsilon\\rfloor-1$: $N=9,19,49$ for $\\varepsilon=0.1,0.05,0.02$. Halve $\\varepsilon$ and $N$ roughly doubles. For $1+\\frac{\\sin n}{\\sqrt n}$, $N$ moves in jumps: from $\\varepsilon=0.102$ to $0.100$ it leaps from $83$ to $99$, because $\\sin n$ returns near $\\pm1$ irregularly. The definition only asks that **some** sufficient $N$ exist, not the smallest one and not a tidy formula: since $\\bigl|\\frac{\\sin n}{\\sqrt n}\\bigr|\\le\\frac1{\\sqrt n}$, $N=\\lceil1/\\varepsilon^2\\rceil$ always works, and that is how a proof would go. The terms of $(-1)^n$ jump between $1$ and $-1$, which are $2$ apart; if both kept landing in $(L-\\varepsilon,L+\\varepsilon)$ we would have $2<2\\varepsilon$. So for $\\varepsilon\\le1$ no $N$ exists wherever $L$ is: there is no limit. $L=0.95$ fails too: once $\\varepsilon<0.05$, all later terms sit above the band."
+      ),
+    },
+  },
+  {
+    slug: "basis-coordinates",
+    kind: "basis-coordinates",
+    title: b("基与坐标", "Bases and coordinates"),
+    summary: b("拖动两个基向量和一个向量 v，看 b₁、b₂ 张成的斜网格，以及 v 在这组基下的坐标 (c₁, c₂)。换一组基，v 不动，坐标却变了；基向量共线时，坐标要么不存在，要么不唯一。", "Drag two basis vectors and a vector v; see the skewed grid spanned by b₁, b₂ and the coordinates (c₁, c₂) of v in that basis. Change the basis: v stays put, its coordinates change. When the basis vectors are collinear, coordinates either do not exist or are not unique."),
+    concept: "vectors",
+    observe: {
+      questions: [
+        b("按“斜基”：v 没有动，它的坐标从 (1, 2) 变成了多少？“向量”和“坐标”哪一个依赖于基？", "Press “Skewed basis”. v has not moved; its coordinates were (1, 2). What are they now? Which depends on the basis, the vector or its coordinates?"),
+        b("按“几乎共线”，再用方向键把 v 移动一小步。坐标变化得比 v 的移动大还是小？为什么？", "Press “Nearly collinear” and move v one small step with the arrow keys. Do the coordinates change more or less than v moved? Why?"),
+        b("按“共线”：还能把 v 写成 c₁b₁ + c₂b₂ 吗？把 v 拖到那条直线上，又会怎样？", "Press “Collinear”. Can v still be written as c₁b₁ + c₂b₂? What happens if you drag v onto that line?"),
+      ],
+      explanation: b(
+        "$v=(1,2)$ 在斜基 $b_1=(2,1),\\ b_2=(-1,1)$ 下的坐标是 $(1,1)$：$1\\cdot(2,1)+1\\cdot(-1,1)=(1,2)$。向量是平面上同一个箭头，坐标是相对于一组基读出来的数，换基就换数。基向量几乎共线时，$b_1,b_2$ 张成的平行四边形面积只有 $0.5$，解坐标要除以这个面积：$v=(1,2)$ 的坐标是 $(-5.5,\\,6)$，$v$ 向右移动 $0.1$，坐标就变成 $(-5.25,\\,5.8)$，变化是移动量的两倍多。面积越接近 $0$，坐标就越大、越敏感。共线时面积为 $0$，$b_1,b_2$ 只张成一条直线：$v$ 不在线上，**写不出来**（张成失败）；$v$ 在线上，**写法有无穷多种**（线性无关失败）。基的定义里的两个条件，恰好分别对应坐标的存在与唯一。",
+        "In the skewed basis $b_1=(2,1),\\ b_2=(-1,1)$, $v=(1,2)$ has coordinates $(1,1)$: $1\\cdot(2,1)+1\\cdot(-1,1)=(1,2)$. The vector is the same arrow in the plane; coordinates are numbers read off relative to a basis, and a new basis gives new numbers. When the basis vectors are nearly collinear, the parallelogram they span has area only $0.5$, and solving for coordinates divides by that area: $v=(1,2)$ has coordinates $(-5.5,\\,6)$, and moving $v$ right by $0.1$ changes them to $(-5.25,\\,5.8)$, more than twice the move. The closer the area to $0$, the larger and more sensitive the coordinates. When collinear the area is $0$ and $b_1,b_2$ span only a line: if $v$ is off it, it **cannot be written** at all (spanning fails); if $v$ is on it, there are **infinitely many ways** (independence fails). The two conditions in the definition of a basis correspond exactly to existence and uniqueness of coordinates."
+      ),
+    },
+  },
+  {
+    slug: "projection-slack",
+    kind: "projection-slack",
+    title: b("投影与 Cauchy–Schwarz 的差额", "Projection and the Cauchy–Schwarz slack"),
+    summary: b("拖动 u 和 v，看 u 在 v 方向上的投影和剩下的部分；两根条比较 |⟨u,v⟩| 与 ‖u‖‖v‖。再换一个加权内积：垂直、单位圆和投影都变了，不等式照样成立。", "Drag u and v and see the projection of u onto v and what is left over; two bars compare |⟨u,v⟩| with ‖u‖‖v‖. Then switch to a weighted inner product: perpendicularity, the unit circle and the projection all change, and the inequality still holds."),
+    concept: "inner-product",
+    observe: {
+      questions: [
+        b("拖着 u 绕原点转一圈。|⟨u,v⟩| 那根条什么时候和 ‖u‖‖v‖ 一样长？这时 u 与 v 是什么关系？", "Drag u once around the origin. When is the |⟨u,v⟩| bar as long as ‖u‖‖v‖? How are u and v related then?"),
+        b("把 u 从 v 所在的直线上往外拉。“差额”和红色虚线 u − tv 的长度有什么关系？", "Pull u away from the line through v. How is the “slack” related to the length of the dashed red remainder u − tv?"),
+        b("切换到加权内积 2u₁v₁ + u₂v₂，按“加权下正交”。u 和 v 看上去并不垂直，内积却是 0。单位圆变成了什么？不等式还成立吗？", "Switch to the weighted inner product 2u₁v₁ + u₂v₂ and press “Orthogonal when weighted”. u and v do not look perpendicular, yet their inner product is 0. What has the unit circle become? Does the inequality still hold?"),
+      ],
+      explanation: b(
+        "只有 $u$ 落在 $v$ 所在的直线上（同向或反向）时两根条才一样长，即 $u,v$ 线性相关：这就是等号条件。差额 $\\|u\\|^2\\|v\\|^2-\\langle u,v\\rangle^2$ 恰好等于 $\\|v\\|^2\\,\\|u-tv\\|^2$：把证明里的 $0\\le\\langle u-tv,u-tv\\rangle$ 两边乘以 $\\langle v,v\\rangle$，得到的就是这个式子。默认位置 $u=(1,2.5),\\ v=(3,1)$ 时，$\\langle u,v\\rangle=5.5$，$\\|u\\|^2\\|v\\|^2=72.5$，差额 $42.25=10\\times\\|(-0.65,1.95)\\|^2$。所以“投影不会变长”和 Cauchy–Schwarz 是同一件事，差额就是剩下那一段的长度（的平方，再乘 $\\|v\\|^2$）。加权内积下，“长度为 $1$”的点是椭圆 $2x^2+y^2=1$；$u=(1,2)$ 与 $v=(2,-2)$ 的加权内积是 $2\\cdot2-4=0$，所以它们正交，投影是 $0$。直角、圆、投影都由内积决定，而证明只用到了三条公理，所以不等式在这里一样成立。",
+        "The bars are equal only when $u$ lies on the line through $v$ (same or opposite direction), that is, when $u,v$ are dependent: the equality case. The slack $\\|u\\|^2\\|v\\|^2-\\langle u,v\\rangle^2$ equals $\\|v\\|^2\\,\\|u-tv\\|^2$ exactly: multiply the proof's $0\\le\\langle u-tv,u-tv\\rangle$ by $\\langle v,v\\rangle$ and this is what you get. At the start, $u=(1,2.5),\\ v=(3,1)$: $\\langle u,v\\rangle=5.5$, $\\|u\\|^2\\|v\\|^2=72.5$, slack $42.25=10\\times\\|(-0.65,1.95)\\|^2$. So “a projection is never longer” and Cauchy–Schwarz are the same statement, and the slack is the length of what is left over (squared, times $\\|v\\|^2$). With the weighted inner product the points of length $1$ form the ellipse $2x^2+y^2=1$; $u=(1,2)$ and $v=(2,-2)$ have weighted inner product $2\\cdot2-4=0$, so they are orthogonal and the projection is $0$. Right angles, circles and projections are all decided by the inner product, and the proof used only the three axioms, so the inequality holds here just the same."
+      ),
+    },
   },
   {
     slug: "binomial-poisson",

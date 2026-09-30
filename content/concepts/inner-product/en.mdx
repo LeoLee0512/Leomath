@@ -8,6 +8,10 @@ We need to add a structure to a vector space from which length and angle can be 
 
 <Observe>
 In the plane, the projection of $u$ onto the direction of $v$ has length $\|u\|\,|\cos\theta|$. Whatever $\theta$ is, **the projection is never longer than $u$ itself**. This sounds too obvious to mention, yet it is the entire source of this section's inequality.
+
+Drag $u$ and $v$ below. The blue arrow is the projection of $u$ onto the line of $v$; the dashed red segment is what is left over. **When does the $|\langle u,v\rangle|$ bar reach the $\|u\|\|v\|$ bar, and what does the gap between them have to do with the red segment?**
+
+<Experiment slug="projection-slack" />
 </Observe>
 
 <Conjecture>
@@ -34,7 +38,7 @@ $\|v\|=\sqrt{\langle v,v\rangle}$ is the **length** (norm) of $v$. If $\langle u
 - Continuous functions on $[0,1]$ with $\langle f,g\rangle=\int_0^1f(x)g(x)\,dx$.
 - Random variables with finite variance, $\langle X,Y\rangle=\mathbb E[XY]$.
 
-All three axioms check out in each case. In the third, $\|X-\mathbb EX\|^2$ is the variance.
+All three axioms check out in each case. Even $\mathbb R^2$ has more than one: $\langle u,v\rangle=2u_1v_1+u_2v_2$ is an inner product too (you can switch to it in the experiment), with its own lengths and right angles. In the third, $\|X-\mathbb EX\|^2$ is the variance.
 </Example>
 
 ## Theorem and proof
@@ -54,6 +58,10 @@ Multiply by $\langle v,v\rangle>0$. Equality holds iff $u-tv=0$ (positive defini
 </Proof>
 
 The proof used exactly two things: **lengths are non-negative** (axiom 3) and **subtract the projection** (axioms 1 and 2 to expand). So it holds, word for word, in every inner product space.
+
+Multiplying the proof's first line by $\langle v,v\rangle$ gives an exact formula for how much room the inequality leaves:
+$$\|u\|^2\|v\|^2-\langle u,v\rangle^2=\|v\|^2\,\|u-tv\|^2.$$
+This is the "slack" in the experiment: the gap between the two bars is controlled by the length of the dashed red remainder, and it closes exactly when the remainder vanishes.
 
 <Corollary title="Triangle inequality">
 $\|u+v\|\le\|u\|+\|v\|$.

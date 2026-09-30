@@ -58,6 +58,10 @@ Existence is spanning. For uniqueness, if $v=\sum c_iv_i=\sum d_iv_i$ then $\sum
 
 This theorem is the entire justification for the word "coordinates". Once a basis is fixed, every vector in any vector space corresponds to one list of numbers, a point of $\mathbb R^n$.
 
+See it in the plane. Drag $b_1,b_2$: the light blue skewed grid is their whole-number combinations, and the coordinates $(c_1,c_2)$ of $v$ say "go $c_1$ steps along $b_1$, then $c_2$ steps along $b_2$". **Change the basis: does $v$ move, do its coordinates change? When $b_1,b_2$ are collinear, do coordinates still exist, and are they unique?**
+
+<Experiment slug="basis-coordinates" />
+
 <Theorem title="Dimension is well defined">
 Any two finite bases of a vector space have the same number of elements.
 </Theorem>
@@ -69,7 +73,7 @@ It suffices to show: if $u_1,\dots,u_m$ are independent and $v_1,\dots,v_n$ span
 </Proof>
 
 <Warning>
-Linear independence is **not** "no two are collinear". $(1,0,1),(0,1,1),(1,1,2)$ are pairwise non-collinear yet dependent, since the third is the sum of the first two. The definition is about the whole family having only the trivial zero combination; it must be checked all at once.
+Linear independence is **not** "no two are collinear". $(1,0,1),(0,1,1),(1,1,2)$ are pairwise non-collinear yet dependent, since the third is the sum of the first two. The definition is about the whole family having only the trivial zero combination; it must be checked all at once. For just two vectors, dependence is exactly collinearity (the experiment's "Collinear"); from three on, checking pairs is not enough.
 </Warning>
 
 ## Application

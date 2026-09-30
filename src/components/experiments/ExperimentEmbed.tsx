@@ -25,6 +25,9 @@ const BirthdayProblem = dynamic(() => import("./BirthdayProblem").then((m) => m.
 const BayesScreening = dynamic(() => import("./BayesScreening").then((m) => m.BayesScreening));
 const Conditioning = dynamic(() => import("./Conditioning").then((m) => m.Conditioning));
 const BinomialPoisson = dynamic(() => import("./BinomialPoisson").then((m) => m.BinomialPoisson));
+const EpsilonBand = dynamic(() => import("./EpsilonBand").then((m) => m.EpsilonBand));
+const BasisCoordinates = dynamic(() => import("./BasisCoordinates").then((m) => m.BasisCoordinates));
+const ProjectionSlack = dynamic(() => import("./ProjectionSlack").then((m) => m.ProjectionSlack));
 
 export type SearchParams = Record<string, string | string[] | undefined>;
 
@@ -93,5 +96,11 @@ function renderExperiment(kind: ExperimentKind, locale: Locale, preset?: string,
       return <Conditioning locale={locale} />;
     case "binomial-poisson":
       return <BinomialPoisson locale={locale} />;
+    case "epsilon-band":
+      return <EpsilonBand locale={locale} />;
+    case "basis-coordinates":
+      return <BasisCoordinates locale={locale} />;
+    case "projection-slack":
+      return <ProjectionSlack locale={locale} />;
   }
 }

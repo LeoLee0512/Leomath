@@ -24,6 +24,18 @@ export const experimentTex: Partial<Record<ExperimentKind, Record<string, Formul
     poisson: "e^{-\\lambda}\\frac{\\lambda^{k}}{k!}",
     distance: "d=\\tfrac12\\sum_{k}\\bigl|P(X=k)-P(Y=k)\\bigr|",
   },
+  "epsilon-band": {
+    definition: "\\forall\\varepsilon>0\\ \\exists N\\ \\forall n>N:\\ |a_n-L|<\\varepsilon",
+    ratio: "\\frac{n}{n+1}",
+    alternating: "1+\\frac{(-1)^n}{n}",
+    sine: "1+\\frac{\\sin n}{\\sqrt n}",
+    sign: "(-1)^n",
+  },
+  "basis-coordinates": { combination: "v=c_1b_1+c_2b_2" },
+  "projection-slack": {
+    cauchySchwarz: "\\langle u,v\\rangle^2\\le\\|u\\|^2\\|v\\|^2",
+    slack: "\\|u\\|^2\\|v\\|^2-\\langle u,v\\rangle^2=\\|v\\|^2\\,\\|u-tv\\|^2",
+  },
   "exponential-derivative": { quotient: "\\frac{a^{x+h}-a^{x}}{h}=a^{x}\\cdot\\frac{a^{h}-1}{h}" },
   "secant-tangent": { quotient: "\\frac{f(x_0+h)-f(x_0)}{h}" },
   "riemann-sums": { sum: "\\sum_{i=1}^{n} f(\\xi_i)\\,\\Delta x" },

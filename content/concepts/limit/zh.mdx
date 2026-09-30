@@ -10,6 +10,10 @@ $a_n=\dfrac{n}{n+1}$ 永远到不了 $1$，我们却想说它"趋于 $1$"。这�
 看数列 $a_n = \dfrac{n}{n+1}$：$\tfrac12,\ \tfrac23,\ \tfrac34,\ \tfrac45,\ \dots$
 
 它永远到不了 $1$，却离 $1$ 越来越近。我们想说"$a_n$ 趋于 $1$"。但"越来越近"到底是什么意思？$b_n = 1 - \tfrac{1}{n}$ 也越来越近，$c_n = 1 + \tfrac{(-1)^n}{n}$ 忽左忽右也越来越近。这三种"接近"有什么共同点？
+
+在下面的实验里试一试：在 $1$ 的上下各画一条距离为 $\varepsilon$ 的线，围成一条带子。**把 $\varepsilon$ 缩小，是不是总能找到某一项，从它往后所有的点都待在带子里？** 再看看 $(-1)^n$ 为什么不行。
+
+<Experiment slug="epsilon-band" />
 </Observe>
 
 <Conjecture>
@@ -39,6 +43,8 @@ $\varepsilon$ 控制输出的误差，$\delta$ 控制输入的范围。定义说
 
 给定 $\varepsilon>0$。我们要让 $\left|\dfrac{n}{n+1}-1\right|=\dfrac{1}{n+1}<\varepsilon$。只要 $n+1>\tfrac1\varepsilon$，即 $n>\tfrac1\varepsilon-1$ 即可。取 $N=\left\lceil \tfrac1\varepsilon\right\rceil$，则当 $n>N$ 时 $\tfrac1{n+1}<\tfrac1N\le\varepsilon$。
 </Example>
+
+实验里 $\varepsilon=0.1$ 时显示 $N=9$，比这里取的 $\lceil1/0.1\rceil=10$ 小一点。这没有关系：定义只要求**存在**一个够用的 $N$，取大一些永远可以，不必找最小的那个。
 
 这类证明的套路是固定的：先把 $|a_n-L|$ 化简成关于 $n$ 的表达式，再反解出 $n$ 需要多大。
 
