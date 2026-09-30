@@ -7,7 +7,7 @@
 | 域名 | `leomath.cn`（阿里云域名 + 云解析 DNS，免费版） |
 | DNS | `@` 与 `www` 两条 A 记录 → `8.130.33.10`，TTL 10 分钟 |
 | 服务器 | 阿里云 ECS，公网 IP `8.130.33.10`，已安装 nginx（默认欢迎页） |
-| 应用 | Docker Compose：`web`（Next.js，监听 3000）+ `db`（Postgres 16） |
+| 应用 | Docker Compose：`web`（Astro 服务端，Node，监听 3000）+ `db`（Postgres 16） |
 
 `.cn` 域名在国内服务器上对公网提供 Web 服务需要完成 ICP 备案，备案通过前 80/443 端口可能被阻断。备案入口在阿里云控制台顶部的「备案」。
 
@@ -48,7 +48,7 @@ cd /opt/leomath
 cp .env.example .env
 # 编辑 .env：
 #   POSTGRES_PASSWORD=<随机强密码>
-#   SITE_URL=https://leomath.cn
+#   SITE_URL=https://leomath.cn   （也决定应用在 nginx 后面信任哪个域名：表单提交的来源检查靠它）
 #   WEB_PORT=3000   （只在本机监听时，把 docker-compose.yml 的 ports 改成 "127.0.0.1:3000:3000"）
 
 # 4. 启动（自动执行数据库迁移）
@@ -77,6 +77,18 @@ docker compose up -d --build
 ```
 
 新的 SQL 迁移放在 `db/migrations/` 下，容器启动时自动应用。
+
+### 从 Next.js 版本升级到 Astro 版本（一次性）
+
+1. `git pull`，确认 `.env` 里的 `SITE_URL` 是 `https://leomath.cn`（以前的 `NEXT_PUBLIC_SITE_URL` 不再使用，可以删掉）。
+2. 更新 nginx：静态资源路径从 `/_next/static/` 变成了 `/_astro/`，登录限流也要覆盖 `/_actions/login` 等接口。
+   ```bash
+   sudo cp deploy/nginx.leomath.conf /etc/nginx/conf.d/leomath.conf
+   # 如果 certbot 改写过这个文件，先对比一下，只把 location 块换成新版本
+   sudo nginx -t && sudo systemctl reload nginx
+   ```
+3. `docker compose up -d --build`。数据库结构没有变化，不需要迁移。
+4. 验证：登录、发一条评论再删掉、做一道练习；`docker compose logs web | grep "\[csp\]"` 应当没有新的违规记录。nginx 必须带上 `Host` 与 `X-Forwarded-Proto`（现有配置已经带了），否则所有表单提交都会被当成跨站请求拒绝（403）。
 
 ## 管理员（可删除任何评论）
 

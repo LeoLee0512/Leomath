@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { birthdayBound, birthdayExact, conditionals, intersectionRange, pairs, posterior, sameAsMine, sampleBirthdays, screeningCounts, sharedDays, smallestGroup } from "@/lib/math/probability";
+import { binomialMode, binomialPmf, binomialPoissonDistance, birthdayBound, birthdayExact, conditionals, intersectionRange, pairs, poissonPmf, posterior, sameAsMine, sampleBirthdays, sampleTrials, screeningCounts, sharedDays, smallestGroup } from "@/lib/math/probability";
 
 describe("birthday problem", () => {
   it("matches the known exact values", () => {
@@ -67,5 +67,55 @@ describe("conditional probability and Bayes", () => {
     expect(intersectionRange(0.7, 0.6)[0]).toBeCloseTo(0.3, 12);
     expect(intersectionRange(0.7, 0.6)[1]).toBeCloseTo(0.6, 12);
     expect(intersectionRange(0.2, 0.3)).toEqual([0, 0.2]);
+  });
+});
+
+describe("binomial and Poisson", () => {
+  const sum = (xs: number[]) => xs.reduce((a, b) => a + b, 0);
+  it("the binomial probabilities are C(n,k)pᵏ(1−p)ⁿ⁻ᵏ and add up to 1", () => {
+    const b = binomialPmf(10, 0.5);
+    expect(b[3]).toBeCloseTo(120 / 1024, 12);
+    expect(sum(b)).toBeCloseTo(1, 12);
+    expect(sum(binomialPmf(1000, 0.003))).toBeCloseTo(1, 10);
+    expect(binomialPmf(4, 1)).toEqual([0, 0, 0, 0, 1]);
+    expect(binomialPmf(4, 0)).toEqual([1, 0, 0, 0, 0]);
+  });
+  it("the Poisson probabilities are e^{−λ}λᵏ/k!", () => {
+    const q = poissonPmf(2, 40);
+    expect(q[0]).toBeCloseTo(Math.exp(-2), 14);
+    expect(q[3]).toBeCloseTo((Math.exp(-2) * 8) / 6, 14);
+    expect(sum(q)).toBeCloseTo(1, 12);
+  });
+  it("the peak is at ⌊(n+1)p⌋, shared when (n+1)p is a whole number", () => {
+    for (const [n, p] of [[20, 0.25], [11, 0.5], [9, 0.5], [30, 0.1], [7, 0.93], [1000, 0.005]] as const) {
+      const b = binomialPmf(n, p);
+      const top = Math.max(...b);
+      const argmax = b.flatMap((v, k) => (v > top * (1 - 1e-9) ? [k] : []));
+      expect(binomialMode(n, p), `${n}, ${p}`).toEqual(argmax);
+    }
+    expect(binomialMode(11, 0.5)).toEqual([5, 6]);
+    expect(binomialMode(20, 0.25)).toEqual([5]);
+  });
+  it("B(n, λ/n) approaches Poisson(λ) at rate 1/n, within Le Cam's bound λ²/n", () => {
+    for (const lambda of [0.5, 1, 3, 10]) {
+      let prev = Infinity;
+      for (const n of [Math.ceil(lambda) + 1, 20, 50, 100, 300, 1000]) {
+        const d = binomialPoissonDistance(n, lambda);
+        expect(d).toBeLessThan(prev);
+        expect(d).toBeLessThanOrEqual((lambda * lambda) / n);
+        prev = d;
+      }
+    }
+    // Ten times as many trials, about a tenth of the distance.
+    const r = binomialPoissonDistance(100, 3) / binomialPoissonDistance(1000, 3);
+    expect(r).toBeGreaterThan(9);
+    expect(r).toBeLessThan(11);
+  });
+  it("simulated trials succeed with frequency close to p", () => {
+    let seed = 7;
+    const rng = () => ((seed = (seed * 16807) % 2147483647) / 2147483647);
+    const t = sampleTrials(20000, 0.3, rng);
+    expect(t.length).toBe(20000);
+    expect(t.filter(Boolean).length / 20000).toBeCloseTo(0.3, 1);
   });
 });

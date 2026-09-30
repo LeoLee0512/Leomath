@@ -1,0 +1,10 @@
+---
+import { getTool } from "@/content/graph";
+
+interface Props {
+  id: string;
+}
+const locale = Astro.locals.locale;
+const tool = getTool(Astro.props.id);
+---
+{tool && <p class="mblock-tool"><a href={`/${locale}${tool.href}`} class="text-leo hover:underline text-[0.95rem] font-sans">{tool.cta[locale]}</a></p>}

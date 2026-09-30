@@ -18,6 +18,30 @@ $$f'(\xi)=\frac{f(b)-f(a)}{b-a}.$$
 Strategy for the proof: **reduce to the special case of equal endpoint values**, where all we need is an extremum.
 </Conjecture>
 
+## Definition
+
+"All we need is an extremum" requires saying what an extremum is. Here it is compared only with nearby values, not with the whole interval.
+
+<Definition title="Local extrema and stationary points">
+Let $f$ be defined on a neighbourhood of $x_0$. If there is $\delta>0$ with $f(x)\le f(x_0)$ whenever $|x-x_0|<\delta$, then $x_0$ is a **local maximum** of $f$; with $\ge$ instead of $\le$ it is a **local minimum**. Both are called **extrema**. If $f$ is differentiable at $x_0$ and $f'(x_0)=0$, then $x_0$ is a **stationary point** of $f$.
+</Definition>
+
+The definition needs points of the domain on both sides of $x_0$, so the endpoints of an interval are never extrema in this sense. That matters in the proof below.
+
+<Lemma title="Fermat's lemma">
+If $x_0$ is an extremum of $f$ and $f$ is differentiable at $x_0$, then $f'(x_0)=0$.
+</Lemma>
+
+<Proof>
+Say $x_0$ is a local maximum (for a minimum apply the same argument to $-f$). For $0<|h|<\delta$ we have $f(x_0+h)\le f(x_0)$, so
+$$\frac{f(x_0+h)-f(x_0)}{h}\le0\ (h>0),\qquad\frac{f(x_0+h)-f(x_0)}{h}\ge0\ (h<0).$$
+Since $f$ is differentiable at $x_0$, both one-sided limits equal $f'(x_0)$; hence $f'(x_0)\le0$ and $f'(x_0)\ge0$, that is, $f'(x_0)=0$.
+</Proof>
+
+<Warning>
+Fermat's lemma does not run backwards: **a stationary point need not be an extremum.** $f(x)=x^3$ has derivative $0$ at $0$, yet it is below $0$ on the left and above on the right, so $0$ is no extremum. Also, an extremum may have no derivative at all, like $|x|$ at $0$. The lemma only says that a differentiable extremum is a stationary point.
+</Warning>
+
 ## Theorems and proofs
 
 <Theorem title="Rolle's theorem">
@@ -25,12 +49,10 @@ Let $f$ be continuous on $[a,b]$, differentiable on $(a,b)$, with $f(a)=f(b)$. T
 </Theorem>
 
 <Proof>
-A continuous function on a closed interval attains a maximum $M$ and a minimum $m$ (extreme value theorem). If $M=m$, $f$ is constant and any $\xi$ works. Otherwise at least one of $M,m$ differs from $f(a)=f(b)$ and is attained at an interior point $\xi\in(a,b)$; say $f(\xi)=M$. For small $h$, $f(\xi+h)\le f(\xi)$, so
-$$\frac{f(\xi+h)-f(\xi)}{h}\le0\ (h>0),\qquad\frac{f(\xi+h)-f(\xi)}{h}\ge0\ (h<0).$$
-Taking limits (the one-sided limits agree because $f$ is differentiable at $\xi$) gives $f'(\xi)\le0$ and $f'(\xi)\ge0$, hence $f'(\xi)=0$.
+A continuous function on a closed interval attains a maximum $M$ and a minimum $m$ (extreme value theorem). If $M=m$, $f$ is constant and any $\xi$ works. Otherwise at least one of $M,m$ differs from $f(a)=f(b)$ and is attained at an interior point $\xi\in(a,b)$; say $f(\xi)=M$. Since $\xi$ is interior, the points near it lie in $[a,b]$ and none has a value above $M$, so $\xi$ is a local maximum. $f$ is differentiable at $\xi$, so $f'(\xi)=0$ by Fermat's lemma.
 </Proof>
 
-The heart of this step: **the derivative vanishes at an interior extremum.** That is Fermat's lemma.
+The heart of this step: **the extreme value lies inside, an interior extreme point is an extremum, and a differentiable extremum is a stationary point.** Equal endpoint values guarantee that the extreme values are not found only at the endpoints.
 
 <Theorem title="Lagrange's mean value theorem">
 Let $f$ be continuous on $[a,b]$ and differentiable on $(a,b)$. Then there is $\xi\in(a,b)$ with

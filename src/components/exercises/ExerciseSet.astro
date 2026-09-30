@@ -1,0 +1,31 @@
+---
+/** A concept's exercises, with a running count and a moment of completion when the last one is solved. */
+import type { AnswerResult } from "@/actions";
+import type { Exercise } from "@/content/exercises";
+import { getDictionary } from "@/i18n/dictionaries";
+import ExerciseCard from "./ExerciseCard.astro";
+
+interface Props {
+  exercises: Exercise[];
+  summary: Record<string, { attempts: number; solved: boolean }>;
+  next?: { href: string; title: string };
+  result?: AnswerResult;
+}
+const { exercises, summary, next, result } = Astro.props;
+const t = getDictionary(Astro.locals.locale).problems;
+const done = exercises.filter((e) => summary[e.id]?.solved || (result?.exercise === e.id && result.correct)).length;
+const all = done === exercises.length;
+---
+<div data-exercise-set data-template={t.keepGoing} data-total={exercises.length}>
+  <p class:list={["text-sm", all ? "text-e2" : "text-muted"]} data-count>{t.keepGoing.replace("{d}", String(done)).replace("{n}", String(exercises.length))}</p>
+  <div class="mt-4 space-y-6">
+    {exercises.map((e, i) => <ExerciseCard exercise={e} index={i + 1} summary={summary[e.id]} result={result?.exercise === e.id ? result : undefined} />)}
+  </div>
+  <!-- The live region exists from the start, so screen readers announce the moment it fills. -->
+  <div role="status" aria-live="polite">
+    <div class="exercise-correct mt-8 border border-e2/50 bg-e2/10 rounded-[4px] px-5 py-4 flex flex-wrap items-center gap-x-6 gap-y-3" data-all-done hidden={!all}>
+      <p class="display text-lg text-e2 font-semibold">✓ {t.allDone}</p>
+      {next && <a href={next.href} class="btn btn-primary btn-small ml-auto">{t.allDoneNext.replace("{title}", next.title)}</a>}
+    </div>
+  </div>
+</div>

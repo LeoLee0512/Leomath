@@ -1,0 +1,41 @@
+---
+import { actions } from "astro:actions";
+import Base from "@/layouts/Base.astro";
+import Comments from "@/components/content/Comments.astro";
+import { getDictionary } from "@/i18n/dictionaries";
+import { getSoftware } from "@/content/software";
+import { statusLabel } from "@/lib/software";
+import { pageMeta } from "@/lib/seo";
+import { redirectAfterForms } from "@/lib/forms";
+
+const redirect = redirectAfterForms(Astro, [actions.addComment, actions.deleteComment]);
+if (redirect) return redirect;
+const locale = Astro.locals.locale;
+const s = getSoftware(Astro.params.slug ?? "");
+if (!s) return Astro.rewrite("/404");
+const t = getDictionary(locale);
+const version = s.latest?.version ?? s.version;
+const meta = pageMeta(locale, `/software/${s.slug}`, t.tagline, { title: s.name, description: s.tagline[locale] });
+---
+<Base meta={meta}>
+  <div class="container py-14 max-w-3xl">
+    <p class="eyebrow"><a href={`/${locale}/software`} class="hover:text-ink">{t.nav.software}</a></p>
+    <h1 class="display text-4xl font-semibold mt-3">{s.name}</h1>
+    <p class="mt-3 text-lg text-ink-2">{s.tagline[locale]}</p>
+    <p class="mt-8 leading-relaxed prose-math">{s.description[locale]}</p>
+    {s.screenshot && <img src={s.screenshot} alt={`${s.name} screenshot`} class="mt-8 w-full border border-rule rounded" />}
+    <dl class="mt-10 grid grid-cols-[auto_1fr] gap-x-8 gap-y-2 text-sm border-t border-rule pt-6">
+      {version && (<><dt class="text-muted">{t.software.version}</dt><dd class="mono">v{version}</dd></>)}
+      {s.latest && (<><dt class="text-muted">{t.software.released}</dt><dd class="mono">{s.latest.date}</dd></>)}
+      <dt class="text-muted">{t.software.platform}</dt><dd>{s.latest ? s.latest.platforms.join(", ") : s.kind === "web" ? t.software.web : t.software.desktop}</dd>
+      <dt class="text-muted">{t.software.status}</dt><dd>{statusLabel(s, t.software)}{s.openSource ? ` · ${t.software.openSource}` : ` · ${t.software.closedSource}`}</dd>
+      {s.latest?.sha256 && (<><dt class="text-muted">{t.software.checksum}</dt><dd class="mono break-all text-xs">{s.latest.sha256}</dd></>)}
+    </dl>
+    {s.status === "coming-soon" && <p class="mt-4 text-sm text-ink-2">{t.software.comingDesc}</p>}
+    <div class="mt-8 flex flex-wrap gap-3">
+      {s.kind === "web" && s.useUrl && <a href={s.useUrl} class="btn btn-primary" rel="noopener">{t.software.open}</a>}
+      {s.latest && <a href={s.latest.downloadUrl} class="btn btn-primary" rel="noopener">{t.software.download} ↓</a>}
+    </div>
+    <Comments type="software" slug={s.slug} />
+  </div>
+</Base>

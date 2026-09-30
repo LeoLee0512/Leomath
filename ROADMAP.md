@@ -20,7 +20,8 @@ MathForge (LeoLee0512/MathLearn) is archived. What was worth keeping has been re
 - [ ] Probability path: conditional probability and Bayes, maximum likelihood, central limit theorem with its experiment, random walks. Planned nodes exist in the tree.
   - [x] Probability spaces (birthday problem), published 2026-09.
   - [x] Conditional probability & Bayes (screening and area experiments; a short Bayesian-neural-network extension), published 2026-09.
-  - [ ] Random variables (binomial → Poisson), Mean & variance (covariance as an inner product), Central limit theorem.
+  - [x] Random variables (binomial → Poisson experiment; binomial peak; waiting times and densities), published 2026-09.
+  - [ ] Mean & variance (covariance as an inner product), Central limit theorem.
   - [ ] Later: a statistics path (sampling distributions, estimation, hypothesis testing).
   - Ideas are rewritten, never copied, from public probability demos at https://github.com/huzhuofan1020-svg; each borrowed node, experiment and path carries a `credits` link to the specific repository (link only, no name, at the author's request).
 - [ ] Number theory (gcd and Bézout) and analytic geometry (conics and eccentricity): not yet placed in the tree.
@@ -32,9 +33,11 @@ MathForge (LeoLee0512/MathLearn) is archived. What was worth keeping has been re
 
 No new nodes until the existing ones are complete. `node scripts/audit-chain.mjs` is the checklist. Known gaps:
 
-- [ ] Experiments for Limits (ε–δ band on a sequence), Vectors (basis and coordinates), Inner products (projection and the Cauchy–Schwarz slack).
-- [ ] A definition block for the mean value theorem article (extremum / critical point), or accept that it is theorem-centred.
+- [x] Experiments for Limits (ε–N band on a sequence), Vectors (basis and coordinates), Inner products (projection and the Cauchy–Schwarz slack).
+- [x] A definition block for the mean value theorem article: local extrema and stationary points, with Fermat's lemma proved on its own.
 - [ ] Observation questions reviewed against what the experiments actually show.
+
+- [x] Lighter pages: Astro islands instead of Next.js hydration, MathML (Temml) instead of KaTeX.
 
 ## After launch
 

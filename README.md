@@ -26,8 +26,11 @@ Structure → Principles & derivation → Experiments → Exercises → Tools
 
 ## 技术栈 · Stack
 
-- Next.js 16 (App Router, TypeScript), React 19, Tailwind CSS 4
-- MDX（`@mdx-js/mdx` + remark-math + rehype-katex），KaTeX
+- Astro 7（服务端渲染，`@astrojs/node` 独立服务器），TypeScript，Tailwind CSS 4
+- 页面是纯 HTML；只有实验、工具和知识树是 React 19 孤岛（islands），进入视口时才加载各自的 JS
+- 公式：Temml 在服务端把 LaTeX 渲染成 MathML，由浏览器原生排版；字体 STIX Two Math，裁剪到站内用到的字符（约 40 KB）
+- MDX（Astro 内容集合 + remark-math，`src/lib/mdx-plugins.ts` 负责公式、块编号与标题锚点）
+- 表单与交互：Astro Actions（登录、注册、进度、评论、判题），不开 JavaScript 也能用
 - PostgreSQL via `pg`，手写 SQL 迁移（`db/migrations`）
 - Vitest（数值算法与知识图谱完整性测试）
 - Docker Compose 部署
@@ -39,12 +42,17 @@ content/concepts/<slug>/{zh,en}.mdx   数学正文（MDX + LaTeX）
 src/content/graph.ts                  知识节点、前置关系、路线、实验
 src/content/exercises.ts              练习题库与判题
 src/content/software.ts               软件目录
-src/components/experiments/           线性变换 / ODE / 指数导数 实验
-src/components/KnowledgeTree.tsx      交互式知识树
-src/lib/math/                         2×2 线性代数、ODE 积分器
+src/pages/[locale]/                   页面（Astro）；src/pages/api/ 数据导出与 CSP 报告
+src/layouts/Base.astro                页面骨架；src/components/site/ 页头、页脚、<head>
+src/components/content/               文章块、公式、实验框、讨论区；exercises/ 练习
+src/components/experiments/           交互实验（React 孤岛，islands/ 每个实验一个入口）
+src/components/KnowledgeTree.tsx      交互式知识树（React 孤岛）
+src/actions/index.ts                  表单与判题（Astro Actions）
+src/lib/tex.ts                        LaTeX → MathML（Temml）；src/styles/math.css 公式样式与字体
+src/lib/math/                         2×2 线性代数、ODE 积分器、概率
 src/lib/{auth,db,progress}.ts         账户、会话、进度
 src/i18n/                             语言配置与 UI 词典
-src/proxy.ts                          语言检测与跳转
+src/middleware.ts                     语言跳转、登录用户、安全响应头与 CSP
 db/migrations/                        SQL 迁移
 ```
 
@@ -63,10 +71,16 @@ npm run dev                     # http://localhost:3000
 
 ```bash
 npm run typecheck && npm run lint && npm test
-node scripts/compile-mdx.mjs    # 编译全部 MDX，KaTeX 严格模式
+node scripts/compile-mdx.mjs    # 编译全部 MDX，并检查站内每个公式都能被 Temml 解析
 ```
 
 没有数据库也能运行：账户与进度功能会自动关闭，其余全部可用。
+
+新增的内容用到了新的数学符号时，`npm test` 里的字体覆盖检查会失败，这时重新裁剪字体（需要 Python 的 fonttools 与 brotli：`pip install fonttools brotli`）：
+
+```bash
+npm run font:subset
+```
 
 ## 部署 · Deployment
 
@@ -83,7 +97,8 @@ docker compose up -d --build
 ## 写内容 · Writing content
 
 1. 在 `src/content/graph.ts` 添加节点（标题、摘要、前置、所属路线、实验），`status: "published"`。
-2. 在 `content/concepts/<slug>/zh.mdx` 写正文，可选 `en.mdx`。可用组件：`<Observe>` `<Conjecture>` `<Definition>` `<Theorem>` `<Proposition>` `<Lemma>` `<Proof>` `<Example>` `<Application>` `<Remark>` `<Experiment slug="…" />`。
+2. 在 `content/concepts/<slug>/zh.mdx` 写正文，可选 `en.mdx`。可用组件：`<Problem>` `<Observe>` `<Conjecture>` `<Definition>` `<Theorem>` `<Proposition>` `<Lemma>` `<Corollary>` `<Proof>` `<Example>` `<Warning>` `<Application>` `<Remark>` `<Tool id="…" />` `<Experiment slug="…" />`。编号（定义 3.1、定理 3.2……）在编译时自动生成；只占一行的 `$$…$$` 是行间公式。
+   新实验：组件放在 `src/components/experiments/`，在 `islands/` 加一个同名入口文件，并在 `src/components/content/Experiment.astro` 里加一行。
 3. 在 `src/content/exercises.ts` 添加练习。
 4. 在 `src/components/KnowledgeTree.tsx` 的 `positions` 中给节点一个坐标。
 5. `npm test` 会验证图谱完整性（无环、引用存在、路线只含已发布节点）。

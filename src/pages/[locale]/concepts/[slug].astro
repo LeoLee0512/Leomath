@@ -1,0 +1,209 @@
+---
+import { getEntry, render } from "astro:content";
+import { actions } from "astro:actions";
+import Base from "@/layouts/Base.astro";
+import Block from "@/components/content/Block.astro";
+import Tex from "@/components/content/Tex.astro";
+import Tool from "@/components/content/Tool.astro";
+import Experiment from "@/components/content/Experiment.astro";
+import ArticleNav from "@/components/content/ArticleNav.astro";
+import CreditLine from "@/components/content/CreditLine.astro";
+import Comments from "@/components/content/Comments.astro";
+import ExerciseSet from "@/components/exercises/ExerciseSet.astro";
+import { getDictionary } from "@/i18n/dictionaries";
+import { getConcept, experimentsForConcept, dependents, neighboursInPath, prerequisiteChain, getTool } from "@/content/graph";
+import { exercisesForConcept } from "@/content/exercises";
+import { getProgress, getExerciseSummary, type ProgressStatus } from "@/lib/progress";
+import { readingMinutes } from "@/lib/reading";
+import { pageMeta } from "@/lib/seo";
+import { redirectAfterForms } from "@/lib/forms";
+import type { AnswerResult } from "@/actions";
+
+const redirect = redirectAfterForms(Astro, [actions.setProgress, actions.addComment, actions.deleteComment]);
+if (redirect) return redirect;
+
+const locale = Astro.locals.locale;
+const slug = Astro.params.slug ?? "";
+const c = getConcept(slug);
+const entry = c?.status === "published" ? ((await getEntry("concepts", `${slug}/${locale}`)) ?? (await getEntry("concepts", `${slug}/zh`))) : undefined;
+if (!c || !entry) return Astro.rewrite("/404");
+const fallback = !entry.id.endsWith(`/${locale}`);
+const { Content, headings: raw } = await render(entry);
+const headings = raw.filter((h) => h.depth === 2 || h.depth === 3).map((h) => ({ id: h.slug, text: h.text, depth: h.depth }));
+
+const t = getDictionary(locale);
+const user = Astro.locals.user;
+const minutes = await readingMinutes(slug, locale);
+const progress: Record<string, string> = user ? await getProgress(user.id).catch(() => ({})) : {};
+const summary: Record<string, { attempts: number; solved: boolean }> = user ? await getExerciseSummary(user.id).catch(() => ({})) : {};
+const status = (progress[slug] ?? "none") as ProgressStatus;
+const exps = experimentsForConcept(slug);
+const exs = exercisesForConcept(slug);
+const { prev, next, path } = neighboursInPath(slug);
+const chain = prerequisiteChain(slug).filter((s) => s !== slug);
+const after = dependents(slug);
+const chapter = path ? path.concepts.indexOf(slug) + 1 : 1;
+const navHeadings = exs.length > 0 ? [...headings, { id: "exercises", text: t.learn.exercises, depth: 2 }] : headings;
+const answer = Astro.getActionResult(actions.checkAnswer)?.data as AnswerResult | undefined;
+const meta = pageMeta(locale, `/concepts/${slug}`, t.tagline, { title: c.title[locale], description: c.summary[locale], type: "article" });
+---
+<Base meta={meta}>
+  <div class="container py-12 grid gap-12 lg:grid-cols-[minmax(0,1fr)_16rem]">
+    <article class="min-w-0">
+      <p class="eyebrow">
+        {path && <a href={`/${locale}/learn/${path.slug}`} class="hover:text-ink">{path.title[locale]}</a>}
+        {path && <span class="lg:hidden"> · {t.paths.step(chapter, path.concepts.length)}</span>}
+      </p>
+      <h1 class="display text-4xl md:text-[2.75rem] leading-tight font-semibold mt-3">{c.title[locale]}</h1>
+      <p class="mt-3 text-lg text-ink-2 font-serif">{c.summary[locale]}</p>
+      {minutes && <p class="mt-2 text-xs text-muted mono">{t.learn.readingTime(minutes)}</p>}
+      {fallback && <p class="mt-6 text-sm text-muted border border-rule px-3 py-2 rounded">{t.learn.noTranslationEn}</p>}
+      <div class="lg:hidden mt-6 border-y border-rule">
+        <ArticleNav headings={navHeadings} label={t.learn.sections} variant="horizontal" />
+      </div>
+      <div class="prose-math mt-10">
+        <Content components={{ Block, Tex, Tool, Experiment }} />
+      </div>
+      <CreditLine credits={c.credits} class="mt-10 border-t border-rule pt-4" />
+
+      {exs.length > 0 && (
+        <section class="mt-16">
+          <h2 id="exercises" class="display text-2xl font-semibold border-t border-rule pt-8 scroll-mt-24">{t.learn.exercises}</h2>
+          <div class="mt-3">
+            <ExerciseSet
+              exercises={exs}
+              summary={summary}
+              result={answer}
+              next={next ? { href: `/${locale}/concepts/${next.slug}`, title: next.title[locale] } : undefined}
+            />
+          </div>
+        </section>
+      )}
+
+      <nav class="mt-16 grid grid-cols-2 gap-4 border-t border-rule pt-6 text-sm">
+        <div>
+          {prev && (
+            <a href={`/${locale}/concepts/${prev.slug}`} class="block hover:text-leo">
+              <span class="text-muted">← {t.learn.prevConcept}</span>
+              <span class="block display text-lg mt-1">{prev.title[locale]}</span>
+            </a>
+          )}
+        </div>
+        <div class="text-right">
+          {next && (
+            <a href={`/${locale}/concepts/${next.slug}`} class="block hover:text-leo">
+              <span class="text-muted">{t.learn.nextConcept} →</span>
+              <span class="block display text-lg mt-1">{next.title[locale]}</span>
+            </a>
+          )}
+        </div>
+      </nav>
+
+      <Comments type="concept" slug={slug} />
+    </article>
+
+    <aside class="min-w-0 lg:sticky lg:top-20 self-start space-y-7 text-sm">
+      {path && (
+        <div class="border border-ink-2 rounded-[4px] p-4 bg-paper-2">
+          <p class="eyebrow">
+            <a href={`/${locale}/learn/${path.slug}`} class="hover:text-ink">{path.title[locale]}</a>
+            <span class="mx-1.5">·</span>{t.paths.step(chapter, path.concepts.length)}
+          </p>
+          <ol class="mt-3 space-y-1">
+            {path.concepts.map((s, i) => {
+              const pc = getConcept(s)!;
+              const here = s === slug;
+              const isDone = progress[s] === "done";
+              return (
+                <li class="flex gap-2">
+                  <span aria-hidden="true" class:list={["mono w-5 shrink-0", isDone ? "text-e2" : here ? "text-ink" : "text-muted"]}>{isDone ? "✓" : here ? "◐" : i + 1}</span>
+                  {here ? (
+                    <span class="font-semibold text-ink" aria-current="step">{pc.title[locale]}</span>
+                  ) : (
+                    <a href={`/${locale}/concepts/${s}`} class="text-ink-2 hover:text-leo">{pc.title[locale]}{isDone && <span class="sr-only"> ({t.learn.status.done})</span>}</a>
+                  )}
+                </li>
+              );
+            })}
+          </ol>
+          {exs.length > 0 && <a href="#exercises" class="mt-4 block text-leo hover:underline">{t.paths.check(exs.length)}</a>}
+          {next ? (
+            <a href={`/${locale}/concepts/${next.slug}`} class="btn btn-primary btn-small mt-3 w-full justify-center">{t.paths.nextConcept(next.title[locale])}</a>
+          ) : (
+            <p class="mt-3 text-xs text-muted">{t.paths.lastInPath}</p>
+          )}
+        </div>
+      )}
+
+      <div class="hidden lg:block">
+        <ArticleNav headings={navHeadings} label={t.learn.sections} />
+      </div>
+
+      {user ? (
+        <div>
+          <p class="eyebrow mb-2">{t.auth.progressTitle}</p>
+          <form method="POST" action={actions.setProgress} class="flex flex-wrap items-center gap-2">
+            <input type="hidden" name="slug" value={slug} />
+            <input type="hidden" name="locale" value={locale} />
+            <p class="w-full text-ink-2">{t.learn.status[status]}</p>
+            {status !== "learning" && <button name="status" value="learning" class="btn btn-ghost btn-small">{t.learn.markLearning}</button>}
+            {status !== "done" && <button name="status" value="done" class="btn btn-primary btn-small">{t.learn.markDone}</button>}
+            {status !== "none" && <button name="status" value="none" class="btn btn-ghost btn-small">{t.learn.markReset}</button>}
+          </form>
+        </div>
+      ) : (
+        <p class="text-xs text-muted leading-relaxed">
+          {t.paths.loginValue}{" "}
+          <a href={`/${locale}/login?next=/${locale}/concepts/${slug}`} class="text-leo hover:underline">{t.nav.login} →</a>
+        </p>
+      )}
+
+      {(chain.length > 0 || after.length > 0 || (c.tools?.length ?? 0) > 0 || exps.length > 0) && (
+        <details class="group border-t border-rule pt-4">
+          <summary class="cursor-pointer select-none eyebrow hover:text-ink">{t.paths.more}</summary>
+          <div class="mt-4 space-y-6">
+            {chain.length > 0 && (
+              <div>
+                <p class="eyebrow mb-2">{t.learn.prerequisites}</p>
+                <ol class="space-y-1">
+                  {chain.map((s) => {
+                    const pc = getConcept(s)!;
+                    return (
+                      <li>{pc.status === "published" ? <a href={`/${locale}/concepts/${s}`} class="hover:text-leo">{pc.title[locale]}</a> : <span class="text-muted">{pc.title[locale]}</span>}</li>
+                    );
+                  })}
+                </ol>
+              </div>
+            )}
+            {after.length > 0 && (
+              <div>
+                <p class="eyebrow mb-2">{t.learn.leadsTo}</p>
+                <ul class="space-y-1">
+                  {after.map((d) => (
+                    <li>{d.status === "published" ? <a href={`/${locale}/concepts/${d.slug}`} class="hover:text-leo">{d.title[locale]}</a> : <span class="text-muted">{d.title[locale]} · {t.common.planned}</span>}</li>
+                  ))}
+                </ul>
+              </div>
+            )}
+            {c.tools && c.tools.length > 0 && (
+              <div>
+                <p class="eyebrow mb-2">{t.learn.tools}</p>
+                <ul class="space-y-1">
+                  {c.tools.map((id) => <li><a href={`/${locale}${getTool(id)!.href}`} class="text-leo hover:underline">{getTool(id)!.cta[locale]}</a></li>)}
+                </ul>
+              </div>
+            )}
+            {exps.length > 0 && (
+              <div>
+                <p class="eyebrow mb-2">{t.learn.experiments}</p>
+                <ul class="space-y-1">
+                  {exps.map((e) => <li><a href={`/${locale}/explore/${e.slug}`} class="hover:text-leo">{e.title[locale]}</a></li>)}
+                </ul>
+              </div>
+            )}
+          </div>
+        </details>
+      )}
+    </aside>
+  </div>
+</Base>

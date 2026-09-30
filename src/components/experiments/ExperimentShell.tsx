@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import { useMemo, useState, type ReactNode } from "react";
 import type { Locale } from "@/i18n/config";
 import { ExperimentUrlContext, clearExperimentUrl, flushExperimentUrl } from "./urlState";
@@ -59,7 +58,7 @@ export function ExperimentShell({ slug, locale, query, backHref, children, after
         <button type="button" onClick={reset} className="text-muted hover:text-ink"><span aria-hidden="true">↺ </span>{t.reset}</button>
         <button type="button" onClick={share} className="text-muted hover:text-ink"><span aria-hidden="true">⧉ </span>{t.share}</button>
         <span role="status" aria-live="polite" className="text-e2 text-xs">{copied ? t.copied : ""}</span>
-        {backHref && <Link href={backHref} className="ml-auto text-leo hover:underline">{t.back}</Link>}
+        {backHref && <a href={backHref} className="ml-auto text-leo hover:underline">{t.back}</a>}
       </div>
       {after}
     </div>

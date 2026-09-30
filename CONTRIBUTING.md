@@ -7,7 +7,7 @@ LeoMath is a personal site built in public. The most useful contribution is a re
 1. Add the node to `src/content/graph.ts` (title, summary, prerequisites, path, experiments) and give it a position in `src/components/KnowledgeTree.tsx`.
 2. Write `content/concepts/<slug>/zh.mdx` (and `en.mdx`) in the order problem → observe → conjecture → definition → theorem → proof → common mistake → application. Use the semantic blocks: `<Problem>` `<Observe>` `<Conjecture>` `<Definition>` `<Theorem>` `<Proposition>` `<Lemma>` `<Corollary>` `<Proof>` `<Example>` `<Warning>` `<Application>` `<Remark>` `<Experiment slug="…" />`.
 3. Add exercises to `src/content/exercises.ts`.
-4. Run `npm run check`; it verifies the graph has no cycles, every reference resolves, and every formula compiles under strict KaTeX.
+4. Run `npm run check`; it verifies the graph has no cycles, every reference resolves, every article compiles and every formula parses. If the new content uses a symbol the math font does not have yet, the font test fails: run `npm run font:subset` (needs `pip install fonttools brotli`).
 
 ## Content review checklist
 

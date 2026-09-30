@@ -1,7 +1,5 @@
-import "server-only";
 import { createHash, randomBytes } from "node:crypto";
-import { cookies } from "next/headers";
-import { cache } from "react";
+import type { AstroCookies } from "astro";
 import bcrypt from "bcryptjs";
 import { db, hasDatabase } from "./db";
 
@@ -45,15 +43,14 @@ export async function verifyUser(email: string, password: string): Promise<User 
   return { id: rows[0].id, email: rows[0].email, displayName: rows[0].display_name, isAdmin: rows[0].is_admin };
 }
 
-export async function startSession(userId: string): Promise<void> {
+export async function startSession(cookies: AstroCookies, userId: string): Promise<void> {
   const token = randomBytes(32).toString("base64url");
   const expires = new Date(Date.now() + SESSION_DAYS * 86_400_000);
   await db().query(
     "INSERT INTO sessions(token_hash, user_id, expires_at) VALUES ($1, $2, $3)",
     [hashToken(token), userId, expires],
   );
-  const jar = await cookies();
-  jar.set(SESSION_COOKIE, token, {
+  cookies.set(SESSION_COOKIE, token, {
     httpOnly: true,
     sameSite: "lax",
     secure: process.env.NODE_ENV === "production",
@@ -62,20 +59,17 @@ export async function startSession(userId: string): Promise<void> {
   });
 }
 
-export async function endSession(): Promise<void> {
-  const jar = await cookies();
-  const token = jar.get(SESSION_COOKIE)?.value;
+export async function endSession(cookies: AstroCookies): Promise<void> {
+  const token = cookies.get(SESSION_COOKIE)?.value;
   if (token && hasDatabase()) {
     await db().query("DELETE FROM sessions WHERE token_hash = $1", [hashToken(token)]).catch(() => undefined);
   }
-  jar.delete(SESSION_COOKIE);
+  cookies.delete(SESSION_COOKIE, { path: "/" });
 }
 
-/** The signed-in user for this request, or null. Cached per request. */
-export const currentUser = cache(async (): Promise<User | null> => {
-  // Read cookies first so every page depending on the user is rendered per request.
-  const jar = await cookies();
-  const token = jar.get(SESSION_COOKIE)?.value;
+/** The signed-in user for a request, or null. src/middleware.ts calls this once and keeps it in locals.user. */
+export async function currentUser(cookies: AstroCookies): Promise<User | null> {
+  const token = cookies.get(SESSION_COOKIE)?.value;
   if (!token || !hasDatabase()) return null;
   try {
     const { rows } = await db().query<{ id: string; email: string; display_name: string | null; is_admin: boolean }>(
@@ -89,4 +83,4 @@ export const currentUser = cache(async (): Promise<User | null> => {
   } catch {
     return null;
   }
-});
+}

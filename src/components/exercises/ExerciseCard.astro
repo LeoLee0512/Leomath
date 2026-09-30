@@ -1,0 +1,85 @@
+---
+/**
+ * One exercise. Plain HTML that works without JavaScript (the form posts to the checkAnswer action and the page
+ * shows the result); with JavaScript, exercises.ts checks in place and loads hints and solutions on demand.
+ */
+import { actions } from "astro:actions";
+import type { AnswerResult } from "@/actions";
+import type { Exercise } from "@/content/exercises";
+import { getDictionary } from "@/i18n/dictionaries";
+import { richHtml } from "@/lib/rich";
+
+interface Props {
+  exercise: Exercise;
+  index: number;
+  summary?: { attempts: number; solved: boolean };
+  /** The result of a check posted without JavaScript, when it was this exercise. */
+  result?: AnswerResult;
+}
+/** Tolerances below this mean “exact value” (a fraction is fine); larger ones are stated as ±tolerance. */
+const EXACT_TOLERANCE = 1e-5;
+const { exercise: e, index, summary, result } = Astro.props;
+const locale = Astro.locals.locale;
+const t = getDictionary(locale).problems;
+const solved = Boolean(summary?.solved || result?.correct);
+const answerFor = t.answerFor.replace("{n}", String(index));
+---
+<div
+  class:list={["border p-5 md:p-6 bg-paper transition-colors", solved ? "border-e2/50" : "border-rule"]}
+  data-exercise-card
+  data-id={e.id}
+  data-locale={locale}
+  data-solved={solved ? "1" : undefined}
+>
+  <div class="flex items-baseline gap-3">
+    <span class:list={["mono text-sm", solved ? "text-e2" : "text-muted"]} data-number>
+      <span aria-hidden="true" data-mark={String(index).padStart(2, "0")}>{solved ? "✓" : String(index).padStart(2, "0")}</span>
+      <span class="sr-only">{index}</span>
+    </span>
+    <div class="prose-math text-base flex-1" set:html={richHtml(e.statement[locale])} />
+    <span class="text-xs text-e2 whitespace-nowrap" data-solved-label hidden={!solved}>{t.solved}</span>
+  </div>
+  <form method="POST" action={actions.checkAnswer} class="mt-4 pl-8">
+    <input type="hidden" name="exercise" value={e.id} />
+    <input type="hidden" name="locale" value={locale} />
+    {e.kind === "numeric" ? (
+      <>
+        <div class="flex gap-2 max-w-sm">
+          <input name="answer" class="field mono" inputmode="decimal" placeholder={t.yourAnswer} aria-label={answerFor} value={result?.answer ?? ""} autocomplete="off" />
+          <button class="btn btn-primary btn-small shrink-0 whitespace-nowrap">{t.check}</button>
+        </div>
+        <p class="mt-1.5 text-xs text-muted">{e.tolerance < EXACT_TOLERANCE ? t.exact : t.within.replace("{tol}", String(e.tolerance))}</p>
+      </>
+    ) : (
+      <fieldset class="space-y-2">
+        <legend class="sr-only">{answerFor}</legend>
+        {e.options.map((o, i) => (
+          <label class="flex items-start gap-2 cursor-pointer">
+            <input type="radio" name="answer" value={String(i)} checked={result?.answer === String(i)} class="mt-1.5 accent-[var(--leo)]" />
+            <span class="prose-math text-base" set:html={richHtml(o[locale])} />
+          </label>
+        ))}
+        <button class="btn btn-primary btn-small mt-1">{t.check}</button>
+      </fieldset>
+    )}
+    <div aria-live="polite" data-feedback data-correct={t.correct} data-incorrect={t.incorrect}>
+      {result?.checked && (
+        <div class:list={["mt-3 px-3 py-2 text-sm border-l-2", result.correct ? "exercise-correct border-e2 bg-e2/10" : "border-e1"]}>
+          <p class={result.correct ? "text-e2 font-medium" : "text-e1"}>{result.correct ? `✓ ${t.correct}` : t.incorrect}</p>
+          {result.feedback && <div class="mt-1 text-ink-2 prose-math text-[0.95rem] leading-relaxed" set:html={result.feedback} />}
+        </div>
+      )}
+    </div>
+  </form>
+  <div class="mt-4 pl-8 flex gap-4 text-sm">
+    <button type="button" class="text-muted hover:text-ink" aria-expanded="false" data-part="hint" hidden>{t.hint}</button>
+    <button type="button" class="text-muted hover:text-ink" aria-expanded="false" data-part="solution" hidden>{t.solution}</button>
+    {summary && summary.attempts > 0 && <span class="text-muted ml-auto">{summary.attempts === 1 ? t.attemptOne : t.attempts.replace("{n}", String(summary.attempts))}</span>}
+  </div>
+  <div class="mt-3 pl-8 text-sm text-ink-2 prose-math" data-text="hint" hidden></div>
+  <div class="mt-3 ml-8 pl-4 text-sm text-ink-2 prose-math border-l-2 border-rule-2" data-text="solution" hidden></div>
+</div>
+
+<script>
+  import "./exercises";
+</script>

@@ -1,0 +1,36 @@
+---
+import Base from "@/layouts/Base.astro";
+import SoftwareCard from "@/components/cards/SoftwareCard.astro";
+import { getDictionary } from "@/i18n/dictionaries";
+import { software } from "@/content/software";
+import { pageMeta } from "@/lib/seo";
+
+const locale = Astro.locals.locale;
+const t = getDictionary(locale);
+const released = software.filter((s) => s.status !== "coming-soon");
+const upcoming = software.filter((s) => s.status === "coming-soon");
+const meta = pageMeta(locale, "/software", t.tagline, { title: t.nav.software, description: t.software.subtitle });
+---
+<Base meta={meta}>
+  <div class="container py-14">
+    <h1 class="display text-4xl font-semibold">{t.software.title}</h1>
+    <p class="mt-3 text-ink-2 max-w-2xl">{t.software.subtitle}</p>
+    <div class="mt-12 grid gap-4 md:grid-cols-2 max-w-4xl">
+      {released.map((s) => <SoftwareCard s={s} learnLabel={`${t.software.learn} →`} />)}
+    </div>
+    {/* Not usable yet: listed, but without the weight of a product card. */}
+    {upcoming.length > 0 && (
+      <section class="mt-12 max-w-4xl">
+        <h2 class="eyebrow mb-3">{t.software.upcoming}</h2>
+        <ul class="divide-y divide-rule border-y border-rule">
+          {upcoming.map((s) => (
+            <li class="py-3 flex flex-wrap items-baseline gap-x-3 gap-y-1 text-sm">
+              <a href={`/${locale}/software/${s.slug}`} class="font-medium text-ink-2 hover:text-leo">{s.name}</a>
+              <span class="text-muted">{s.tagline[locale]}</span>
+            </li>
+          ))}
+        </ul>
+      </section>
+    )}
+  </div>
+</Base>

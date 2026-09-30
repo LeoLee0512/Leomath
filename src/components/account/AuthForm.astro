@@ -1,0 +1,54 @@
+---
+/** Sign-in / sign-up form: a plain form posted to the login or register action; errors come back with the page. */
+import { actions } from "astro:actions";
+import { getDictionary } from "@/i18n/dictionaries";
+import type { FormResult } from "@/actions";
+
+interface Props {
+  mode: "login" | "register";
+  next?: string;
+}
+const { mode, next } = Astro.props;
+const locale = Astro.locals.locale;
+const t = getDictionary(locale).auth;
+const action = mode === "login" ? actions.login : actions.register;
+const result = Astro.getActionResult(action)?.data as FormResult | undefined;
+const failed = result && !result.ok ? result : undefined;
+---
+<form method="POST" action={action} class="space-y-4" data-auth-form>
+  <input type="hidden" name="locale" value={locale} />
+  {next && <input type="hidden" name="next" value={next} />}
+  <label class="block text-sm">
+    <span class="text-ink-2">{t.email}</span>
+    <input name="email" type="email" required autocomplete="email" class="field mt-1" value={failed?.email ?? ""} />
+  </label>
+  <label class="block text-sm">
+    <span class="text-ink-2">{t.password}</span>
+    <input name="password" type="password" required minlength="10" autocomplete={mode === "login" ? "current-password" : "new-password"} class="field mt-1" />
+    {mode === "register" && <span class="block text-xs text-muted mt-1">{t.passwordHint}</span>}
+  </label>
+  {mode === "register" && (
+    <label class="block text-sm">
+      <span class="text-ink-2">{t.displayName}</span>
+      <input name="displayName" type="text" maxlength="60" class="field mt-1" />
+    </label>
+  )}
+  {failed && <p class="text-sm text-e1" role="alert">{failed.error}</p>}
+  {mode === "register" && (
+    <p class="text-xs text-muted">
+      {t.agree[0]}<a href={`/${locale}/terms`} class="text-leo hover:underline">{t.agree[1]}</a>{t.agree[2]}<a href={`/${locale}/privacy`} class="text-leo hover:underline">{t.agree[3]}</a>{t.agree[4]}
+    </p>
+  )}
+  <button class="btn btn-primary w-full justify-center">{mode === "login" ? t.submitLogin : t.submitRegister}</button>
+  <p class="text-sm text-muted text-center">
+    {mode === "login" ? t.noAccount : t.haveAccount}{" "}
+    <a href={`/${locale}/${mode === "login" ? "register" : "login"}${next ? `?next=${encodeURIComponent(next)}` : ""}`} class="text-leo hover:underline">{mode === "login" ? t.goRegister : t.goLogin}</a>
+  </p>
+</form>
+
+<script>
+  // Password hashing takes a moment; a second click would post twice.
+  for (const form of document.querySelectorAll<HTMLFormElement>("[data-auth-form]")) {
+    form.addEventListener("submit", () => queueMicrotask(() => (form.querySelector("button")!.disabled = true)));
+  }
+</script>

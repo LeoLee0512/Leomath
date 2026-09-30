@@ -1,0 +1,40 @@
+---
+import { actions } from "astro:actions";
+import Base from "@/layouts/Base.astro";
+import Experiment from "@/components/content/Experiment.astro";
+import Comments from "@/components/content/Comments.astro";
+import { getDictionary } from "@/i18n/dictionaries";
+import { getExperiment, getConcept, concepts } from "@/content/graph";
+import { pageMeta } from "@/lib/seo";
+import { redirectAfterForms } from "@/lib/forms";
+
+const redirect = redirectAfterForms(Astro, [actions.addComment, actions.deleteComment]);
+if (redirect) return redirect;
+const locale = Astro.locals.locale;
+const slug = Astro.params.slug ?? "";
+const e = getExperiment(slug);
+if (!e) return Astro.rewrite("/404");
+const t = getDictionary(locale);
+const main = getConcept(e.concept)!;
+const related = concepts.filter((c) => c.experiments.includes(slug) && c.status === "published");
+const meta = pageMeta(locale, `/explore/${slug}`, t.tagline, { title: e.title[locale], description: e.summary[locale] });
+---
+<Base meta={meta}>
+  <div class="container py-12">
+    <p class="eyebrow"><a href={`/${locale}/explore`} class="hover:text-ink">{t.explore.title}</a></p>
+    <h1 class="display text-4xl font-semibold mt-3">{e.title[locale]}</h1>
+    <p class="mt-3 text-ink-2 max-w-2xl">{e.summary[locale]}</p>
+    <div class="mt-10">
+      <Experiment slug={slug} standalone backHref={main.status === "published" ? `/${locale}/concepts/${main.slug}#exp-${slug}` : undefined} />
+    </div>
+    <div class="mt-8 text-sm">
+      <span class="text-muted">{t.explore.relatedConcept}{t.common.colon}</span>
+      {(related.length ? related : [main]).map((c, i) => (
+        <span>{i > 0 && <span class="text-muted"> · </span>}<a href={`/${locale}/concepts/${c.slug}`} class="text-leo hover:underline">{c.title[locale]}</a></span>
+      ))}
+    </div>
+    <div class="max-w-3xl">
+      <Comments type="experiment" slug={slug} />
+    </div>
+  </div>
+</Base>

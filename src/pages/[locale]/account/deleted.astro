@@ -1,0 +1,19 @@
+---
+import Base from "@/layouts/Base.astro";
+import { getDictionary } from "@/i18n/dictionaries";
+import { pageMeta } from "@/lib/seo";
+
+const locale = Astro.locals.locale;
+const d = getDictionary(locale);
+const t = d.auth.data;
+const meta = pageMeta(locale, "/account/deleted", d.tagline, { title: t.deletedTitle, description: t.deletedBody, noindex: true });
+---
+<Base meta={meta}>
+  <div class="container py-20">
+    <div class="mx-auto max-w-md">
+      <h1 class="display text-3xl font-semibold">{t.deletedTitle}</h1>
+      <p class="mt-4 text-ink-2 leading-relaxed">{t.deletedBody}</p>
+      <a href={`/${locale}`} class="btn btn-primary btn-small mt-8 inline-flex">{t.backHome}</a>
+    </div>
+  </div>
+</Base>

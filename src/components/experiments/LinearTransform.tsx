@@ -301,15 +301,15 @@ function snap(v: number): number {
 
 /**
  * A = (2×2 matrix), columns coloured like the basis vectors they are. Laid out in HTML rather than
- * KaTeX because it changes on every drag, and so the page needs no maths library in the browser.
+ * MathML because it changes on every drag, and so the page needs no maths library in the browser.
  */
 function MatrixView({ m }: { m: Mat2 }) {
   const cell = (v: number, col: 0 | 1) => (
     <span className={`text-right tabular-nums ${col === 0 ? "text-e1" : "text-e2"}`}>{format(v).replace(/^-/, "−")}</span>
   );
   return (
-    <div className="inline-flex items-center gap-2 text-lg" style={{ fontFamily: "KaTeX_Main, var(--font-serif)" }} aria-label={`A = [[${format(m[0])}, ${format(m[1])}], [${format(m[2])}, ${format(m[3])}]]`}>
-      <span style={{ fontFamily: "KaTeX_Math, var(--font-serif)", fontStyle: "italic" }}>A</span>
+    <div className="inline-flex items-center gap-2 text-lg" style={{ fontFamily: "STIX2, var(--font-serif)" }} aria-label={`A = [[${format(m[0])}, ${format(m[1])}], [${format(m[2])}, ${format(m[3])}]]`}>
+      <span style={{ fontFamily: "STIX2, var(--font-serif)", fontStyle: "italic" }}>A</span>
       <span>=</span>
       <span className="relative inline-grid grid-cols-2 gap-x-3 px-2.5 py-0.5 leading-tight" aria-hidden="true">
         <span className="absolute left-0 inset-y-0 w-2 border-l-[1.5px] border-y-0 rounded-l-[50%] border-ink" />

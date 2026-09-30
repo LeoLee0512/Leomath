@@ -1,0 +1,74 @@
+---
+/**
+ * A reading navigator, not a progress bar: sections as stops on a line, ● passed, ◐ current, ○ ahead.
+ * Rendered with every section ahead; a small script marks the current one as the reader scrolls.
+ */
+export interface Heading {
+  id: string;
+  text: string;
+  depth: number;
+}
+interface Props {
+  headings: Heading[];
+  label: string;
+  variant?: "vertical" | "horizontal";
+}
+const { headings, label, variant = "vertical" } = Astro.props;
+const top = headings.filter((h) => h.depth === 2);
+---
+{variant === "horizontal" ? (
+  <nav aria-label={label} class="flex gap-3 overflow-x-auto text-sm py-2 -mx-1 px-1" data-article-nav="horizontal">
+    {top.map((h) => (
+      <a href={`#${h.id}`} data-id={h.id} class="whitespace-nowrap text-muted"><span aria-hidden="true" class="mr-1" data-dot>○</span>{h.text}</a>
+    ))}
+  </nav>
+) : (
+  <nav aria-label={label} data-article-nav="vertical">
+    <p class="eyebrow mb-3">{label}</p>
+    <ol class="relative ml-[5px] border-l border-rule-2 text-sm">
+      {headings.map((h) => (
+        <li class:list={["relative py-1", h.depth === 3 ? "pl-7" : "pl-4"]}>
+          <span aria-hidden="true" data-dot class="absolute -left-[5.5px] top-[9px] w-[10px] h-[10px] rounded-full border bg-paper border-rule-2"></span>
+          <a href={`#${h.id}`} data-id={h.id} class="text-muted hover:text-ink">{h.text}</a>
+        </li>
+      ))}
+    </ol>
+  </nav>
+)}
+
+<script>
+  const navs = [...document.querySelectorAll<HTMLElement>("[data-article-nav]")];
+  if (navs.length) {
+    const ids = [...new Set(navs.flatMap((n) => [...n.querySelectorAll<HTMLAnchorElement>("a[data-id]")].map((a) => a.dataset.id!)))];
+    const els = ids.map((id) => document.getElementById(id)).filter((e): e is HTMLElement => Boolean(e));
+    const order = new Map(els.map((e, i) => [e.id, i]));
+    const textClass = { past: ["text-ink-2"], now: ["text-ink", "font-medium"], ahead: ["text-muted"] };
+    const dotClass = { past: ["bg-ink", "border-ink"], now: ["border-ink", "bg-[linear-gradient(90deg,var(--ink)_50%,var(--paper)_50%)]"], ahead: ["bg-paper", "border-rule-2"] };
+    const all = (m: Record<string, string[]>) => Object.values(m).flat();
+    const update = () => {
+      let current = els[0]?.id;
+      for (const el of els) if (el.getBoundingClientRect().top <= 120) current = el.id;
+      const now = order.get(current!) ?? 0;
+      for (const nav of navs) {
+        for (const a of nav.querySelectorAll<HTMLAnchorElement>("a[data-id]")) {
+          const i = order.get(a.dataset.id!) ?? 0;
+          const state = i < now ? "past" : i === now ? "now" : "ahead";
+          a.classList.remove(...all(textClass));
+          a.classList.add(...textClass[state]);
+          if (state === "now") a.setAttribute("aria-current", "location");
+          else a.removeAttribute("aria-current");
+          const dot = nav.dataset.articleNav === "horizontal" ? a.querySelector("[data-dot]") : a.parentElement?.querySelector("[data-dot]");
+          if (!dot) continue;
+          if (nav.dataset.articleNav === "horizontal") dot.textContent = state === "now" ? "◐" : state === "past" ? "●" : "○";
+          else {
+            dot.classList.remove(...all(dotClass));
+            dot.classList.add(...dotClass[state]);
+          }
+        }
+      }
+    };
+    update();
+    addEventListener("scroll", update, { passive: true });
+    addEventListener("resize", update);
+  }
+</script>

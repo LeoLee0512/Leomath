@@ -1,0 +1,9 @@
+---
+/** A formula rendered at compile time (src/lib/mdx-plugins.ts): the MathML goes into the page once, nothing else. */
+interface Props {
+  html: string;
+  display?: string;
+}
+const { html, display } = Astro.props;
+---
+{display ? <div class="math-display" set:html={html} /> : <Fragment set:html={html} />}

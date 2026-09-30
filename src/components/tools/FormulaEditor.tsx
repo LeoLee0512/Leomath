@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react";
 import type { Locale } from "@/i18n/config";
-import { tex } from "@/lib/katex";
+import { tex } from "@/lib/tex";
 
 const snippets = [
   { label: "a/b", tex: "\\frac{a}{b}" }, { label: "√", tex: "\\sqrt{x}" }, { label: "xⁿ", tex: "x^{n}" }, { label: "aₙ", tex: "a_{n}" },
@@ -22,7 +22,7 @@ export function FormulaEditor({ locale }: { locale: Locale }) {
   const [display, setDisplay] = useState(true);
   const [msg, setMsg] = useState("");
   const html = useMemo(() => tex(src, display), [src, display]);
-  const hasError = html.includes("katex-error");
+  const hasError = html.includes("temml-error");
 
   function insert(snippet: string) {
     setSrc((s) => (s.endsWith(" ") || s === "" ? s + snippet : s + " " + snippet));

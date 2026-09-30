@@ -1,0 +1,151 @@
+## 从一个问题开始
+
+<Problem>
+一个客服中心有 $1000$ 位客户，每一位在某个小时内打进电话的概率都是 $0.3\%$，彼此独立。这一小时里打进来的电话有几个？个数当然是随机的，真正要问的是：$0,1,2,\dots$ 个电话的概率**各是多少**？只开 $5$ 条线，有多大的机会不够用？
+
+老老实实地算，要用到 $\binom{1000}{k}$ 这样大得吓人的数。可人们早就注意到：只要数的是**稀有事件**发生了几次，比如一页书上的错字、一小时里的来电、一秒钟里打到探测器上的光子，得到的分布几乎总是同一个形状，而且只由平均次数决定。为什么会这样？
+
+要回答它，先得把"试验的结果"变成"一个数"。这就是**随机变量**。
+</Problem>
+
+<Observe>
+先玩再读。柱子是"$n$ 次独立试验里成功了几次"的分布，每次成功的概率是 $\lambda/n$；圆点是另一个只由平均次数 $\lambda$ 决定的分布。保持 $\lambda=3$，把 $n$ 从 $10$ 拖到 $1000$。**柱子和圆点最后是什么关系？** 再按"抽样"：中间那一排格子就是一次试验的全部结果，红格子的个数就是这一次数出来的数。
+
+<Experiment slug="binomial-poisson" />
+</Observe>
+
+<Conjecture>
+$n$ 越大、每次成功的概率 $p=\lambda/n$ 越小，柱子就越贴近圆点，最后只剩下 $\lambda$ 一个参数起作用；下面那张图说明，两者的差距大约按 $1/n$ 缩小。圆点的公式是 $e^{-\lambda}\lambda^k/k!$，于是猜想：
+$$\binom nk\Bigl(\frac\lambda n\Bigr)^k\Bigl(1-\frac\lambda n\Bigr)^{n-k}\ \longrightarrow\ e^{-\lambda}\frac{\lambda^k}{k!}\qquad(n\to\infty).$$
+要把"一个分布趋于另一个分布"说清楚，先要说清楚"数"和"分布"是什么。
+</Conjecture>
+
+## 定义
+
+<Definition title="随机变量">
+设 $(\Omega,P)$ 是[概率空间](/zh/concepts/probability-space)。函数 $X:\Omega\to\mathbb R$ 称为**随机变量**。若 $X$ 只取有限或可数多个值，称 $X$ 为**离散型**随机变量。
+</Definition>
+
+随机变量既不"随机"，也不是"变量"：它是一个完全确定的函数，随机性全在样本点 $\omega$ 上。实验里那一排格子就是一个样本点 $\omega$（$n$ 次试验各自成功或失败），$X(\omega)$ 是红格子的个数。对每个实数 $x$，$\{X=x\}=\{\omega\in\Omega:\ X(\omega)=x\}$ 是一个事件，所以可以问它的概率。
+
+<Definition title="分布列">
+离散型随机变量 $X$ 的**分布列**是函数 $x\mapsto P(X=x)$，其中 $x$ 取遍 $X$ 的所有可能值。
+</Definition>
+
+分布列的值非负，且总和为 $1$：事件 $\{X=x\}$ 对不同的 $x$ 两两互斥，并起来是整个 $\Omega$，由可列可加性 $\sum_xP(X=x)=P(\Omega)=1$。反过来，只问关于 $X$ 的概率时，用到的只有分布列，$\Omega$ 本身长什么样并不重要。所以可以脱离具体试验，直接比较两个分布：实验里比较的正是两张分布列。
+
+要写出成功次数的分布列，需要把上一节的[独立](/zh/concepts/conditional-probability)推广到多个事件：称 $A_1,\dots,A_n$ **相互独立**，是指从中任取若干个，它们同时发生的概率都等于各自概率的乘积。
+
+<Definition title="二项分布">
+做 $n$ 次试验，各次试验成功与否相互独立，每次成功的概率都是 $p$。成功的次数 $X$ 服从的分布称为**二项分布**，记作 $X\sim B(n,p)$。
+</Definition>
+
+<Proposition title="二项分布的分布列">
+若 $X\sim B(n,p)$，则
+$$P(X=k)=\binom nk p^k(1-p)^{n-k},\qquad k=0,1,\dots,n.$$
+</Proposition>
+
+<Proof>
+先看一个具体的结果：恰好第 $i_1,\dots,i_k$ 次成功、其余 $n-k$ 次失败。由独立性（事件独立时，把其中一些换成补事件仍然独立），它的概率是 $p^k(1-p)^{n-k}$，与成功发生在哪几次无关。不同的结果两两互斥，而从 $n$ 次中选出成功的 $k$ 次共有 $\binom nk$ 种选法，相加即得。由二项式定理，$\sum_k\binom nkp^k(1-p)^{n-k}=(p+1-p)^n=1$，二项分布因此得名。
+</Proof>
+
+柱子最高的地方在哪里？比较相邻两项就知道。
+
+<Proposition title="最可能的值">
+设 $0<p<1$，$X\sim B(n,p)$。$P(X=k)$ 在 $k=\lfloor(n+1)p\rfloor$ 处最大；若 $(n+1)p$ 是整数，则 $k=(n+1)p$ 与 $k=(n+1)p-1$ 两处并列最大。
+</Proposition>
+
+<Proof>
+对 $1\le k\le n$，由 $\binom nk\big/\binom n{k-1}=\frac{n-k+1}k$，
+$$\frac{P(X=k)}{P(X=k-1)}=\frac{(n-k+1)\,p}{k\,(1-p)}.$$
+这个比值大于 $1$，当且仅当 $(n-k+1)p>k(1-p)$，即 $k<(n+1)p$。所以 $k<(n+1)p$ 时分布列逐项上升，$k>(n+1)p$ 时逐项下降，$k=(n+1)p$ 时相邻两项相等。记 $m=(n+1)p\in(0,n+1)$：若 $m$ 不是整数，最高点在 $\lfloor m\rfloor$；若 $m$ 是整数，则 $1\le m\le n$，$m-1$ 与 $m$ 两项并列最高。
+</Proof>
+
+$(n+1)p=np+p$，所以最可能的值与 $np$ 相差不到 $1$，但未必等于 $np$。$np$ 甚至可以不是整数，而 $X$ 只取整数。实验里的小三角标出了 $(n+1)p$ 的位置，按"峰值并列"可以看到两根一样高的柱子。
+
+<Definition title="Poisson 分布">
+设 $\lambda>0$。若随机变量 $Y$ 取值 $0,1,2,\dots$，且
+$$P(Y=k)=e^{-\lambda}\frac{\lambda^k}{k!},\qquad k=0,1,2,\dots,$$
+称 $Y$ 服从参数为 $\lambda$ 的 **Poisson 分布**，记作 $Y\sim\mathrm{Poisson}(\lambda)$。
+</Definition>
+
+它确实是分布列：由 $e^\lambda$ 的 [Taylor 展开](/zh/concepts/taylor-series)，$\sum_{k\ge0}e^{-\lambda}\frac{\lambda^k}{k!}=e^{-\lambda}e^{\lambda}=1$。同样比较相邻两项，$P(Y=k)/P(Y=k-1)=\lambda/k$，所以峰值在 $\lfloor\lambda\rfloor$，$\lambda$ 是整数时 $\lambda-1$ 与 $\lambda$ 并列。
+
+## 定理与证明
+
+<Theorem title="Poisson 极限定理">
+设 $\lambda>0$，$p_n=\lambda/n$（$n\ge\lambda$）。对每个固定的 $k=0,1,2,\dots$，
+$$\lim_{n\to\infty}\binom nk p_n^k(1-p_n)^{n-k}=e^{-\lambda}\frac{\lambda^k}{k!}.$$
+</Theorem>
+
+<Proof>
+把要求极限的式子拆成三个因子：
+$$\binom nk\Bigl(\frac\lambda n\Bigr)^k\Bigl(1-\frac\lambda n\Bigr)^{n-k}=\frac{\lambda^k}{k!}\cdot\prod_{j=0}^{k-1}\Bigl(1-\frac jn\Bigr)\cdot\Bigl(1-\frac\lambda n\Bigr)^{n}\Bigl(1-\frac\lambda n\Bigr)^{-k}.$$
+这里用了 $\binom nk\frac1{n^k}=\frac1{k!}\cdot\frac{n(n-1)\cdots(n-k+1)}{n^k}$。$k$ 固定，乘积只有 $k$ 个因子，每个都趋于 $1$，所以乘积趋于 $1$；同理 $(1-\lambda/n)^{-k}\to1$。剩下的一项取对数：
+$$\ln\Bigl(1-\frac\lambda n\Bigr)^n=-\lambda\cdot\frac{\ln(1-\lambda/n)}{-\lambda/n}\ \longrightarrow\ -\lambda,$$
+因为 $x\to0$ 时 $\frac{\ln(1+x)}{x}\to1$，这正是 $\ln$ 在 $1$ 处的[导数](/zh/concepts/derivative)。由 $e^x$ 连续，$(1-\lambda/n)^n\to e^{-\lambda}$。三个因子的极限相乘，即得结论。
+</Proof>
+
+证明里每一步都用到"$k$ 固定"：若 $k$ 随 $n$ 一起增大，$\prod(1-j/n)$ 就未必趋于 $1$。所以定理说的是每一根柱子分别收敛。实验下方的 $d$ 衡量的却是整张分布列的差距，它有一个更强、更实用的版本。
+
+<Remark>
+实验中的
+$$d=\frac12\sum_k\bigl|P(X=k)-P(Y=k)\bigr|$$
+称为两个分布的**全变差距离**。可以证明，它等于"任取一个事件 $A$，$X\in A$ 与 $Y\in A$ 的概率之差"的最大值。也就是说，用 Poisson 分布代替二项分布去回答**任何**关于计数的问题，误差都不超过 $d$。Le Cam 在 1960 年证明了
+$$d\le np^2=\frac{\lambda^2}{n},$$
+而且各次试验的成功概率 $p_i$ 不必相同，同样有 $d\le\sum_ip_i^2$。在双对数图上，这个上界是一条斜率为 $-1$ 的直线（实验里的虚线），真实的 $d$ 与它平行：$n$ 大十倍，误差小十倍。
+</Remark>
+
+<Warning>
+**只让 $n$ 大是不够的，还要 $p$ 小。** 保持 $n=20$：$\lambda=1$（$p=0.05$）时两者的距离约 $0.014$，$\lambda=10$（$p=0.5$）时约 $0.17$。$B(20,\tfrac12)$ 取不到 $20$ 以上的值，而且比 $\mathrm{Poisson}(10)$ 窄得多。下一节会看到，二项分布的方差是 $np(1-p)$，Poisson 分布的方差是 $\lambda=np$，两者只差一个因子 $1-p$。Poisson 近似说的是**稀有事件**：每次都不太可能发生，但机会很多。
+</Warning>
+
+<Warning>
+**同分布不等于相等。** 抛 $10$ 次均匀硬币，正面次数 $X$ 与反面次数 $10-X$ 都服从 $B(10,\tfrac12)$，分布完全一样，可是除非恰好 $5$ 对 $5$，这两个数从来不相等。分布只记录"每个值的概率"，不记录"这个值来自哪个 $\omega$"。同样，$X=3$ 不是一个数，而是一个事件 $\{\omega:X(\omega)=3\}$。
+</Warning>
+
+## 应用
+
+<Application title="回到开头：开几条线">
+来电数 $X\sim B(1000,\,0.003)$，$\lambda=np=3$。用 Poisson 分布，
+$$P(X\ge6)=1-\sum_{k=0}^{5}e^{-3}\frac{3^k}{k!}\approx0.084,$$
+精确值是 $0.0836$。只开 $5$ 条线，大约每十二个小时就有一个小时不够用；开到 $7$ 条，$P(X\ge8)\approx0.012$，不够用的小时降到约八十分之一。计算里没有出现 $1000$ 和 $0.003$，只出现了它们的乘积 $3$：客户数翻倍、每人打电话的概率减半，答案几乎不变。
+</Application>
+
+<Application title="生日问题再看一眼">
+$n$ 个人有 $\binom n2$ 对，每一对同一天生日的概率是 $\frac1{365}$。"同一天生日的对数"是许多个稀有事件的计数，近似服从 $\mathrm{Poisson}(\lambda)$，$\lambda=\binom n2/365$。于是
+$$P(\text{没有人同一天})\approx e^{-\lambda}=\exp\Bigl(-\frac{n(n-1)}{730}\Bigr),$$
+恰好是[概率空间](/zh/concepts/probability-space)一节用 $1-x\le e^{-x}$ 得到的那个指数。$n=23$ 时 $\lambda=\frac{253}{365}\approx0.693\approx\ln2$，近似值 $0.500$，精确值 $0.493$。各对之间并不完全独立（甲乙同天、乙丙同天，就迫使甲丙同天），但这种依赖很弱。"很多个几乎独立的稀有事件，发生的个数近似服从 Poisson 分布"是一个比本节定理宽得多的原则。
+</Application>
+
+<Application title="漏检的光子：全概率公式变成对分布求和">
+一秒钟内打到探测器上的光子数 $N\sim\mathrm{Poisson}(\lambda)$，每个光子被记录下来的概率是 $q$，各自独立。记录到的个数 $M$ 服从什么分布？按 $N$ 的取值分情况，这就是[全概率公式](/zh/concepts/conditional-probability)，只是求和对象变成了一个分布：
+$$P(M=m)=\sum_{n\ge m}\binom nm q^m(1-q)^{n-m}\cdot e^{-\lambda}\frac{\lambda^n}{n!}=e^{-\lambda}\frac{(\lambda q)^m}{m!}\sum_{j\ge0}\frac{\bigl(\lambda(1-q)\bigr)^j}{j!}=e^{-\lambda q}\frac{(\lambda q)^m}{m!}.$$
+（第二步令 $j=n-m$。）所以 $M\sim\mathrm{Poisson}(\lambda q)$：随机漏掉一部分，Poisson 分布仍是 Poisson 分布，只是平均数打了折。再用 Bayes 公式反过来问"记录到 $m$ 个时，实际来了几个"，得到 $P(N=n\mid M=m)=e^{-\lambda(1-q)}\dfrac{(\lambda(1-q))^{n-m}}{(n-m)!}$：漏掉的个数 $N-m$ 服从 $\mathrm{Poisson}(\lambda(1-q))$，与记录到多少**无关**。
+</Application>
+
+<Tool id="plot" />
+
+在绘图器里画 $(1-3/x)^x$，再画常数 $\exp(-3)\approx0.0498$。$x=10$ 时前者只有 $0.028$，$x=100$ 时是 $0.0476$，$x=1000$ 时是 $0.0496$：Poisson 极限定理证明里最关键的一步，就是这条曲线趋于这条水平线。
+
+## 延伸：等待时间与概率密度
+
+同样的想法还能回答另一个问题：**下一个电话要等多久？** 设来电的平均速率是每小时 $\lambda$ 个。把 $[0,t]$ 切成 $n$ 小段，每段里有来电的概率约为 $\lambda t/n$，由 Poisson 极限定理，$[0,t]$ 内的来电数近似服从 $\mathrm{Poisson}(\lambda t)$。等待时间 $T$ 超过 $t$，就是 $[0,t]$ 内一个电话也没有：
+$$P(T>t)=e^{-\lambda t},\qquad t\ge0.$$
+$T$ 可以取 $[0,\infty)$ 中的任何实数，对每个具体的 $t$ 都有 $P(T=t)=0$，分布列在这里毫无用处。需要换一种描述。
+
+<Definition title="分布函数与概率密度">
+随机变量 $X$ 的**分布函数**是 $F(x)=P(X\le x)$。若存在非负函数 $f$，使得对所有实数 $x$ 都有
+$$F(x)=\int_{-\infty}^xf(t)\,dt,$$
+称 $X$ 为**连续型**随机变量，$f$ 为它的**概率密度**。
+</Definition>
+
+这时 $P(a<X\le b)=F(b)-F(a)=\int_a^bf(t)\,dt$：概率是密度曲线下的面积。在 $f$ 连续的点，由[微积分基本定理](/zh/concepts/integral) $F'(x)=f(x)$。等待时间的分布函数是 $F(t)=1-e^{-\lambda t}$，求导得密度 $f(t)=\lambda e^{-\lambda t}$（$t\ge0$），这就是**指数分布**。密度本身不是概率，它可以大于 $1$；$f(x)\,\Delta x$ 才近似等于 $X$ 落在 $(x,x+\Delta x]$ 里的概率。在绘图器里画 $a\exp(-ax)$，拖动参数 $a$ 看看：$a$ 越大，曲线越高越窄，下面的面积始终是 $1$。上一节贝叶斯神经网络里的 $p(w\mid D)$，就是这样的密度。
+
+<Remark>
+[概率空间](/zh/concepts/probability-space)一节假设 $\Omega$ 有限或可数，那时每个子集都可以是事件。像 $T$ 这样取连续值的随机变量，需要不可数的 $\Omega$，这时并不是每个子集都能合理地赋予概率，只能对一类足够大的集合族（包含所有区间）定义 $P$。严格的处理属于测度论，这条路线不展开；本节用到的只有区间的概率，不会碰到这个问题。
+</Remark>
+
+<Remark>
+二项分布的最高点在 $np$ 附近，Poisson 分布的在 $\lambda$ 附近。这个"中心"的精确版本是**期望**，"宽度"的精确版本是**方差**，那是下一节**期望与方差**（建设中）的主题。在那里还会看到，两个随机变量的协方差就是[内积](/zh/concepts/inner-product)，所以 Cauchy–Schwarz 不等式直接给出 $|\rho|\le1$。
+</Remark>

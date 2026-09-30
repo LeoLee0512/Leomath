@@ -98,6 +98,18 @@ export const optionFeedback: Record<string, Bilingual[]> = {
     b("在 P(A)、P(B) 都大于 0 的前提下没有例外。只有某个概率为 0 时，互斥事件才可能独立。", "With both probabilities positive there is no exception. Exclusive events can be independent only when one has probability 0."),
     b("独立与否和两个概率是否相等无关；这里 P(A∩B)=0 总不等于正数 P(A)P(B)。", "Independence has nothing to do with the two probabilities being equal; here P(A∩B)=0 never equals the positive P(A)P(B)."),
   ],
+  "random-variables-3": [
+    b("P(X=5) 确实最大，但不是唯一的：C(11,5)=C(11,6)，p=1/2 时两项其余因子也相同，所以 P(X=6) 与它相等。", "P(X=5) is indeed largest, but not alone: C(11,5)=C(11,6), and with p=1/2 the other factors agree too, so P(X=6) equals it."),
+    b("P(X=6) 确实最大，但不是唯一的：(n+1)p=6 是整数，P(X=6)/P(X=5)=1，两项并列。", "P(X=6) is indeed largest, but not alone: (n+1)p=6 is a whole number, so P(X=6)/P(X=5)=1 and the two are tied."),
+    b("5.5 是均值 np，可 X 只取整数，P(X=5.5)=0。最可能的值和均值是两回事。", "5.5 is the mean np, but X takes only whole values and P(X=5.5)=0. The most likely value and the mean are different things."),
+    b("(n+1)p=6 是整数，相邻两项之比 (n−k+1)p/(k(1−p)) 在 k=6 时恰好等于 1，所以 5 和 6 并列最可能。", "(n+1)p=6 is a whole number, so the ratio (n−k+1)p/(k(1−p)) equals 1 at k=6: 5 and 6 are tied as most likely."),
+  ],
+  "random-variables-4": [
+    b("p=0.5 太大：B(10,0.5) 的方差 2.5 只有 Poisson(5) 的一半，而且取不到 10 以上的值。两者的距离约 0.17。", "p=0.5 is too large: B(10,0.5) has variance 2.5, half that of Poisson(5), and cannot exceed 10. The distance is about 0.17."),
+    b("p=0.005 很小，方差 np(1−p)≈4.975 几乎等于 5，两者的距离约 0.0012。", "p=0.005 is small, the variance np(1−p)≈4.975 is almost 5, and the distance is about 0.0012."),
+    b("np 只决定均值。近似的好坏取决于 p：距离不超过 np²=λp，p 越小越好。", "np fixes only the mean. The quality of the approximation depends on p: the distance is at most np²=λp, smaller for smaller p."),
+    b("B(1000,0.005) 与 Poisson(5) 的距离约 0.0012：任何一个事件的概率，两者都相差不到 0.0012。", "B(1000,0.005) is about 0.0012 from Poisson(5): no event's probability differs by more than 0.0012 between them."),
+  ],
 };
 
 /** A specific wrong numeric answer and what it usually means. Checked before the generic diagnoses. */
@@ -135,5 +147,15 @@ export const numericMistakes: Record<string, KnownMistake[]> = {
   "conditional-probability-4": [
     { value: 0.107, feedback: b("这是只测一次后的后验。第二次阳性要把 0.107 当作新的先验再更新一次。", "That is the posterior after one test. For the second positive, use 0.107 as the new prior and update again.") },
     { value: 0.9025, feedback: b("0.95²=P(两次阳性|病)，方向反了；还需要先验和误报这一项。", "0.95²=P(two positives | ill): the conditional is reversed, and the prior and false-alarm term are still missing.") },
+  ],
+  "random-variables-1": [
+    { value: 0.125, feedback: b("0.5³ 只算了 3 次正面，漏了另外 7 次反面的 0.5⁷，也漏了正面出现在哪几次的 C(10,3) 种排法。", "0.5³ covers the 3 heads only: the 0.5⁷ for the 7 tails is missing, and so are the C(10,3) ways to place the heads.") },
+    { value: 1 / 1024, feedback: b("这是某一个具体序列（比如“正正正反反……”）的概率。含 3 个正面的序列有 C(10,3)=120 个。", "That is the probability of one particular sequence (say HHHTT…). There are C(10,3)=120 sequences with 3 heads.") },
+    { value: 0.3, feedback: b("3/10 是正面所占的比例，不是概率。要算的是“10 次里恰好 3 次”这个事件的概率。", "3/10 is the proportion of heads, not a probability. The question asks for the probability of the event “exactly 3 of 10”.") },
+  ],
+  "random-variables-2": [
+    { value: 0.5, feedback: b("0.5 是 λ，即每页的平均错误数。没有错误的概率是 P(Y=0)=e^{−λ}。", "0.5 is λ, the average number of misprints per page. The chance of none is P(Y=0)=e^{−λ}.") },
+    { value: 1 - Math.exp(-0.5), feedback: b("这是“至少有一处错误”的概率 1−e^{−0.5}，题目问的是没有错误。", "That is the chance of at least one misprint, 1−e^{−0.5}; the question asks for none.") },
+    { value: 0.5 * Math.exp(-0.5), feedback: b("λe^{−λ} 是恰好一处错误的概率 P(Y=1)，没有错误是 P(Y=0)。", "λe^{−λ} is the chance of exactly one misprint, P(Y=1); none is P(Y=0).") },
   ],
 };

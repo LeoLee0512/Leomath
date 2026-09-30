@@ -1,0 +1,57 @@
+---
+import Base from "@/layouts/Base.astro";
+import PathCard from "@/components/cards/PathCard.astro";
+import { getDictionary } from "@/i18n/dictionaries";
+import { paths, publishedConcepts } from "@/content/graph";
+import { pathStats } from "@/lib/paths";
+import { pageMeta } from "@/lib/seo";
+
+const locale = Astro.locals.locale;
+const t = getDictionary(locale);
+const all = publishedConcepts().map((c) => ({ slug: c.slug, title: c.title[locale], summary: c.summary[locale] }));
+const stats = await Promise.all(paths.map((p) => pathStats(p, locale)));
+const meta = pageMeta(locale, "/learn", t.tagline, { title: t.learn.title, description: t.learn.subtitle });
+---
+<Base meta={meta}>
+  <div class="container py-14">
+    <h1 class="display text-4xl font-semibold">{t.learn.title}</h1>
+    <p class="mt-3 text-ink-2">{t.learn.subtitle}</p>
+    <p class="mt-2 text-sm text-muted max-w-2xl leading-relaxed">{t.paths.choose}</p>
+    <div class="mt-10 grid gap-px bg-rule md:grid-cols-2 border border-rule">
+      {paths.map((p, i) => <PathCard p={p} stats={stats[i]} />)}
+    </div>
+
+    <!-- Every concept is listed; typing filters the list in place. -->
+    <div id="search" class="mt-16 max-w-2xl scroll-mt-24" data-concept-search>
+      <input type="search" class="field" placeholder={t.nav.search} aria-label={t.nav.search} />
+      <ul class="mt-4 divide-y divide-rule border-y border-rule">
+        {all.map((i) => (
+          <li data-text={`${i.title} ${i.summary} ${i.slug}`.toLowerCase()}>
+            <a href={`/${locale}/concepts/${i.slug}`} class="flex flex-col gap-0.5 py-3 hover:text-leo">
+              <span class="font-medium">{i.title}</span>
+              <span class="text-sm text-muted">{i.summary}</span>
+            </a>
+          </li>
+        ))}
+        <li class="py-3 text-muted text-sm" data-empty hidden>—</li>
+      </ul>
+    </div>
+  </div>
+</Base>
+
+<script>
+  for (const box of document.querySelectorAll<HTMLElement>("[data-concept-search]")) {
+    const input = box.querySelector("input")!;
+    const items = [...box.querySelectorAll<HTMLElement>("li[data-text]")];
+    const empty = box.querySelector<HTMLElement>("[data-empty]")!;
+    input.addEventListener("input", () => {
+      const q = input.value.trim().toLowerCase();
+      let shown = 0;
+      for (const li of items) {
+        li.hidden = Boolean(q) && !li.dataset.text!.includes(q);
+        if (!li.hidden) shown++;
+      }
+      empty.hidden = shown > 0;
+    });
+  }
+</script>

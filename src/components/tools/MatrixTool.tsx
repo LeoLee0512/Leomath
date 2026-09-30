@@ -3,7 +3,7 @@
 import { useMemo, useState } from "react";
 import type { Locale } from "@/i18n/config";
 import { apply, det, eigen, format, multiply, trace, type Mat2 } from "@/lib/math/linear";
-import { tex } from "@/lib/katex";
+import { tex } from "@/lib/tex";
 
 const copy = {
   zh: { title: "2×2 矩阵计算器", hint: "输入矩阵 A 与向量 v。行列式、迹、逆、特征值与特征向量、Av 与 A² 都实时计算。", singular: "A 不可逆（行列式为 0）", complex: "复特征值：没有实特征方向" },

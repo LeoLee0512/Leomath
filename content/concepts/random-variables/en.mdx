@@ -1,0 +1,151 @@
+## Start from a problem
+
+<Problem>
+A call centre has $1000$ customers. Each of them calls within a given hour with probability $0.3\%$, independently of the others. How many calls arrive in that hour? The number is random, of course; the real question is what the probability of $0,1,2,\dots$ calls **is**. With only $5$ lines open, how likely is it that they are not enough?
+
+Doing it honestly involves numbers like $\binom{1000}{k}$, frighteningly large. Yet people noticed long ago that whenever you count how often a **rare event** happens (misprints on a page, calls in an hour, photons hitting a detector in a second), the distribution has nearly the same shape, and it depends only on the average count. Why?
+
+To answer that, we first have to turn "the outcome of an experiment" into "a number". That is what a **random variable** does.
+</Problem>
+
+<Observe>
+Play first, read later. The bars show how many of $n$ independent trials succeed, each with probability $\lambda/n$; the dots show another distribution that depends only on the average count $\lambda$. Keep $\lambda=3$ and drag $n$ from $10$ to $1000$. **How do the bars and dots end up related?** Then press "Sample": the row of cells in the middle is the complete outcome of one run, and the number of red cells is the number counted in that run.
+
+<Experiment slug="binomial-poisson" />
+</Observe>
+
+<Conjecture>
+The larger $n$ and the smaller the success probability $p=\lambda/n$, the closer the bars come to the dots, until only $\lambda$ seems to matter; the plot below them suggests the gap shrinks roughly like $1/n$. The dots follow $e^{-\lambda}\lambda^k/k!$, which suggests
+$$\binom nk\Bigl(\frac\lambda n\Bigr)^k\Bigl(1-\frac\lambda n\Bigr)^{n-k}\ \longrightarrow\ e^{-\lambda}\frac{\lambda^k}{k!}\qquad(n\to\infty).$$
+Before we can say what it means for one distribution to approach another, we must say what "a number" and "a distribution" are.
+</Conjecture>
+
+## Definitions
+
+<Definition title="Random variable">
+Let $(\Omega,P)$ be a [probability space](/en/concepts/probability-space). A function $X:\Omega\to\mathbb R$ is called a **random variable**. If $X$ takes only finitely or countably many values, it is **discrete**.
+</Definition>
+
+A random variable is neither random nor a variable: it is a perfectly definite function, and all the randomness lives in the outcome $\omega$. In the experiment, the row of cells is one outcome $\omega$ (each of the $n$ trials a success or a failure), and $X(\omega)$ is the number of red cells. For every real $x$, $\{X=x\}=\{\omega\in\Omega:\ X(\omega)=x\}$ is an event, so we may ask for its probability.
+
+<Definition title="Probability mass function">
+The **probability mass function** of a discrete random variable $X$ is the function $x\mapsto P(X=x)$, where $x$ ranges over the possible values of $X$.
+</Definition>
+
+Its values are non-negative and add up to $1$: the events $\{X=x\}$ for different $x$ are pairwise disjoint and together make up $\Omega$, so countable additivity gives $\sum_xP(X=x)=P(\Omega)=1$. Conversely, as long as we only ask about probabilities involving $X$, the mass function is all we use; what $\Omega$ looks like no longer matters. That is why two distributions can be compared on their own, away from any particular experiment, and the experiment compares exactly two mass functions.
+
+To write down the distribution of a number of successes, we extend [independence](/en/concepts/conditional-probability) from two events to many: $A_1,\dots,A_n$ are **mutually independent** if for every choice of some of them, the probability that all the chosen ones occur equals the product of their probabilities.
+
+<Definition title="Binomial distribution">
+Run $n$ trials whose successes are mutually independent, each succeeding with probability $p$. The number of successes $X$ has the **binomial distribution**, written $X\sim B(n,p)$.
+</Definition>
+
+<Proposition title="The binomial mass function">
+If $X\sim B(n,p)$, then
+$$P(X=k)=\binom nk p^k(1-p)^{n-k},\qquad k=0,1,\dots,n.$$
+</Proposition>
+
+<Proof>
+Take one particular outcome: successes exactly at trials $i_1,\dots,i_k$ and failures at the other $n-k$. By independence (replacing some independent events by their complements keeps them independent), its probability is $p^k(1-p)^{n-k}$, whichever trials the successes fall on. Different outcomes are disjoint, and there are $\binom nk$ ways to choose which $k$ trials succeed; add them up. By the binomial theorem $\sum_k\binom nkp^k(1-p)^{n-k}=(p+1-p)^n=1$, which is where the name comes from.
+</Proof>
+
+Where is the tallest bar? Compare neighbouring terms.
+
+<Proposition title="The most likely value">
+Let $0<p<1$ and $X\sim B(n,p)$. Then $P(X=k)$ is largest at $k=\lfloor(n+1)p\rfloor$; if $(n+1)p$ is a whole number, $k=(n+1)p$ and $k=(n+1)p-1$ are tied for the maximum.
+</Proposition>
+
+<Proof>
+For $1\le k\le n$, since $\binom nk\big/\binom n{k-1}=\frac{n-k+1}k$,
+$$\frac{P(X=k)}{P(X=k-1)}=\frac{(n-k+1)\,p}{k\,(1-p)}.$$
+The ratio exceeds $1$ exactly when $(n-k+1)p>k(1-p)$, that is, when $k<(n+1)p$. So the mass function rises while $k<(n+1)p$, falls once $k>(n+1)p$, and two neighbours are equal where $k=(n+1)p$. Write $m=(n+1)p\in(0,n+1)$. If $m$ is not a whole number, the peak is at $\lfloor m\rfloor$; if it is, then $1\le m\le n$ and $m-1$ and $m$ share the peak.
+</Proof>
+
+Since $(n+1)p=np+p$, the most likely value is within $1$ of $np$, but it need not equal $np$; indeed $np$ need not be a whole number, while $X$ only takes whole values. The small triangle in the experiment marks $(n+1)p$, and "tied peak" shows two equally tall bars.
+
+<Definition title="Poisson distribution">
+Let $\lambda>0$. A random variable $Y$ with values $0,1,2,\dots$ and
+$$P(Y=k)=e^{-\lambda}\frac{\lambda^k}{k!},\qquad k=0,1,2,\dots,$$
+has the **Poisson distribution** with parameter $\lambda$, written $Y\sim\mathrm{Poisson}(\lambda)$.
+</Definition>
+
+It is a genuine mass function: by the [Taylor expansion](/en/concepts/taylor-series) of $e^\lambda$, $\sum_{k\ge0}e^{-\lambda}\frac{\lambda^k}{k!}=e^{-\lambda}e^{\lambda}=1$. Comparing neighbours again, $P(Y=k)/P(Y=k-1)=\lambda/k$, so the peak is at $\lfloor\lambda\rfloor$, shared by $\lambda-1$ and $\lambda$ when $\lambda$ is a whole number.
+
+## Theorems and proofs
+
+<Theorem title="Poisson limit theorem">
+Let $\lambda>0$ and $p_n=\lambda/n$ (for $n\ge\lambda$). For each fixed $k=0,1,2,\dots$,
+$$\lim_{n\to\infty}\binom nk p_n^k(1-p_n)^{n-k}=e^{-\lambda}\frac{\lambda^k}{k!}.$$
+</Theorem>
+
+<Proof>
+Split the expression into three factors:
+$$\binom nk\Bigl(\frac\lambda n\Bigr)^k\Bigl(1-\frac\lambda n\Bigr)^{n-k}=\frac{\lambda^k}{k!}\cdot\prod_{j=0}^{k-1}\Bigl(1-\frac jn\Bigr)\cdot\Bigl(1-\frac\lambda n\Bigr)^{n}\Bigl(1-\frac\lambda n\Bigr)^{-k},$$
+using $\binom nk\frac1{n^k}=\frac1{k!}\cdot\frac{n(n-1)\cdots(n-k+1)}{n^k}$. With $k$ fixed the product has only $k$ factors, each tending to $1$, so it tends to $1$; likewise $(1-\lambda/n)^{-k}\to1$. Take the logarithm of what remains:
+$$\ln\Bigl(1-\frac\lambda n\Bigr)^n=-\lambda\cdot\frac{\ln(1-\lambda/n)}{-\lambda/n}\ \longrightarrow\ -\lambda,$$
+because $\frac{\ln(1+x)}{x}\to1$ as $x\to0$, which is just the [derivative](/en/concepts/derivative) of $\ln$ at $1$. Since $e^x$ is continuous, $(1-\lambda/n)^n\to e^{-\lambda}$. Multiplying the three limits gives the result.
+</Proof>
+
+Every step uses "$k$ fixed": if $k$ grew with $n$, $\prod(1-j/n)$ need not tend to $1$. So the theorem says that each bar converges separately. The $d$ below the experiment measures the gap between the whole mass functions, and there is a stronger, more useful version for it.
+
+<Remark>
+The quantity in the experiment,
+$$d=\frac12\sum_k\bigl|P(X=k)-P(Y=k)\bigr|,$$
+is the **total variation distance** between the two distributions. One can show that it equals the largest possible difference between $P(X\in A)$ and $P(Y\in A)$ over all sets $A$. In other words, if you answer **any** question about the count with the Poisson law instead of the binomial one, you are off by at most $d$. In 1960 Le Cam proved
+$$d\le np^2=\frac{\lambda^2}{n},$$
+and the trials need not share one success probability: with probabilities $p_i$, still $d\le\sum_ip_i^2$. On the log–log plot this bound is a line of slope $-1$ (the dashed line in the experiment), and the true $d$ runs parallel to it: ten times as many trials, a tenth of the error.
+</Remark>
+
+<Warning>
+**Large $n$ alone is not enough; $p$ must be small.** Keep $n=20$: with $\lambda=1$ ($p=0.05$) the distance is about $0.014$, with $\lambda=10$ ($p=0.5$) about $0.17$. $B(20,\tfrac12)$ can never exceed $20$ and is much narrower than $\mathrm{Poisson}(10)$. The next section shows that the binomial variance is $np(1-p)$ and the Poisson variance is $\lambda=np$: they differ by the factor $1-p$. The Poisson approximation is about **rare events**: each unlikely on its own, but with many chances.
+</Warning>
+
+<Warning>
+**Same distribution does not mean equal.** Toss a fair coin $10$ times. The number of heads $X$ and the number of tails $10-X$ both follow $B(10,\tfrac12)$, exactly the same distribution, yet unless the split is exactly $5$ to $5$ they are never equal. A distribution records the probability of each value, not which $\omega$ produced it. Likewise $X=3$ is not a number but an event, $\{\omega:X(\omega)=3\}$.
+</Warning>
+
+## Applications
+
+<Application title="Back to the start: how many lines">
+The number of calls is $X\sim B(1000,\,0.003)$, with $\lambda=np=3$. With the Poisson law,
+$$P(X\ge6)=1-\sum_{k=0}^{5}e^{-3}\frac{3^k}{k!}\approx0.084,$$
+against the exact $0.0836$. With only $5$ lines, roughly one hour in twelve runs short; with $7$, $P(X\ge8)\approx0.012$, about one hour in eighty. Neither $1000$ nor $0.003$ appears in the calculation, only their product $3$: double the customers and halve each one's chance of calling, and the answer barely moves.
+</Application>
+
+<Application title="The birthday problem once more">
+$n$ people form $\binom n2$ pairs, and each pair shares a birthday with probability $\frac1{365}$. The number of pairs that share is a count of many rare events, approximately $\mathrm{Poisson}(\lambda)$ with $\lambda=\binom n2/365$. Hence
+$$P(\text{no shared birthday})\approx e^{-\lambda}=\exp\Bigl(-\frac{n(n-1)}{730}\Bigr),$$
+exactly the exponential that the [probability spaces](/en/concepts/probability-space) section obtained from $1-x\le e^{-x}$. At $n=23$, $\lambda=\frac{253}{365}\approx0.693\approx\ln2$: the approximation gives $0.500$, the exact value is $0.493$. The pairs are not quite independent (if A and B share a day and B and C do, then so do A and C), but the dependence is weak. "The number of many nearly independent rare events is approximately Poisson" is a principle far wider than this section's theorem.
+</Application>
+
+<Application title="Missed photons: total probability as a sum over a distribution">
+The number of photons reaching a detector in one second is $N\sim\mathrm{Poisson}(\lambda)$, and each photon is recorded with probability $q$, independently. What is the distribution of the number recorded, $M$? Split by the value of $N$. This is the [law of total probability](/en/concepts/conditional-probability), with the sum now running over a distribution:
+$$P(M=m)=\sum_{n\ge m}\binom nm q^m(1-q)^{n-m}\cdot e^{-\lambda}\frac{\lambda^n}{n!}=e^{-\lambda}\frac{(\lambda q)^m}{m!}\sum_{j\ge0}\frac{\bigl(\lambda(1-q)\bigr)^j}{j!}=e^{-\lambda q}\frac{(\lambda q)^m}{m!}.$$
+(The second step puts $j=n-m$.) So $M\sim\mathrm{Poisson}(\lambda q)$: losing a random share of a Poisson count leaves a Poisson count with a discounted mean. Asking the reverse question with Bayes' theorem, "given $m$ recorded, how many arrived?", gives $P(N=n\mid M=m)=e^{-\lambda(1-q)}\dfrac{(\lambda(1-q))^{n-m}}{(n-m)!}$: the number missed, $N-m$, is $\mathrm{Poisson}(\lambda(1-q))$ **whatever** $m$ is.
+</Application>
+
+<Tool id="plot" />
+
+In the plotter, draw $(1-3/x)^x$ and the constant $\exp(-3)\approx0.0498$. At $x=10$ the first is only $0.028$, at $x=100$ it is $0.0476$, at $x=1000$ it is $0.0496$: the key step in the proof of the Poisson limit theorem is this curve approaching this horizontal line.
+
+## Further: waiting times and densities
+
+The same idea answers another question: **how long until the next call?** Let calls arrive at an average rate of $\lambda$ per hour. Cut $[0,t]$ into $n$ short pieces; each contains a call with probability about $\lambda t/n$, so by the Poisson limit theorem the number of calls in $[0,t]$ is approximately $\mathrm{Poisson}(\lambda t)$. The waiting time $T$ exceeds $t$ exactly when no call arrives in $[0,t]$:
+$$P(T>t)=e^{-\lambda t},\qquad t\ge0.$$
+$T$ can be any real number in $[0,\infty)$, and $P(T=t)=0$ for every particular $t$, so a mass function is useless here. We need another description.
+
+<Definition title="Distribution function and density">
+The **distribution function** of a random variable $X$ is $F(x)=P(X\le x)$. If there is a non-negative function $f$ such that for every real $x$
+$$F(x)=\int_{-\infty}^xf(t)\,dt,$$
+then $X$ is called **continuous** and $f$ is its **probability density**.
+</Definition>
+
+Then $P(a<X\le b)=F(b)-F(a)=\int_a^bf(t)\,dt$: probability is area under the density curve. Where $f$ is continuous, the [fundamental theorem of calculus](/en/concepts/integral) gives $F'(x)=f(x)$. The waiting time has distribution function $F(t)=1-e^{-\lambda t}$; differentiating gives the density $f(t)=\lambda e^{-\lambda t}$ for $t\ge0$, the **exponential distribution**. A density is not a probability and can exceed $1$; it is $f(x)\,\Delta x$ that approximates the probability of landing in $(x,x+\Delta x]$. Draw $a\exp(-ax)$ in the plotter and drag the parameter $a$: the larger $a$, the taller and narrower the curve, and the area under it is always $1$. The $p(w\mid D)$ in the previous section's Bayesian neural networks is a density of exactly this kind.
+
+<Remark>
+The [probability spaces](/en/concepts/probability-space) section assumed $\Omega$ finite or countable, where every subset can be an event. A random variable with continuous values such as $T$ needs an uncountable $\Omega$, and then not every subset can sensibly be given a probability: $P$ is defined only on a large enough family of sets, one that contains all intervals. The rigorous treatment is measure theory, which this path does not go into; this section only needs probabilities of intervals, where the issue never arises.
+</Remark>
+
+<Remark>
+The binomial peak sits near $np$, the Poisson peak near $\lambda$. The precise version of this "centre" is the **mean**, and of the "width" the **variance**: the subject of the next section, **mean and variance** (in progress). There we will also see that the covariance of two random variables is an [inner product](/en/concepts/inner-product), so the Cauchy–Schwarz inequality gives $|\rho|\le1$ at once.
+</Remark>
