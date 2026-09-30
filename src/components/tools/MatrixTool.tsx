@@ -4,6 +4,7 @@ import { useMemo, useState } from "react";
 import type { Locale } from "@/i18n/config";
 import { apply, det, eigen, format, multiply, trace, type Mat2 } from "@/lib/math/linear";
 import { tex } from "@/lib/tex";
+import { withBoundary } from "@/components/IslandBoundary";
 
 const copy = {
   zh: { title: "2×2 矩阵计算器", hint: "输入矩阵 A 与向量 v。行列式、迹、逆、特征值与特征向量、Av 与 A² 都实时计算。", singular: "A 不可逆（行列式为 0）", complex: "复特征值：没有实特征方向" },
@@ -15,7 +16,7 @@ function num(s: string): number {
   return Number.isFinite(v) ? v : 0;
 }
 
-export function MatrixTool({ locale }: { locale: Locale }) {
+function MatrixToolIsland({ locale }: { locale: Locale }) {
   const t = copy[locale];
   const [cells, setCells] = useState(["2", "1", "1", "2"]);
   const [vec, setVec] = useState(["1", "0"]);
@@ -61,3 +62,6 @@ export function MatrixTool({ locale }: { locale: Locale }) {
     </section>
   );
 }
+
+/** An error inside the MatrixTool shows a message with a reload button instead of removing it from the page. */
+export const MatrixTool = withBoundary(MatrixToolIsland);

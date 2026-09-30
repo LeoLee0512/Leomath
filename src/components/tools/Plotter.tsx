@@ -5,6 +5,7 @@ import type { Locale } from "@/i18n/config";
 import { Plot, fitCanvas } from "@/lib/plot";
 import { compile, ExprError, type Compiled } from "@/lib/math/expr";
 import { useResizeVersion, useThemeColors } from "../experiments/useTheme";
+import { withBoundary } from "@/components/IslandBoundary";
 
 const copy = {
   zh: {
@@ -30,7 +31,7 @@ function describe(err: unknown, t: (typeof copy)["zh"]): string {
 
 interface Curve { src: string; compiled?: Compiled; error?: string }
 
-export function Plotter({ locale }: { locale: Locale }) {
+function PlotterIsland({ locale }: { locale: Locale }) {
   const t = copy[locale];
   const colors = useThemeColors();
   const wrapRef = useRef<HTMLDivElement>(null);
@@ -108,11 +109,14 @@ export function Plotter({ locale }: { locale: Locale }) {
   const drag = useRef<{ x: number; y: number; cx: number; cy: number } | null>(null);
   function onDown(e: React.PointerEvent<HTMLCanvasElement>) { drag.current = { x: e.clientX, y: e.clientY, cx: view.cx, cy: view.cy }; e.currentTarget.setPointerCapture(e.pointerId); }
   function onMove(e: React.PointerEvent<HTMLCanvasElement>) {
-    if (!drag.current) return;
+    const start = drag.current;
+    if (!start) return;
     const rect = e.currentTarget.getBoundingClientRect();
-    const dx = ((e.clientX - drag.current.x) / rect.width) * view.w;
-    const dy = ((e.clientY - drag.current.y) / rect.height) * (view.w / 1.6);
-    setView((v) => ({ ...v, cx: drag.current!.cx - dx, cy: drag.current!.cy + dy }));
+    const dx = ((e.clientX - start.x) / rect.width) * view.w;
+    const dy = ((e.clientY - start.y) / rect.height) * (view.w / 1.6);
+    // Computed now, not inside a state updater: React runs updaters later, by which time the pointer may be
+    // up and drag.current null, and a throw during render would unmount the whole tool.
+    setView((v) => ({ ...v, cx: start.cx - dx, cy: start.cy + dy }));
   }
   function onUp(e: React.PointerEvent<HTMLCanvasElement>) { drag.current = null; e.currentTarget.releasePointerCapture(e.pointerId); }
 
@@ -195,3 +199,6 @@ function niceStep(w: number): number {
 function trim(x: number): string {
   return Number(x.toPrecision(6)).toString();
 }
+
+/** An error inside the Plotter shows a message with a reload button instead of removing it from the page. */
+export const Plotter = withBoundary(PlotterIsland);

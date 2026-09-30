@@ -2,6 +2,7 @@ import type { ComponentType } from "react";
 import type { Locale } from "@/i18n/config";
 import { ExperimentShell } from "../ExperimentShell";
 import { TexProvider } from "../texContext";
+import { IslandBoundary } from "../../IslandBoundary";
 
 export interface ExperimentIslandProps {
   slug: string;
@@ -30,11 +31,14 @@ export function island(Experiment: ExperimentComponent) {
         <Experiment locale={locale} preset={preset} compact={compact} />
       </TexProvider>
     );
-    if (compact) return inner;
+    // An error inside the experiment shows a message with a reload button instead of removing it from the page.
+    if (compact) return <IslandBoundary locale={locale}>{inner}</IslandBoundary>;
     return (
-      <ExperimentShell slug={slug} locale={locale} query={query} backHref={backHref}>
-        {inner}
-      </ExperimentShell>
+      <IslandBoundary locale={locale}>
+        <ExperimentShell slug={slug} locale={locale} query={query} backHref={backHref}>
+          {inner}
+        </ExperimentShell>
+      </IslandBoundary>
     );
   };
 }

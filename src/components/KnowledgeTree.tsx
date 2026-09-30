@@ -3,6 +3,7 @@
 import { useMemo, useState } from "react";
 import type { Locale } from "@/i18n/config";
 import { concepts, getConcept, paths, prerequisiteChain, prerequisiteClosure, type Concept } from "@/content/graph";
+import { withBoundary } from "@/components/IslandBoundary";
 
 /** Hand-laid positions in a 1120 × 800 viewBox. */
 const positions: Record<string, [number, number]> = {
@@ -92,7 +93,7 @@ export interface KnowledgeTreeProps {
   minutes?: Record<string, number>;
 }
 
-export function KnowledgeTree({ locale, focus, minutes = {} }: KnowledgeTreeProps) {
+function KnowledgeTreeIsland({ locale, focus, minutes = {} }: KnowledgeTreeProps) {
   const [hover, setHover] = useState<string | null>(null);
   const [pinned, setPinned] = useState<string | null>(focus ?? null);
   const active = hover ?? pinned;
@@ -376,3 +377,6 @@ export function KnowledgeTree({ locale, focus, minutes = {} }: KnowledgeTreeProp
     </div>
   );
 }
+
+/** An error inside the KnowledgeTree shows a message with a reload button instead of removing it from the page. */
+export const KnowledgeTree = withBoundary(KnowledgeTreeIsland);

@@ -191,12 +191,14 @@ export function LinearTransform({ locale, compact = false, initial = [1, 0, 0, 1
     ev.currentTarget.setPointerCapture(ev.pointerId);
   }
   function onMove(ev: React.PointerEvent<HTMLCanvasElement>) {
-    if (dragging.current === null) return;
+    const which = dragging.current;
+    if (which === null) return;
     const [x, y] = toMath(ev);
     const snapped: Vec2 = [snap(x), snap(y)];
+    // Read the ref now: the updater runs later, after the pointer may already be up.
     setM((prev) => {
       const [c1, c2] = [[prev[0], prev[2]] as Vec2, [prev[1], prev[3]] as Vec2];
-      return dragging.current === 0 ? fromColumns(snapped, c2) : fromColumns(c1, snapped);
+      return which === 0 ? fromColumns(snapped, c2) : fromColumns(c1, snapped);
     });
   }
   function onUp(ev: React.PointerEvent<HTMLCanvasElement>) {
