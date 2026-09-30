@@ -3,6 +3,7 @@
 import { useMemo, useState } from "react";
 import type { Locale } from "@/i18n/config";
 import { tex } from "@/lib/tex";
+import { withBoundary } from "@/components/IslandBoundary";
 
 const snippets = [
   { label: "a/b", tex: "\\frac{a}{b}" }, { label: "√", tex: "\\sqrt{x}" }, { label: "xⁿ", tex: "x^{n}" }, { label: "aₙ", tex: "a_{n}" },
@@ -16,7 +17,7 @@ const strings = {
   en: { title: "Formula editor", hint: "Type LaTeX; it renders live. Click a button to insert a common structure.", copy: "Copy LaTeX", copied: "Copied", copyFail: "The browser blocked automatic copying; select and copy by hand.", display: "display", inline: "inline" },
 };
 
-export function FormulaEditor({ locale }: { locale: Locale }) {
+function FormulaEditorIsland({ locale }: { locale: Locale }) {
   const t = strings[locale];
   const [src, setSrc] = useState("\\int_0^1 x^2\\,dx = \\left[\\frac{x^3}{3}\\right]_0^1 = \\frac13");
   const [display, setDisplay] = useState(true);
@@ -76,3 +77,6 @@ export function FormulaEditor({ locale }: { locale: Locale }) {
     </section>
   );
 }
+
+/** An error inside the FormulaEditor shows a message with a reload button instead of removing it from the page. */
+export const FormulaEditor = withBoundary(FormulaEditorIsland);
