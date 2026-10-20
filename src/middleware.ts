@@ -3,6 +3,7 @@ import { defineMiddleware } from "astro:middleware";
 import { LOCALE_COOKIE, isLocale, negotiateLocale } from "@/i18n/config";
 import { currentUser } from "@/lib/auth";
 import { SITE_URL } from "@/lib/seo";
+import { htmlResponsePolicy, localeRedirectPolicy } from "@/lib/response-policy";
 
 const PUBLIC_FILE = /\.[a-zA-Z0-9]+$/;
 const dev = import.meta.env.DEV;
@@ -54,7 +55,11 @@ export const onRequest = defineMiddleware(async (context, next) => {
     const locale = isLocale(cookie) ? cookie : negotiateLocale(context.request.headers.get("accept-language"));
     const url = new URL(context.url);
     url.pathname = `/${locale}${pathname === "/" ? "" : pathname}`;
-    return context.redirect(url.pathname + url.search, 307);
+    const redirect = context.redirect(url.pathname + url.search, 307);
+    const headers = new Headers(redirect.headers);
+    securityHeaders(headers);
+    localeRedirectPolicy(headers);
+    return new Response(redirect.body, { status: redirect.status, headers });
   }
 
   context.locals.locale = isLocale(first) ? first : "zh";
@@ -71,6 +76,7 @@ export const onRequest = defineMiddleware(async (context, next) => {
   }
   // The policy lists the hashes of this page's inline scripts, so the whole page is read first.
   const html = await response.text();
+  htmlResponsePolicy(headers);
   headers.set(process.env.CSP_ENFORCE === "1" ? "Content-Security-Policy" : "Content-Security-Policy-Report-Only", contentSecurityPolicy(html));
   headers.delete("content-length");
   return new Response(html, { status: response.status, statusText: response.statusText, headers });

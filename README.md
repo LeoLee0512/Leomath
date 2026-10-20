@@ -116,3 +116,9 @@ MathForge（[LeoLee0512/MathLearn](https://github.com/LeoLee0512/MathLearn)，v0
 ## 许可 · Licence
 
 代码 MIT（[LICENSE](./LICENSE)）；数学正文与文档 CC BY-SA 4.0（[LICENSE-CONTENT](./LICENSE-CONTENT)）。
+
+## 概念分享图与 HTML 响应
+
+每个已发布概念都有中英文独立 PNG 分享图（1200 × 630），位于 `public/og/concepts/{zh,en}/`。概念页的 Open Graph 与 Twitter 元数据使用相应图片；其他页面保留站点默认图。修改标题、简介、路线或新增概念后，在安装了 **Noto Sans CJK SC**（Debian/Ubuntu：`fonts-noto-cjk`）和 Fontconfig 的环境执行 `npm run og:concepts`，并提交生成图片。生产构建直接打包 PNG，不依赖服务器字体。`npm test` 检查每个已发布概念的图片存在、尺寸正确且内容不同。
+
+HTML 由服务端根据登录状态和进度生成，统一返回 `Content-Type: text/html; charset=utf-8`、`Cache-Control: private, no-store`、`Vary: Cookie`。无语言前缀的跳转额外声明 `Vary: Accept-Language`；已有的 `Vary` 字段会保留。带哈希的 `/_astro/` 静态资源继续长期缓存。nginx 配置显式指定 UTF-8 和 `gzip_vary on`，转发应用的缓存策略。
