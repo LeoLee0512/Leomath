@@ -15,7 +15,7 @@ import { getConcept, experimentsForConcept, dependents, neighboursInPath, prereq
 import { exercisesForConcept } from "@/content/exercises";
 import { getProgress, getExerciseSummary, type ProgressStatus } from "@/lib/progress";
 import { readingMinutes } from "@/lib/reading";
-import { pageMeta } from "@/lib/seo";
+import { pageMeta, conceptImage } from "@/lib/seo";
 import { redirectAfterForms } from "@/lib/forms";
 import type { AnswerResult } from "@/actions";
 
@@ -45,7 +45,7 @@ const after = dependents(slug);
 const chapter = path ? path.concepts.indexOf(slug) + 1 : 1;
 const navHeadings = exs.length > 0 ? [...headings, { id: "exercises", text: t.learn.exercises, depth: 2 }] : headings;
 const answer = Astro.getActionResult(actions.checkAnswer)?.data as AnswerResult | undefined;
-const meta = pageMeta(locale, `/concepts/${slug}`, t.tagline, { title: c.title[locale], description: c.summary[locale], type: "article" });
+const meta = pageMeta(locale, `/concepts/${slug}`, t.tagline, { title: c.title[locale], description: c.summary[locale], type: "article", image: conceptImage(locale, slug, c.title[locale]) });
 ---
 <Base meta={meta}>
   <div class="container py-12 grid gap-12 lg:grid-cols-[minmax(0,1fr)_16rem]">

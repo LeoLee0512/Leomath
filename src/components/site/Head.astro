@@ -1,13 +1,13 @@
 ---
 /** <head> contents for every page: title, description, canonical URL, hreflang, Open Graph, Twitter card, icons. */
-import { OG_IMAGE, SITE_NAME, SITE_URL, ogLocale, type PageMeta } from "@/lib/seo";
+import { SITE_NAME, SITE_URL, ogLocale, type PageMeta } from "@/lib/seo";
 import { locales } from "@/i18n/config";
 
 interface Props {
   meta: PageMeta;
 }
 const { meta } = Astro.props;
-const image = `${SITE_URL}${OG_IMAGE.url}`;
+const image = `${SITE_URL}${meta.image.url}`;
 ---
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -24,14 +24,15 @@ const image = `${SITE_URL}${OG_IMAGE.url}`;
 <meta property="og:locale" content={ogLocale[meta.locale]} />
 {locales.filter((l) => l !== meta.locale).map((l) => <meta property="og:locale:alternate" content={ogLocale[l]} />)}
 <meta property="og:image" content={image} />
-<meta property="og:image:width" content={String(OG_IMAGE.width)} />
-<meta property="og:image:height" content={String(OG_IMAGE.height)} />
-<meta property="og:image:alt" content={OG_IMAGE.alt} />
+<meta property="og:image:width" content={String(meta.image.width)} />
+<meta property="og:image:height" content={String(meta.image.height)} />
+<meta property="og:image:alt" content={meta.image.alt} />
 <meta property="og:type" content={meta.type} />
 <meta name="twitter:card" content="summary_large_image" />
 <meta name="twitter:title" content={meta.shareTitle} />
 <meta name="twitter:description" content={meta.description} />
 <meta name="twitter:image" content={image} />
+<meta name="twitter:image:alt" content={meta.image.alt} />
 <link rel="icon" href="/icon.svg" type="image/svg+xml" />
 <link rel="icon" href="/favicon.ico" sizes="32x32" />
 <link rel="apple-touch-icon" href="/apple-touch-icon.png" />

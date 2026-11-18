@@ -106,7 +106,7 @@ docker compose exec db psql -U leomath -c "UPDATE users SET is_admin = true WHER
   ```bash
   docker compose logs web | grep "\[csp\]"
   ```
-  日志干净后，在 `.env` 里设 `CSP_ENFORCE=1` 并 `docker compose up -d` 重启即可。脚本只有带上每次请求随机生成的 nonce 才能运行，所以强制模式能挡住注入的内联脚本。
+  日志干净后，在 `.env` 里设 `CSP_ENFORCE=1` 并 `docker compose up -d` 重启即可。站内脚本通过 `self` 放行，页面内联脚本通过其内容的 SHA-256 哈希放行，所以强制模式能挡住不匹配的注入脚本。`style-src` 暂保留 `unsafe-inline`，用于交互实验的动态样式；后续需单独审计样式属性与样式块后再收紧。
 - **限流**：`deploy/nginx.leomath.conf` 对登录、注册、账户页面和 CSP 报告接口按 IP 限速（超出返回 429）；应用内另有按 IP 和按账户的失败计数（登录失败 5 次锁定该账户 15 分钟）。更新 nginx 配置后执行 `sudo nginx -t && sudo systemctl reload nginx`。应用依赖 nginx 设置的 `X-Real-IP` 识别访客，不要去掉这一行。
 - **日志上限**：`docker-compose.yml` 把每个容器的日志限制为 3 个 10 MB 文件。
 - **HSTS**：`SITE_URL` 以 `https://` 开头时自动发送 `Strict-Transport-Security: max-age=15552000`（180 天）。只在 HTTPS 已稳定可用后部署这一版；一旦浏览器收到 HSTS，180 天内都只会用 HTTPS 访问。
@@ -134,3 +134,17 @@ docker compose exec -T db pg_dump -U leomath leomath | gzip > /opt/leomath/backu
 - 看到 nginx 欢迎页：说明 `default.conf` 还在，或 `leomath.conf` 没有加载，`nginx -T | grep server_name` 检查。
 - 502：容器没起来或没监听 3000，`docker compose ps`。
 - 注册/登录报「出错了」：检查 `DATABASE_URL` 与 `db` 健康状态。
+
+
+### HTML 缓存与字符集核对
+
+应用中间件为 HTML 显式设置 `text/html; charset=utf-8` 和 `private, no-store`，防止账号状态、练习或进度被跨用户缓存；`Vary: Cookie` 保留上游已有的协商字段。根路径语言跳转使用 `Vary: Accept-Language, Cookie` 和同样的禁止存储策略。nginx 应转发这些字段，不能覆盖成公共 HTML 缓存；静态哈希资源的长期缓存不变。`gzip_vary on` 使实际启用压缩时声明 `Accept-Encoding`。
+
+部署后分别检查首页、语言跳转、概念页和静态图片（当前云端检查不代表公网已更新）：
+
+```sh
+curl -sSI https://leomath.cn/zh
+curl -sSI -H 'Accept-Language: en' https://leomath.cn/
+curl -sSI https://leomath.cn/zh/concepts/derivative
+curl -sSI https://leomath.cn/og/concepts/zh/derivative.png
+```
