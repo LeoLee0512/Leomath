@@ -21,7 +21,8 @@ MathForge (LeoLee0512/MathLearn) is archived. What was worth keeping has been re
   - [x] Probability spaces (birthday problem), published 2026-09.
   - [x] Conditional probability & Bayes (screening and area experiments; a short Bayesian-neural-network extension), published 2026-09.
   - [x] Random variables (binomial → Poisson experiment; binomial peak; waiting times and densities), published 2026-09.
-  - [ ] Mean & variance (covariance as an inner product), Central limit theorem.
+  - [x] Mean & variance (covariance as an inner product; correlation experiment), published 2026-10.
+  - [ ] Central limit theorem, then Random walks as the bridge to the heat equation.
   - [ ] Later: a statistics path (sampling distributions, estimation, hypothesis testing).
   - Ideas are rewritten, never copied, from public probability demos at https://github.com/huzhuofan1020-svg; each borrowed node, experiment and path carries a `credits` link to the specific repository (link only, no name, at the author's request).
 - [ ] Number theory (gcd and Bézout) and analytic geometry (conics and eccentricity): not yet placed in the tree.
@@ -44,6 +45,7 @@ No new nodes until the existing ones are complete. `node scripts/audit-chain.mjs
 - Search across concepts and exercises.
 - Leo Lab: Lorenz system, Fourier series, numerical integration experiments.
 - Dev log.
+- Next main line: PDE. Partial derivatives and the gradient → Fourier series → heat equation (from conservation and from random walks) → wave equation → Laplace equation → finite differences and stability (optional).
 - More paths: multivariable calculus, numerical analysis.
 - Computational tools: ODE solver with exportable data; 3×3 matrices.
 - Software: screenshots, SHA-256 checksums, update history per release.

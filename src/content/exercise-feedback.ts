@@ -110,6 +110,18 @@ export const optionFeedback: Record<string, Bilingual[]> = {
     b("np 只决定均值。近似的好坏取决于 p：距离不超过 np²=λp，p 越小越好。", "np fixes only the mean. The quality of the approximation depends on p: the distance is at most np²=λp, smaller for smaller p."),
     b("B(1000,0.005) 与 Poisson(5) 的距离约 0.0012：任何一个事件的概率，两者都相差不到 0.0012。", "B(1000,0.005) is about 0.0012 from Poisson(5): no event's probability differs by more than 0.0012 between them."),
   ],
+  "expectation-variance-3": [
+    b("Y=X² 完全由 X 决定，不可能独立：P(X=0, Y=0)=1/3，而 P(X=0)P(Y=0)=1/9。", "Y=X² is determined by X, so they cannot be independent: P(X=0, Y=0)=1/3 while P(X=0)P(Y=0)=1/9."),
+    b("E(XY)=EX³=0，EX=0，所以 Cov=0；可 P(X=0, Y=0)=1/3≠1/9，不独立。不相关推不出独立。", "E(XY)=EX³=0 and EX=0, so Cov=0; yet P(X=0, Y=0)=1/3≠1/9, so not independent. Uncorrelated does not imply independent."),
+    b("Y 随 |X| 增大，不是随 X 增大。X=−1 与 X=1 时 Y 一样大，两边的贡献一正一负，正好抵消。", "Y grows with |X|, not with X. At X=−1 and X=1, Y is the same, and the two contributions cancel, one positive and one negative."),
+    b("ρ=±1 要求 Y 是 X 的线性函数（以概率 1）。Y=X² 是非线性的，这里 ρ=0。", "ρ=±1 needs Y to be a linear function of X (with probability 1). Y=X² is not linear, and here ρ=0."),
+  ],
+  "expectation-variance-4": [
+    b("1/10 是某一个人拿对的概率 P(Aᵢ)。人数是 10 个示性变量之和，期望要把 10 个 1/10 加起来。", "1/10 is the chance P(Aᵢ) for one person. The count is a sum of 10 indicators; its expectation adds up ten times 1/10."),
+    b("N=Σ1_{Aᵢ}，每项期望 1/10，由线性性 EN=1，与人数无关。线性性不需要独立。", "N=Σ1_{Aᵢ} with each term of mean 1/10, so EN=1 by linearity, whatever the number of people. Linearity needs no independence."),
+    b("e^{−1}≈0.368 是“没有一个人拿对”的概率的近似值，是一个概率，不是人数的期望。", "e^{−1}≈0.368 approximates the probability that nobody gets their own hat: a probability, not the expected count."),
+    b("期望的线性性对任何随机变量都成立，不需要独立。需要独立的是“方差相加”和“乘积的期望拆开”。", "Linearity of expectation holds for any random variables, independent or not. It is additivity of variance and splitting E(XY) that need independence."),
+  ],
 };
 
 /** A specific wrong numeric answer and what it usually means. Checked before the generic diagnoses. */
@@ -143,6 +155,18 @@ export const numericMistakes: Record<string, KnownMistake[]> = {
     { value: 0.4, feedback: b("0.4 是乙的产量占比，也就是先验，还没用上“抽到次品”这条信息。", "0.4 is B's share of production, the prior; the information “defective” has not been used yet.") },
     { value: 0.05, feedback: b("0.05 是 P(次品|乙)，所求的是反过来的 P(乙|次品)。", "0.05 is P(defective | B); the question asks for the reverse, P(B | defective).") },
     { value: 0.032, feedback: b("0.032 是 P(次品)，是 Bayes 公式的分母，还要用它去除 P(乙)P(次品|乙)。", "0.032 is P(defective), the denominator of Bayes' formula; divide P(B)P(defective | B) by it.") },
+  ],
+  "expectation-variance-1": [
+    { value: 35 / 12, feedback: b("35/12 是一枚骰子的方差。两枚骰子独立，方差要相加。", "35/12 is the variance of one die. The two dice are independent, so the variances add.") },
+    { value: 35 / 3, feedback: b("35/3=Var(2X)：这是把一枚骰子的点数乘以 2。两枚独立骰子之和的方差是 2·Var X，不是 4·Var X。", "35/3=Var(2X): that doubles the score of one die. The sum of two independent dice has variance 2·Var X, not 4·Var X.") },
+    { value: 91 / 3, feedback: b("91/3 是 E(X₁²)+E(X₂²)，忘了减去 (EX)²。方差是 EX²−(EX)²。", "91/3 is E(X₁²)+E(X₂²): the (EX)² was not subtracted. Variance is EX²−(EX)².") },
+    { value: 7, feedback: b("7 是点数之和的期望，题目问的是方差。", "7 is the expected total; the question asks for the variance.") },
+  ],
+  "expectation-variance-2": [
+    { value: 3, feedback: b("3 是平均值的方差，单位是 mm²。标准差还要开方。", "3 is the variance of the average, in mm². The standard deviation is its square root.") },
+    { value: Math.SQRT2, feedback: b("√2 是误差独立时的结果。这里相关系数是 0.5，Var 里还有 2Cov 这一项。", "√2 is the answer for independent errors. Here the correlation is 0.5, and the variance has the extra 2Cov term.") },
+    { value: 1.5, feedback: b("1.5=σ(1+ρ)/2 把标准差当成了线性的。要先算方差 σ²(1+ρ)/2=3，再开方。", "1.5=σ(1+ρ)/2 treats the standard deviation as linear. Compute the variance σ²(1+ρ)/2=3 first, then take the root.") },
+    { value: 2, feedback: b("只有相关系数为 1 时取平均才完全没用。ρ=0.5 时还有一部分改善。", "Averaging is useless only when the correlation is 1. At ρ=0.5 there is still some improvement.") },
   ],
   "conditional-probability-4": [
     { value: 0.107, feedback: b("这是只测一次后的后验。第二次阳性要把 0.107 当作新的先验再更新一次。", "That is the posterior after one test. For the second positive, use 0.107 as the new prior and update again.") },

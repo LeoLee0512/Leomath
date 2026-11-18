@@ -78,7 +78,7 @@ export interface Observation {
   explanation: Bilingual;
 }
 
-export type ExperimentKind = "linear-transform" | "ode-explorer" | "exponential-derivative" | "secant-tangent" | "riemann-sums" | "taylor-approx" | "birthday-problem" | "conditioning" | "bayes-screening" | "binomial-poisson" | "epsilon-band" | "basis-coordinates" | "projection-slack";
+export type ExperimentKind = "linear-transform" | "ode-explorer" | "exponential-derivative" | "secant-tangent" | "riemann-sums" | "taylor-approx" | "birthday-problem" | "conditioning" | "bayes-screening" | "binomial-poisson" | "epsilon-band" | "basis-coordinates" | "projection-slack" | "correlation-angle";
 
 export interface Experiment {
   slug: string;
@@ -103,7 +103,7 @@ export const concepts: Concept[] = [
   { slug: "probability-space", title: b("概率空间", "Probability spaces"), summary: b("样本空间、事件与三条公理；生日问题为什么反直觉。", "Sample space, events and three axioms; why the birthday problem defies intuition."), parent: "probability", prerequisites: [], status: "published", level: "undergrad", path: "probability", experiments: ["birthday-problem"], tools: ["plot"], credits: [{ url: `${PROB_DEMOS}/GDGX`, note: b("生日问题实验的思路参考", "Birthday-problem experiment idea from") }], },
   { slug: "conditional-probability", title: b("条件概率与 Bayes", "Conditioning & Bayes"), summary: b("知道一件事发生了，就把样本空间缩小到它；再用结果反推原因。", "Knowing an event occurred shrinks the sample space to it; then reason from effects back to causes."), parent: "probability", prerequisites: ["probability-space"], status: "published", level: "undergrad", path: "probability", experiments: ["bayes-screening", "conditioning"], tools: ["plot"], credits: [{ url: `${PROB_DEMOS}/ybs`, note: b("筛查实验的思路参考", "Screening experiment idea from") }, { url: `${PROB_DEMOS}/Venn`, note: b("事件关系实验的思路参考", "Event-relations experiment idea from") }] },
   { slug: "random-variables", title: b("随机变量与分布", "Random variables"), summary: b("把结果变成数；二项分布的极限是 Poisson。", "Turning outcomes into numbers; the Poisson law as a limit of binomials."), parent: "probability", prerequisites: ["conditional-probability"], status: "published", level: "undergrad", path: "probability", experiments: ["binomial-poisson"], tools: ["plot"], credits: [{ url: `${PROB_DEMOS}/EXFB`, note: b("二项分布峰值分析的思路参考", "Binomial peak analysis idea from") }, { url: `${PROB_DEMOS}/PoissonDist`, note: b("Poisson 计数模拟的思路参考", "Poisson counting simulation idea from") }] },
-  { slug: "expectation-variance", title: b("期望与方差", "Mean & variance"), summary: b("协方差是一种内积，所以相关系数落在 [−1, 1]。", "Covariance is an inner product, so correlation lies in [−1, 1]."), parent: "probability", prerequisites: ["random-variables", "inner-product"], status: "planned", level: "undergrad", experiments: [] },
+  { slug: "expectation-variance", title: b("期望与方差", "Mean & variance"), summary: b("平均值与波动的精确说法；协方差是一种内积，所以相关系数落在 [−1, 1]。", "Average and spread made precise; covariance is an inner product, so correlation lies in [−1, 1]."), parent: "probability", prerequisites: ["random-variables", "inner-product"], status: "published", level: "undergrad", path: "probability", experiments: ["correlation-angle"], tools: ["plot"] },
   { slug: "central-limit-theorem", title: b("中心极限定理", "Central limit theorem"), summary: b("分布为什么走向钟形。", "Why distributions tend to the bell curve."), parent: "probability", prerequisites: ["expectation-variance"], status: "planned", level: "undergrad", experiments: [] },
 
   // ---- foundations (planned) ----
@@ -177,10 +177,10 @@ export const paths: LearningPath[] = [
     subtitle: b("概率空间 → 条件概率 → 随机变量 → 期望与方差 → 中心极限定理（建设中）", "Probability spaces → Conditional probability → Random variables → Mean & variance → Central limit theorem (in progress)"),
     intent: b("不确定性、计数与规律", "uncertainty, counting and regularity"),
     level: "intro",
-    requires: b("高中的排列组合", "school counting (permutations and combinations)"),
-    audience: b("想弄懂“概率到底在算什么”的人。这条路线正在建设，已完成前三节。", "anyone who wants to know what probability actually computes. The path is being built; the first three sections are done."),
-    outcome: b("理解概率空间与三条公理；会用补事件和计数算概率；掌握条件概率、独立性与 Bayes 公式；用随机变量和分布描述计数，知道二项分布何时可以用 Poisson 分布近似。", "understand probability spaces and the three axioms; compute probabilities by counting and complements; use conditional probability, independence and Bayes' theorem; describe counts with random variables and distributions, and know when a binomial law can be replaced by a Poisson law."),
-    concepts: ["probability-space", "conditional-probability", "random-variables"],
+    requires: b("高中的排列组合；第四节用到「线性代数基础」里的内积", "school counting (permutations and combinations); section four uses inner products from “Linear algebra”"),
+    audience: b("想弄懂“概率到底在算什么”的人。这条路线正在建设，已完成前四节。", "anyone who wants to know what probability actually computes. The path is being built; the first four sections are done."),
+    outcome: b("理解概率空间与三条公理；会用补事件和计数算概率；掌握条件概率、独立性与 Bayes 公式；用随机变量和分布描述计数，知道二项分布何时可以用 Poisson 分布近似；会算期望与方差，理解协方差为什么是内积、平均为什么能减小误差。", "understand probability spaces and the three axioms; compute probabilities by counting and complements; use conditional probability, independence and Bayes' theorem; describe counts with random variables and distributions, know when a binomial law can be replaced by a Poisson law; compute means and variances, and see why covariance is an inner product and why averaging reduces error."),
+    concepts: ["probability-space", "conditional-probability", "random-variables", "expectation-variance"],
     credits: [{ url: `${PROB_DEMOS}/probability-stats-hub`, note: b("路线规划参考", "Path outline informed by") }],
   },
 ];
@@ -423,6 +423,24 @@ export const experiments: Experiment[] = [
       ),
     },
     credits: [{ url: `${PROB_DEMOS}/EXFB`, note: b("峰值分析的思路参考", "Peak analysis idea from") }, { url: `${PROB_DEMOS}/PoissonDist`, note: b("计数模拟的思路参考", "Counting simulation idea from") }],
+  },
+  {
+    slug: "correlation-angle",
+    kind: "correlation-angle",
+    title: b("相关系数是一个夹角的余弦", "Correlation is the cosine of an angle"),
+    summary: b("掷一次骰子，六个结果各给出一个点 (X, Y)。拖动这些点：协方差是矩形有向面积的平均；减去均值后，X 与 Y 是两个向量，相关系数是它们夹角的余弦。", "One die roll, six outcomes, each giving a point (X, Y). Drag the points: the covariance is the average signed area of the rectangles; with the means removed, X and Y are two vectors, and the correlation is the cosine of the angle between them."),
+    concept: "expectation-variance",
+    observe: {
+      questions: [
+        b("按“完全线性”：ρ 和夹角 θ 是多少？再把第 6 个点往下拖，离开直线。ρ 怎么变？无论怎么拖，ρ 能超出 [−1, 1] 吗？", "Press “On a line”. What are ρ and the angle θ? Now drag point 6 down, off the line. How does ρ change? Can any drag push ρ outside [−1, 1]?"),
+        b("按“不相关却有关系”：这时 Y 完全由 X 决定，Cov 却是 0。左图里正、负面积是怎样抵消的？", "Press “Uncorrelated, yet related”. Here Y is completely determined by X, yet Cov is 0. How do the positive and negative areas on the left cancel?"),
+        b("按“一个离群点”，记下 ρ；再把第 6 个点拖到 (0, 0)。ρ 变成了多少？为什么一个点能有这么大的影响？", "Press “One outlier” and note ρ; then drag point 6 to (0, 0). What does ρ become? Why can one point matter so much?"),
+      ],
+      explanation: b(
+        "“完全线性”的六个点都在直线 $y=\\tfrac12x+\\tfrac12$ 上，$Y-EY=\\tfrac12(X-EX)$，两个向量同向，$\\rho=1$，$\\theta=0^\\circ$。把第 6 个点从 $(3,2)$ 拖到 $(3,0)$，$\\rho$ 降到约 $0.726$，夹角约 $43^\\circ$。$\\rho$ 是两个向量夹角的余弦，由 Cauchy–Schwarz 不等式，怎么拖都出不了 $[-1,1]$；只有六个点落在同一条既不水平也不竖直的直线上时，才取到 $\\pm1$。“不相关却有关系”的六个点关于 $x=0$ 对称，$Y=\\tfrac12X^2-\\tfrac52$：$(x,y)$ 与 $(-x,y)$ 的两个矩形一蓝一红，面积相同，两两抵消，所以 $\\operatorname{Cov}=0$。协方差只衡量**线性**关系，$\\rho=0$ 不等于独立。离群点在 $(4,3)$ 时 $\\rho\\approx0.775$；拖到 $(0,0)$ 后 $\\rho=-0.1$，其余五个点本来几乎没有线性关系。这个点离均值很远，它的矩形面积比其他五个加起来还大，而协方差是这些面积的平均，所以它一个点就决定了 $\\rho$ 的符号和大小。",
+        "The six points of “On a line” lie on $y=\\tfrac12x+\\tfrac12$, so $Y-EY=\\tfrac12(X-EX)$: the two vectors point the same way, $\\rho=1$ and $\\theta=0^\\circ$. Dragging point 6 from $(3,2)$ to $(3,0)$ lowers $\\rho$ to about $0.726$, an angle of about $43^\\circ$. Since $\\rho$ is the cosine of the angle between two vectors, the Cauchy–Schwarz inequality keeps it inside $[-1,1]$ whatever you drag; it reaches $\\pm1$ only when all six points lie on one line that is neither horizontal nor vertical. The points of “Uncorrelated, yet related” are symmetric about $x=0$, with $Y=\\tfrac12X^2-\\tfrac52$: the rectangles of $(x,y)$ and $(-x,y)$, one blue and one red, have equal area and cancel in pairs, so $\\operatorname{Cov}=0$. Covariance measures only **linear** dependence; $\\rho=0$ does not mean independent. With the outlier at $(4,3)$, $\\rho\\approx0.775$; at $(0,0)$, $\\rho=-0.1$, because the other five points have almost no linear relation. That one point lies far from the mean, its rectangle is larger than the other five together, and the covariance is the average of these areas, so a single point decides the sign and size of $\\rho$."
+      ),
+    },
   },
 ];
 

@@ -1,0 +1,228 @@
+## Start from a problem
+
+<Problem>
+An instrument measures a distance; the reading is the true value plus a random error. The error is sometimes positive, sometimes negative, zero on average, but every reading wobbles, and the wobble has a typical size, call it $\sigma$.
+
+To do better, take two instruments, one reading each, and average the two readings. How much smaller than $\sigma$ is the error of the average? If both instruments sit in the same room and feel the same temperature, so that their errors tend to be too large together and too small together, does averaging still help? And if the two errors could be made to always have opposite signs, how good could it get?
+
+To answer this we first need two things made precise: the "average value" of a random variable and the "size of its wobble". These are the **expectation** and the **variance**. As for how much two errors are "too large together", the answer lands somewhere familiar: the angle between two vectors.
+</Problem>
+
+<Observe>
+Play first, read later. The six points on the left are the six outcomes of one die roll, each with probability $\frac16$; the point of outcome $\omega$ has coordinates $(X(\omega),Y(\omega))$, the values of two random variables for that outcome. The cross marks the two means, and a rectangle joins the cross to each point. On the right, $X$ and $Y$ with their means removed are drawn as two vectors.
+
+Drag the points and watch $\operatorname{Cov}$ and the angle $\theta$ on the right change together. **Can $\rho$ ever exceed $1$?** Then press "Negative": $\sigma_X^2+\sigma_Y^2$ is about $6.2$, yet $\operatorname{Var}(X+Y)$ is below $0.8$. **Which arrow on the right explains why?**
+
+<Experiment slug="correlation-angle" />
+</Observe>
+
+<Conjecture>
+Counting blue rectangles as positive and red ones as negative, the average area seems to measure how much $X$ and $Y$ are "too large together, too small together"; it looks like the same number as the inner product of the two vectors on the right, and $\rho$ looks like the cosine of the angle between them, so it always lies between $-1$ and $1$. $\operatorname{Var}(X+Y)$ looks like the squared length of the sum of the two vectors: the closer the angle is to $180^\circ$, the shorter the sum.
+
+If all this holds, the opening question is answered: the wider the angle between the two instruments' errors, the more averaging helps. Below we first define "average" and "wobble", then prove these guesses.
+</Conjecture>
+
+## Definitions
+
+Throughout, random variables live on a finite or countable [probability space](/en/concepts/probability-space) $(\Omega,P)$, and $P(\omega)$ is short for $P(\{\omega\})$.
+
+<Definition title="Expectation">
+Let $X$ be a discrete random variable. If $\sum_x|x|\,P(X=x)<\infty$, the number
+$$EX=\sum_x x\,P(X=x),$$
+where $x$ runs over the possible values of $X$, is the **expectation** (mean) of $X$; otherwise $X$ has no expectation.
+</Definition>
+
+The expectation is the average weighted by probability. For a fair die the expected score is $\frac{1+2+\dots+6}6=3.5$: the expectation need not be a value $X$ can take. With infinitely many values we ask for absolute convergence, so that grouping and reordering the terms cannot change the sum; this is used right away.
+
+<Proposition title="Expectation as a sum over outcomes">
+If $EX$ exists, then
+$$EX=\sum_{\omega\in\Omega}X(\omega)\,P(\omega),$$
+and the right-hand side converges absolutely. More generally, for any function $g$ with $\sum_x|g(x)|\,P(X=x)<\infty$, $E\,g(X)=\sum_x g(x)\,P(X=x)$.
+</Proposition>
+
+<Proof>
+The events $\{X=x\}$ for different $x$ are disjoint with union $\Omega$, so by countable additivity $\sum_{\omega:\,X(\omega)=x}P(\omega)=P(X=x)$. Grouping the non-negative terms $|X(\omega)|P(\omega)$ by the value of $X$ gives $\sum_\omega|X(\omega)|P(\omega)=\sum_x|x|\,P(X=x)<\infty$, so the right-hand side converges absolutely. An absolutely convergent series may be grouped at will:
+$$\sum_{\omega}X(\omega)P(\omega)=\sum_x\ \sum_{\omega:\,X(\omega)=x}x\,P(\omega)=\sum_x x\,P(X=x)=EX.$$
+Applying this to the random variable $g(X)$ and grouping the outcomes by the value of $X$, the same computation gives the second formula.
+</Proof>
+
+<Example title="Indicator variables">
+For an event $A$, let $\mathbf 1_A(\omega)=1$ if $\omega\in A$ and $0$ otherwise. $\mathbf 1_A$ takes only the values $0$ and $1$, so
+$$E\,\mathbf 1_A=0\cdot P(A^c)+1\cdot P(A)=P(A).$$
+A probability is a special expectation. Writing a count as a sum of indicators is the most useful trick in what follows.
+</Example>
+
+<Definition title="Variance and standard deviation">
+Suppose $EX^2<\infty$. The number
+$$\operatorname{Var}X=E\bigl[(X-EX)^2\bigr]$$
+is the **variance** of $X$, and $\sigma_X=\sqrt{\operatorname{Var}X}$ its **standard deviation**.
+</Definition>
+
+Since $|x|\le\frac{1+x^2}2$, $EX^2<\infty$ guarantees that $EX$ exists, so the variance makes sense. The variance is the average of the squared distance from the mean. Squares rather than $|X-EX|$, because squares expand and the expansion can be computed with linearity below; squares are also what make it the square of a length. The standard deviation has the same unit as $X$: if errors are in millimetres, so is $\sigma$. The "typical size of the wobble" from the opening is the standard deviation.
+
+<Definition title="Covariance and correlation">
+Suppose $EX^2<\infty$ and $EY^2<\infty$. The number
+$$\operatorname{Cov}(X,Y)=E\bigl[(X-EX)(Y-EY)\bigr]$$
+is the **covariance** of $X$ and $Y$. If $\sigma_X>0$ and $\sigma_Y>0$,
+$$\rho(X,Y)=\frac{\operatorname{Cov}(X,Y)}{\sigma_X\,\sigma_Y}$$
+is their **correlation**. When $\operatorname{Cov}(X,Y)=0$, $X$ and $Y$ are called **uncorrelated**.
+</Definition>
+
+Since $|xy|\le\frac{x^2+y^2}2$, the covariance always exists, and $\operatorname{Cov}(X,X)=\operatorname{Var}X$. In the experiment, the signed area of rectangle $\omega$ is exactly $(X(\omega)-EX)(Y(\omega)-EY)$: positive when the point is up-right or down-left of the cross, negative when up-left or down-right. By the sum-over-outcomes formula, $\operatorname{Cov}(X,Y)$ is the average of these six signed areas.
+
+<Definition title="Independent random variables">
+Discrete random variables $X$ and $Y$ are **independent** if for all $x,y$
+$$P(X=x,\ Y=y)=P(X=x)\,P(Y=y),$$
+that is, the events $\{X=x\}$ and $\{Y=y\}$ are always [independent](/en/concepts/conditional-probability). Several random variables are independent if, for every choice of values, the corresponding events are [mutually independent](/en/concepts/random-variables).
+</Definition>
+
+## Theorems and proofs
+
+<Theorem title="Linearity of expectation">
+If $EX$ and $EY$ exist, then for all real $a,b$ the expectation $E(aX+bY)$ exists and
+$$E(aX+bY)=a\,EX+b\,EY.$$
+</Theorem>
+
+<Proof>
+Since $|aX(\omega)+bY(\omega)|\le|a|\,|X(\omega)|+|b|\,|Y(\omega)|$, the series $\sum_\omega\bigl(aX(\omega)+bY(\omega)\bigr)P(\omega)$ converges absolutely. Summing over outcomes,
+$$E(aX+bY)=\sum_\omega\bigl(aX(\omega)+bY(\omega)\bigr)P(\omega)=a\sum_\omega X(\omega)P(\omega)+b\sum_\omega Y(\omega)P(\omega)=a\,EX+b\,EY.$$
+</Proof>
+
+Linearity **does not need independence**: $X$ and $Y$ may be related in any way at all. It is the most useful tool of this section, and the hat problem below shows how much work it saves.
+
+<Proposition title="Computing variances">
+$$\operatorname{Cov}(X,Y)=E(XY)-EX\cdot EY,\qquad \operatorname{Var}X=EX^2-(EX)^2,\qquad \operatorname{Var}(aX+b)=a^2\operatorname{Var}X.$$
+</Proposition>
+
+<Proof>
+Write $\mu=EX$ and $\nu=EY$. Expand $(X-\mu)(Y-\nu)=XY-\nu X-\mu Y+\mu\nu$ and use linearity (a constant is its own expectation):
+$$\operatorname{Cov}(X,Y)=E(XY)-\nu\mu-\mu\nu+\mu\nu=E(XY)-\mu\nu.$$
+Taking $Y=X$ gives the second formula. Since $E(aX+b)=a\mu+b$, we have $(aX+b)-E(aX+b)=a(X-\mu)$; squaring and taking expectations gives $a^2\operatorname{Var}X$.
+</Proof>
+
+A shift leaves the variance unchanged, since shifting is not wobbling; scaling by $a$ multiplies the variance by $a^2$ and the standard deviation by $|a|$.
+
+<Proposition title="Independence splits the expectation of a product">
+If $X$ and $Y$ are independent and $EX$, $EY$ exist, then $E(XY)=EX\cdot EY$. Hence independent random variables with finite variance are uncorrelated.
+</Proposition>
+
+<Proof>
+Apply the sum-over-outcomes formula to the pair $(X,Y)$, grouping by its values, then use independence:
+$$E(XY)=\sum_{x,y}xy\,P(X=x,\,Y=y)=\sum_{x,y}xy\,P(X=x)\,P(Y=y)=\Bigl(\sum_xx\,P(X=x)\Bigr)\Bigl(\sum_yy\,P(Y=y)\Bigr).$$
+With $|xy|$ in place of $xy$ the same computation gives $E|X|\cdot E|Y|<\infty$, so the double series converges absolutely and the grouping and splitting above are valid.
+</Proof>
+
+Now the heart of the section: covariance is an inner product.
+
+<Theorem title="Covariance is an inner product; correlation lies between −1 and 1">
+On random variables with $EX^2<\infty$, $\langle X,Y\rangle=E(XY)$ is symmetric and bilinear, and $\langle X,X\rangle\ge0$ with equality exactly when $P(X=0)=1$. The covariance is this inner product after removing the means: $\operatorname{Cov}(X,Y)=\langle X-EX,\ Y-EY\rangle$. Consequently
+$$\bigl|\operatorname{Cov}(X,Y)\bigr|\le\sigma_X\,\sigma_Y,\qquad -1\le\rho(X,Y)\le1.$$
+$|\rho|=1$ exactly when there are constants $a\ne0$ and $b$ with $P(Y=aX+b)=1$; then $\rho$ has the sign of $a$.
+</Theorem>
+
+<Proof>
+Symmetry is clear and bilinearity is linearity of expectation. $EX^2=\sum_xx^2P(X=x)\ge0$, with equality exactly when $P(X=x)=0$ for every $x\ne0$, that is, $P(X=0)=1$.
+
+Write $\tilde X=X-EX$ and $\tilde Y=Y-EY$, so $E\tilde X^2=\sigma_X^2$, $E\tilde Y^2=\sigma_Y^2$ and $E(\tilde X\tilde Y)=\operatorname{Cov}(X,Y)$. Now repeat the Cauchy–Schwarz proof from [inner products](/en/concepts/inner-product): remove from $\tilde Y$ its projection onto the direction of $\tilde X$; what is left has non-negative length. For every real $t$,
+$$0\le E\bigl[(\tilde Y-t\tilde X)^2\bigr]=\sigma_Y^2-2t\operatorname{Cov}(X,Y)+t^2\sigma_X^2.$$
+If $\sigma_X=0$, the right-hand side is linear in $t$ and non-negative for all $t$ only if $\operatorname{Cov}(X,Y)=0$, so the inequality holds. If $\sigma_X>0$, take the projection coefficient $t=\operatorname{Cov}(X,Y)/\sigma_X^2$:
+$$0\le\sigma_Y^2-\frac{\operatorname{Cov}(X,Y)^2}{\sigma_X^2},$$
+that is, $\operatorname{Cov}(X,Y)^2\le\sigma_X^2\sigma_Y^2$; dividing by $\sigma_X\sigma_Y$ gives $|\rho|\le1$.
+
+$|\rho|=1$ exactly when equality holds, i.e. $E\bigl[(\tilde Y-t\tilde X)^2\bigr]=0$, i.e. $P(\tilde Y=t\tilde X)=1$: with probability $1$, $Y=tX+(EY-t\,EX)$. Then $\operatorname{Cov}(X,Y)\ne0$, so $a=t\ne0$ and has the sign of $\operatorname{Cov}$ and of $\rho$. Conversely, if $P(Y=aX+b)=1$ then $\tilde Y=a\tilde X$ with probability $1$, $\operatorname{Cov}(X,Y)=a\sigma_X^2$ and $\sigma_Y=|a|\sigma_X$, so $\rho=a/|a|=\pm1$.
+</Proof>
+
+So $\rho=\cos\theta$ now makes sense: $\theta$ is the angle between the "vectors" $\tilde X$ and $\tilde Y$, and the right-hand picture in the experiment is the plane they span. The projection coefficient $t=\operatorname{Cov}(X,Y)/\sigma_X^2$ appears on the left too: it is the slope of the line drawn there, and an application below explains why that line is the "best".
+
+<Remark>
+Strictly speaking, $E(XY)$ satisfies only "half" of the last inner-product axiom: $\langle X,X\rangle=0$ gives $P(X=0)=1$, not $X=0$ everywhere; $X$ may be non-zero on an outcome of probability $0$. Treating random variables that are equal with probability $1$ as the same, it is a genuine inner product. The inequality above uses only $\langle X,X\rangle\ge0$, so it is unaffected; the equality case can only be stated "with probability $1$".
+</Remark>
+
+<Theorem title="Variance of a sum: the law of cosines">
+$$\operatorname{Var}(X+Y)=\operatorname{Var}X+\operatorname{Var}Y+2\operatorname{Cov}(X,Y).$$
+If $X_1,\dots,X_n$ are pairwise uncorrelated (for instance, independent), then
+$$\operatorname{Var}(X_1+\dots+X_n)=\operatorname{Var}X_1+\dots+\operatorname{Var}X_n.$$
+</Theorem>
+
+<Proof>
+$(X+Y)-E(X+Y)=\tilde X+\tilde Y$, and by bilinearity
+$$E\bigl[(\tilde X+\tilde Y)^2\bigr]=E\tilde X^2+2E(\tilde X\tilde Y)+E\tilde Y^2.$$
+In general $\operatorname{Var}\bigl(\sum_iX_i\bigr)=E\bigl[\bigl(\sum_i\tilde X_i\bigr)^2\bigr]=\sum_{i,j}\operatorname{Cov}(X_i,X_j)$; for uncorrelated variables the terms with $i\ne j$ vanish, leaving $\sum_i\operatorname{Var}X_i$.
+</Proof>
+
+Written as $\sigma_{X+Y}^2=\sigma_X^2+\sigma_Y^2+2\sigma_X\sigma_Y\cos\theta$, this is the law of cosines for the diagonal of a parallelogram; the sum vector on the right of the experiment is that diagonal. For uncorrelated variables $\theta=90^\circ$ and it becomes Pythagoras: **variances of independent errors add; standard deviations do not**. When $\theta$ is close to $180^\circ$ the two vectors nearly cancel, which is why $\operatorname{Var}(X+Y)$ drops below $0.8$ in the "Negative" preset.
+
+<Theorem title="Chebyshev's inequality and the law of large numbers">
+If $\operatorname{Var}X<\infty$, then for every $\varepsilon>0$
+$$P\bigl(|X-EX|\ge\varepsilon\bigr)\le\frac{\operatorname{Var}X}{\varepsilon^2}.$$
+If $X_1,\dots,X_n$ are independent, each with mean $\mu$ and variance $\sigma^2$, and $\bar X_n=\frac1n(X_1+\dots+X_n)$, then $E\bar X_n=\mu$, $\operatorname{Var}\bar X_n=\frac{\sigma^2}n$, and for every $\varepsilon>0$
+$$P\bigl(|\bar X_n-\mu|\ge\varepsilon\bigr)\le\frac{\sigma^2}{n\varepsilon^2}\ \longrightarrow\ 0\qquad(n\to\infty).$$
+</Theorem>
+
+<Proof>
+Let $A=\{|X-EX|\ge\varepsilon\}$. For each $\omega$: if $\omega\in A$, then $(X(\omega)-EX)^2\ge\varepsilon^2=\varepsilon^2\mathbf 1_A(\omega)$; if $\omega\notin A$, the right-hand side is $0$ and the inequality holds too. So the random variable $(X-EX)^2-\varepsilon^2\mathbf 1_A$ is non-negative everywhere, its expectation is non-negative, and by linearity and $E\,\mathbf 1_A=P(A)$,
+$$\operatorname{Var}X-\varepsilon^2P(A)\ge0.$$
+For $\bar X_n$: linearity gives $E\bar X_n=\frac1n\cdot n\mu=\mu$; $\operatorname{Var}(aX)=a^2\operatorname{Var}X$ and additivity for independent variables give $\operatorname{Var}\bar X_n=\frac1{n^2}\cdot n\sigma^2=\frac{\sigma^2}n$. Chebyshev's inequality for $\bar X_n$ finishes the proof.
+</Proof>
+
+The second half is the **weak law of large numbers**: measure independently again and again and average; the probability that the average misses the expectation by more than any fixed $\varepsilon$ tends to $0$. This is where the word "expectation" earns its name: it is where averages of many repetitions end up. The standard deviation of the average is $\sigma/\sqrt n$, not $\sigma/n$: halving the error takes $4$ measurements, cutting it to a tenth takes $100$.
+
+<Warning>
+**Uncorrelated does not mean independent.** Let $X$ take $-1,0,1$ with equal probability and $Y=X^2$. Then $EX=0$ and $E(XY)=EX^3=0$, so $\operatorname{Cov}(X,Y)=0$. Yet $Y$ is completely determined by $X$: $P(X=0,\,Y=0)=\frac13$, while $P(X=0)\,P(Y=0)=\frac19$. The experiment's "Uncorrelated, yet related" is the same thing: points symmetric left to right make the positive and negative areas cancel in pairs. Covariance measures only **linear** dependence; independence implies uncorrelated, not the other way round.
+</Warning>
+
+<Warning>
+**Variance is not linear.** For independent $X$ and $Y$, $\operatorname{Var}(X-Y)=\operatorname{Var}X+\operatorname{Var}Y$, with a plus sign: the variance of $-Y$ is $(-1)^2\operatorname{Var}Y$. Subtracting two errors only piles up the wobble. Likewise $\operatorname{Var}(2X)=4\operatorname{Var}X$, while the sum $X_1+X_2$ of two independent copies has only $2\operatorname{Var}X$: doubling one measurement and adding two independent measurements are entirely different things.
+</Warning>
+
+<Warning>
+**$E\,g(X)$ is generally not $g(EX)$, and the expectation may not exist.** From $\operatorname{Var}X=EX^2-(EX)^2\ge0$ we always have $EX^2\ge(EX)^2$, with equality only when the variance is $0$; $E(1/X)$ and $1/EX$ generally differ as well. As for existence: if $P(X=2^k)=2^{-k}$ for $k=1,2,\dots$, then $\sum_k2^k\cdot2^{-k}=1+1+\cdots$ diverges and $X$ has no expectation. Then there is no variance or covariance either, and none of the theorems here apply.
+</Warning>
+
+## Applications
+
+<Application title="Back to the opening: two instruments">
+Let the two errors $X$, $Y$ have $EX=EY=0$, $\sigma_X=\sigma_Y=\sigma$ and correlation $\rho$. By the variance of a sum,
+$$\operatorname{Var}\frac{X+Y}2=\frac{\sigma^2+\sigma^2+2\rho\sigma^2}4=\frac{1+\rho}2\,\sigma^2.$$
+For independent errors ($\rho=0$) the average has standard deviation $\sigma/\sqrt2\approx0.71\sigma$; in a shared room with $\rho=0.9$ it is $\sigma\sqrt{0.95}\approx0.97\sigma$, hardly better; at $\rho=1$ averaging is useless; at $\rho=-1$ the errors cancel completely. That $\rho$ cannot go below $-1$ is exactly the Cauchy–Schwarz inequality.
+
+With $n$ instruments whose errors all have pairwise correlation $\rho$, the same expansion gives
+$$\operatorname{Var}\bar X_n=\frac1{n^2}\Bigl(n\sigma^2+n(n-1)\rho\sigma^2\Bigr)=\sigma^2\Bigl(\rho+\frac{1-\rho}n\Bigr).$$
+As $n\to\infty$ this tends to $\rho\sigma^2$, not $0$. The part of the error the instruments share cannot be averaged away; only the independent part dies out like $1/n$.
+</Application>
+
+<Application title="Mean and variance of the binomial and Poisson laws">
+Let $X\sim B(n,p)$ and let $A_i$ be "trial $i$ succeeds", so $X=\mathbf 1_{A_1}+\dots+\mathbf 1_{A_n}$. Each $\mathbf 1_{A_i}$ has mean $p$; since $\mathbf 1_{A_i}^2=\mathbf 1_{A_i}$, its variance is $p-p^2=p(1-p)$. By linearity and additivity of variance for independent variables,
+$$EX=np,\qquad\operatorname{Var}X=np(1-p),$$
+without a single binomial sum.
+
+Let $Y\sim\mathrm{Poisson}(\lambda)$. Drop the term $k=0$ and put $j=k-1$:
+$$EY=\sum_{k\ge1}k\,e^{-\lambda}\frac{\lambda^k}{k!}=\lambda\sum_{j\ge0}e^{-\lambda}\frac{\lambda^j}{j!}=\lambda.$$
+In the same way $E\bigl[Y(Y-1)\bigr]=\lambda^2$, so $\operatorname{Var}Y=E\bigl[Y(Y-1)\bigr]+EY-(EY)^2=\lambda$. This settles the claim made in [random variables](/en/concepts/random-variables): the variances of $B(n,p)$ and $\mathrm{Poisson}(np)$ differ only by the factor $1-p$, so the two are close only when $p$ is small.
+</Application>
+
+<Application title="The hat problem: linearity without independence">
+$n\ge2$ people put their hats in a pile and each takes one at random, all $n!$ ways equally likely. How many people get their own hat back, on average? Let $A_i$ be "person $i$ gets their own hat", so $P(A_i)=\frac{(n-1)!}{n!}=\frac1n$. With $N=\sum_i\mathbf 1_{A_i}$, linearity gives
+$$EN=n\cdot\frac1n=1,$$
+whatever $n$ is. The events are not independent (if the first $n-1$ people all got their own hats, so does the last), but linearity does not need independence.
+
+The variance can be computed too: $P(A_i\cap A_j)=\frac{(n-2)!}{n!}=\frac1{n(n-1)}$, so for $i\ne j$, $\operatorname{Cov}(\mathbf 1_{A_i},\mathbf 1_{A_j})=\frac1{n(n-1)}-\frac1{n^2}=\frac1{n^2(n-1)}$, and
+$$\operatorname{Var}N=n\cdot\frac1n\Bigl(1-\frac1n\Bigr)+n(n-1)\cdot\frac1{n^2(n-1)}=1.$$
+Mean $1$ and variance $1$, exactly those of $\mathrm{Poisson}(1)$. The "many nearly independent rare events" of the previous section are back: indeed $P(N=k)\to e^{-1}/k!$ as $n\to\infty$.
+</Application>
+
+<Application title="Predicting Y from X: the best line">
+We look for constants $\alpha,\beta$ that minimise the mean squared error $E\bigl[(Y-\alpha-\beta X)^2\bigr]$. Write $Y-\alpha-\beta X=(\tilde Y-\beta\tilde X)+c$ with the constant $c=EY-\alpha-\beta\,EX$. Since $E\tilde X=E\tilde Y=0$, the cross term has expectation $0$:
+$$E\bigl[(Y-\alpha-\beta X)^2\bigr]=E\bigl[(\tilde Y-\beta\tilde X)^2\bigr]+c^2=\sigma_Y^2-2\beta\operatorname{Cov}(X,Y)+\beta^2\sigma_X^2+c^2.$$
+Choosing $\alpha=EY-\beta\,EX$ makes $c=0$; minimising over $\beta$ (with $\sigma_X>0$) gives
+$$\beta=\frac{\operatorname{Cov}(X,Y)}{\sigma_X^2},\qquad\min E\bigl[(Y-\alpha-\beta X)^2\bigr]=\sigma_Y^2\bigl(1-\rho^2\bigr).$$
+$\beta$ is exactly the projection coefficient of $\tilde Y$ onto $\tilde X$, and the least error is the squared length of what is left over. This is the line $y=EY+\beta(x-EX)$ in the left half of the experiment. $\rho^2$ can be read as "the share of the variance of $Y$ that $X$ explains linearly": all of it when $\rho=\pm1$; when $\rho=0$ the best line is the horizontal $y=EY$ and $X$ is no help at all.
+</Application>
+
+<Tool id="plot" />
+
+In the plotter, draw $r+(1-r)/x$ and drag the parameter $r$ to about $0.2$: this is the variance (in units of $\sigma^2$) of the average of $n$ instruments with pairwise correlation $r$. As $x$ grows from $1$ the curve drops steeply, then flattens onto the horizontal line $y=r$; at $r=0$ it is $1/x$ and goes all the way down to $0$.
+
+<Remark>
+The law of large numbers says that the average $\bar X_n$ approaches $\mu$, with deviations on the scale $\sigma/\sqrt n$. But Chebyshev's inequality only bounds the deviation; it says nothing about the **shape** of its distribution. Magnify the deviation by $\sqrt n$ and it tends to a bell curve, whatever the distribution of the $X_i$. That is the subject of the next section, the **central limit theorem** (in progress).
+</Remark>

@@ -36,6 +36,11 @@ export const experimentTex: Partial<Record<ExperimentKind, Record<string, Formul
     cauchySchwarz: "\\langle u,v\\rangle^2\\le\\|u\\|^2\\|v\\|^2",
     slack: "\\|u\\|^2\\|v\\|^2-\\langle u,v\\rangle^2=\\|v\\|^2\\,\\|u-tv\\|^2",
   },
+  "correlation-angle": {
+    covariance: "\\operatorname{Cov}(X,Y)=E\\bigl[(X-EX)(Y-EY)\\bigr]",
+    correlation: "\\rho=\\frac{\\operatorname{Cov}(X,Y)}{\\sigma_X\\sigma_Y}=\\cos\\theta",
+    sum: "\\operatorname{Var}(X+Y)=\\sigma_X^2+\\sigma_Y^2+2\\operatorname{Cov}(X,Y)",
+  },
   "exponential-derivative": { quotient: "\\frac{a^{x+h}-a^{x}}{h}=a^{x}\\cdot\\frac{a^{h}-1}{h}" },
   "secant-tangent": { quotient: "\\frac{f(x_0+h)-f(x_0)}{h}" },
   "riemann-sums": { sum: "\\sum_{i=1}^{n} f(\\xi_i)\\,\\Delta x" },

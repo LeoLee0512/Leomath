@@ -144,3 +144,34 @@ export function binomialPoissonDistance(n: number, lambda: number): number {
 export function sampleTrials(n: number, p: number, rng: () => number = Math.random): boolean[] {
   return Array.from({ length: n }, () => rng() < p);
 }
+
+/** Means, variances, covariance and correlation of a pair (X, Y) on n equally likely outcomes, one point (X(ω), Y(ω)) per outcome. */
+export interface PairMoments {
+  ex: number;
+  ey: number;
+  varX: number;
+  varY: number;
+  cov: number;
+  /** Correlation Cov/(σ_X σ_Y), the cosine of the angle between X − EX and Y − EY; NaN when either variance is 0. */
+  rho: number;
+  /** Var(X + Y) = Var X + Var Y + 2 Cov, the law of cosines for the centred vectors. */
+  varSum: number;
+  /** Cov/Var X: the slope of the best line through the points, i.e. the projection coefficient of Y − EY onto X − EX; NaN when Var X = 0. */
+  slope: number;
+}
+
+export function pairMoments(points: readonly (readonly [number, number])[]): PairMoments {
+  const n = points.length;
+  const ex = points.reduce((s, p) => s + p[0], 0) / n;
+  const ey = points.reduce((s, p) => s + p[1], 0) / n;
+  let varX = 0, varY = 0, cov = 0;
+  for (const [x, y] of points) {
+    varX += (x - ex) ** 2 / n;
+    varY += (y - ey) ** 2 / n;
+    cov += ((x - ex) * (y - ey)) / n;
+  }
+  // Below this a variance is rounding noise from points that are really all equal.
+  const tiny = 1e-12;
+  const rho = varX > tiny && varY > tiny ? Math.max(-1, Math.min(1, cov / Math.sqrt(varX * varY))) : NaN;
+  return { ex, ey, varX, varY, cov, rho, varSum: varX + varY + 2 * cov, slope: varX > tiny ? cov / varX : NaN };
+}
