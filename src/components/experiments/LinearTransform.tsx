@@ -6,6 +6,7 @@ import { Plot, fitCanvas } from "@/lib/plot";
 import { apply, det, eigen, format, fromColumns, type Mat2, type Vec2 } from "@/lib/math/linear";
 import { useResizeVersion, useThemeColors } from "./useTheme";
 import { useUrlState } from "./urlState";
+import { snapHalf } from "./dragHandles";
 
 const RANGE = 3.2;
 const GRID_EXTENT = 8;
@@ -43,6 +44,7 @@ const copy = {
     showEigen: "显示特征向量",
     reset: "重置",
     drag: "拖动 e₁、e₂ 的箭头端点",
+    move: "方向键移动",
   },
   en: {
     guide: [
@@ -57,6 +59,7 @@ const copy = {
     showEigen: "Show eigenvectors",
     reset: "Reset",
     drag: "Drag the tips of e₁ and e₂",
+    move: "Arrow keys move",
   },
 };
 
@@ -93,6 +96,7 @@ export function LinearTransform({ locale, compact = false, initial = [1, 0, 0, 1
   const guideTimer = useRef<number | null>(null);
   const dragStart = useRef<Vec2 | null>(null);
   const dragging = useRef<0 | 1 | null>(null);
+  const [selected, setSelected] = useState<0 | 1>(0);
   const animRef = useRef<number | null>(null);
   const t = copy[locale];
 
@@ -186,20 +190,36 @@ export function LinearTransform({ locale, compact = false, initial = [1, 0, 0, 1
     const grab = 0.45;
     if (Math.min(d1, d2) > grab) return;
     dragging.current = d1 <= d2 ? 0 : 1;
+    setSelected(dragging.current);
     dragStart.current = dragging.current === 0 ? e1 : e2;
     if (animRef.current) cancelAnimationFrame(animRef.current);
     ev.currentTarget.setPointerCapture(ev.pointerId);
+  }
+  function movePoint(which: 0 | 1, point: Vec2) {
+    // Read the ref now: the updater runs later, after the pointer may already be up.
+    setM((prev) => {
+      const [c1, c2] = [[prev[0], prev[2]] as Vec2, [prev[1], prev[3]] as Vec2];
+      return which === 0 ? fromColumns(point, c2) : fromColumns(c1, point);
+    });
   }
   function onMove(ev: React.PointerEvent<HTMLCanvasElement>) {
     const which = dragging.current;
     if (which === null) return;
     const [x, y] = toMath(ev);
-    const snapped: Vec2 = [snap(x), snap(y)];
-    // Read the ref now: the updater runs later, after the pointer may already be up.
-    setM((prev) => {
-      const [c1, c2] = [[prev[0], prev[2]] as Vec2, [prev[1], prev[3]] as Vec2];
-      return which === 0 ? fromColumns(snapped, c2) : fromColumns(c1, snapped);
-    });
+    movePoint(which, [snapHalf(x), snapHalf(y)]);
+  }
+  function onKeyDown(ev: React.KeyboardEvent<HTMLCanvasElement>) {
+    const step = ev.shiftKey ? 0.5 : 0.1;
+    const d: Vec2 | null =
+      ev.key === "ArrowLeft" ? [-step, 0] : ev.key === "ArrowRight" ? [step, 0]
+      : ev.key === "ArrowUp" ? [0, step] : ev.key === "ArrowDown" ? [0, -step] : null;
+    if (!d) return;
+    ev.preventDefault();
+    const current = selected === 0 ? e1 : e2;
+    movePoint(selected, [
+      snapHalf(Math.max(-RANGE + 0.1, Math.min(RANGE - 0.1, current[0] + d[0]))),
+      snapHalf(Math.max(-RANGE + 0.1, Math.min(RANGE - 0.1, current[1] + d[1]))),
+    ]);
   }
   function onUp(ev: React.PointerEvent<HTMLCanvasElement>) {
     const which = dragging.current;
@@ -246,11 +266,13 @@ export function LinearTransform({ locale, compact = false, initial = [1, 0, 0, 1
       )}
       <canvas
         ref={canvasRef}
+        tabIndex={0}
         className="exp-canvas exp-canvas-drag cursor-grab active:cursor-grabbing"
         onPointerDown={onDown}
         onPointerMove={onMove}
         onPointerUp={onUp}
         onPointerCancel={onUp}
+        onKeyDown={onKeyDown}
         aria-label={t.drag}
         role="img"
       />
@@ -284,6 +306,20 @@ export function LinearTransform({ locale, compact = false, initial = [1, 0, 0, 1
             {pr.label[locale]}
           </button>
         ))}
+        <span className="inline-flex flex-wrap items-center gap-1.5" role="group" aria-label={t.move}>
+          <span className="text-muted">{t.move}</span>
+          {([0, 1] as const).map((i) => (
+            <button
+              key={i}
+              type="button"
+              className={`btn btn-ghost btn-small ${selected === i ? "border-ink" : ""}`}
+              aria-pressed={selected === i}
+              onClick={() => { setSelected(i); canvasRef.current?.focus(); }}
+            >
+              {i === 0 ? "e₁" : "e₂"}
+            </button>
+          ))}
+        </span>
         {!compact && (
           <label className="exp-control ml-auto inline-flex items-center gap-2">
             <input type="checkbox" checked={showEigen} onChange={(e) => setShowEigen(e.target.checked)} />
@@ -294,11 +330,6 @@ export function LinearTransform({ locale, compact = false, initial = [1, 0, 0, 1
       )}
     </div>
   );
-}
-
-function snap(v: number): number {
-  const r = Math.round(v * 2) / 2;
-  return Math.abs(v - r) < 0.08 ? r : Math.round(v * 100) / 100;
 }
 
 /**
