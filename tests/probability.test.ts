@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { binomialMode, binomialPmf, binomialPoissonDistance, birthdayBound, birthdayExact, conditionals, intersectionRange, pairs, poissonPmf, posterior, sameAsMine, sampleBirthdays, sampleTrials, screeningCounts, sharedDays, smallestGroup } from "@/lib/math/probability";
+import { binomialMode, binomialPmf, binomialPoissonDistance, birthdayBound, birthdayExact, conditionals, intersectionRange, pairMoments, pairs, poissonPmf, posterior, sameAsMine, sampleBirthdays, sampleTrials, screeningCounts, sharedDays, smallestGroup } from "@/lib/math/probability";
 
 describe("birthday problem", () => {
   it("matches the known exact values", () => {
@@ -117,5 +117,39 @@ describe("binomial and Poisson", () => {
     const t = sampleTrials(20000, 0.3, rng);
     expect(t.length).toBe(20000);
     expect(t.filter(Boolean).length / 20000).toBeCloseTo(0.3, 1);
+  });
+});
+
+describe("mean, variance and covariance", () => {
+  it("computes the moments of equally likely outcomes", () => {
+    const m = pairMoments([[1, 2], [2, 4], [3, 3], [6, 7]]);
+    expect(m.ex).toBe(3);
+    expect(m.ey).toBe(4);
+    expect(m.varX).toBeCloseTo(3.5, 12);
+    expect(m.varY).toBeCloseTo(3.5, 12);
+    expect(m.cov).toBeCloseTo(3.25, 12);
+    expect(m.rho).toBeCloseTo(3.25 / 3.5, 12);
+    expect(m.slope).toBeCloseTo(3.25 / 3.5, 12);
+  });
+  it("is ±1 exactly on a line, and Var(X + Y) is the law of cosines", () => {
+    const line = pairMoments([[-3, -1], [-2, -0.5], [-1, 0], [1, 1], [2, 1.5], [3, 2]]);
+    expect(line.rho).toBeCloseTo(1, 12);
+    expect(line.slope).toBeCloseTo(0.5, 12);
+    expect(pairMoments([[0, 3], [1, 1], [2, -1]]).rho).toBeCloseTo(-1, 12);
+    const m = pairMoments([[0, 1], [1, 0], [2, 2], [5, 1]]);
+    const sum = pairMoments([[0, 1], [1, 0], [2, 2], [5, 1]].map(([x, y]) => [x + y, 0] as [number, number]));
+    expect(m.varSum).toBeCloseTo(sum.varX, 12);
+    expect(Math.abs(m.cov)).toBeLessThanOrEqual(Math.sqrt(m.varX * m.varY));
+  });
+  it("is 0 for a symmetric parabola, although Y is a function of X", () => {
+    const m = pairMoments([-3, -2, -1, 1, 2, 3].map((x) => [x, x * x / 2 - 2.5] as [number, number]));
+    expect(m.cov).toBeCloseTo(0, 12);
+    expect(m.rho).toBeCloseTo(0, 12);
+  });
+  it("leaves the correlation undefined when a variance is 0", () => {
+    const m = pairMoments([[1, 0], [1, 2], [1, 5]]);
+    expect(m.varX).toBe(0);
+    expect(m.rho).toBeNaN();
+    expect(m.slope).toBeNaN();
   });
 });

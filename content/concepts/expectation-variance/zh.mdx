@@ -1,0 +1,228 @@
+## 从一个问题开始
+
+<Problem>
+用一台仪器测一段距离，读数是真实值加上一个随机误差。误差有正有负，平均起来是 $0$，但每次读数都会晃动，晃动有一个典型的大小，记作 $\sigma$。
+
+为了测得更准，用两台仪器各测一次，取两个读数的平均。平均值的误差比 $\sigma$ 小多少？如果两台仪器放在同一个房间里，受同样的温度影响，误差总是一起偏大、一起偏小，取平均还有没有用？反过来，如果能让两个误差总是一正一负，又能好到什么程度？
+
+要回答这些问题，先得把两件事说清楚：随机变量的"平均值"，和它"晃动的大小"。这就是**期望**与**方差**。至于两个误差"一起偏大"的程度，答案会落在一个熟悉的地方：两个向量之间的夹角。
+</Problem>
+
+<Observe>
+先玩再读。左图的六个点是掷一次骰子的六个结果，概率各 $\frac16$；第 $\omega$ 个点的坐标 $(X(\omega),Y(\omega))$ 记下这个结果下两个随机变量的值。叉号标出两个平均值，矩形从叉号连到各个点。右图把 $X$、$Y$ 各自减去平均值，画成两个向量。
+
+拖动这些点，看 $\operatorname{Cov}$ 和右图的夹角 $\theta$ 怎样一起变化。**$\rho$ 能不能大于 $1$？** 再按"负相关"：$\sigma_X^2+\sigma_Y^2$ 大约是 $6.2$，$\operatorname{Var}(X+Y)$ 却不到 $0.8$。**右图里哪一根箭头说明了原因？**
+
+<Experiment slug="correlation-angle" />
+</Observe>
+
+<Conjecture>
+蓝色矩形算正、红色算负，矩形面积的平均似乎就衡量了 $X$、$Y$ "一起偏大、一起偏小"的程度；它和右图两个向量的内积看起来是同一个数，而 $\rho$ 像是这两个向量夹角的余弦，所以永远落在 $-1$ 与 $1$ 之间。$\operatorname{Var}(X+Y)$ 则像两个向量之和的长度的平方：夹角越接近 $180^\circ$，和就越短。
+
+如果这些都对，开头的问题就有了答案：两台仪器误差之间的夹角越大，取平均越准。下面先把"平均值"和"晃动"定义出来，再证明这些猜想。
+</Conjecture>
+
+## 定义
+
+本节的随机变量都定义在有限或可数的[概率空间](/zh/concepts/probability-space) $(\Omega,P)$ 上，$P(\omega)$ 是 $P(\{\omega\})$ 的简写。
+
+<Definition title="期望">
+设 $X$ 是离散型随机变量。若 $\sum_x|x|\,P(X=x)<\infty$，称
+$$EX=\sum_x x\,P(X=x)$$
+为 $X$ 的**期望**（均值），其中 $x$ 取遍 $X$ 的所有可能值；否则称 $X$ 的期望不存在。
+</Definition>
+
+期望是按概率加权的平均值。掷一枚均匀骰子，点数的期望是 $\frac{1+2+\dots+6}6=3.5$：期望不必是 $X$ 能取到的值。取值有无穷多个时，要求级数绝对收敛，这样怎么分组、按什么次序求和都不影响结果，下面马上要用到这一点。
+
+<Proposition title="按样本点求期望">
+若 $EX$ 存在，则
+$$EX=\sum_{\omega\in\Omega}X(\omega)\,P(\omega),$$
+右边绝对收敛。更一般地，对任何函数 $g$，只要 $\sum_x|g(x)|\,P(X=x)<\infty$，就有 $E\,g(X)=\sum_x g(x)\,P(X=x)$。
+</Proposition>
+
+<Proof>
+事件 $\{X=x\}$ 对不同的 $x$ 两两互斥，并起来是 $\Omega$，由可列可加性 $\sum_{\omega:\,X(\omega)=x}P(\omega)=P(X=x)$。先对非负的 $|X(\omega)|P(\omega)$ 按 $X$ 的取值分组：$\sum_\omega|X(\omega)|P(\omega)=\sum_x|x|\,P(X=x)<\infty$，所以右边绝对收敛。绝对收敛的级数可以任意分组求和：
+$$\sum_{\omega}X(\omega)P(\omega)=\sum_x\ \sum_{\omega:\,X(\omega)=x}x\,P(\omega)=\sum_x x\,P(X=x)=EX.$$
+对随机变量 $g(X)$ 用这个公式，再把 $\omega$ 按 $X$ 的取值分组，同样的计算给出第二个公式。
+</Proof>
+
+<Example title="示性变量">
+对事件 $A$，令 $\mathbf 1_A(\omega)=1$（若 $\omega\in A$），否则为 $0$。$\mathbf 1_A$ 只取 $0$ 和 $1$，所以
+$$E\,\mathbf 1_A=0\cdot P(A^c)+1\cdot P(A)=P(A).$$
+概率是期望的特例。把"数个数"写成示性变量之和，是下面最常用的技巧。
+</Example>
+
+<Definition title="方差与标准差">
+设 $EX^2<\infty$。称
+$$\operatorname{Var}X=E\bigl[(X-EX)^2\bigr]$$
+为 $X$ 的**方差**，$\sigma_X=\sqrt{\operatorname{Var}X}$ 为 $X$ 的**标准差**。
+</Definition>
+
+由 $|x|\le\frac{1+x^2}2$，$EX^2<\infty$ 保证 $EX$ 存在，方差因此有意义。方差是"离平均值多远"的平方的平均。用平方而不用 $|X-EX|$，是因为平方可以展开，展开后能用下面的线性性来计算；也正是平方让它成为一个长度的平方。标准差和 $X$ 的单位相同：误差以毫米计，$\sigma$ 也以毫米计。开头说的"晃动的典型大小"，就是标准差。
+
+<Definition title="协方差与相关系数">
+设 $EX^2<\infty$，$EY^2<\infty$。称
+$$\operatorname{Cov}(X,Y)=E\bigl[(X-EX)(Y-EY)\bigr]$$
+为 $X$ 与 $Y$ 的**协方差**。若 $\sigma_X>0$，$\sigma_Y>0$，称
+$$\rho(X,Y)=\frac{\operatorname{Cov}(X,Y)}{\sigma_X\,\sigma_Y}$$
+为 $X$ 与 $Y$ 的**相关系数**。$\operatorname{Cov}(X,Y)=0$ 时称 $X$、$Y$ **不相关**。
+</Definition>
+
+由 $|xy|\le\frac{x^2+y^2}2$，协方差总是存在。$\operatorname{Cov}(X,X)=\operatorname{Var}X$。实验左图里，第 $\omega$ 个矩形的有向面积正是 $(X(\omega)-EX)(Y(\omega)-EY)$：点在叉号右上或左下时为正，在左上或右下时为负。由按样本点求期望的公式，$\operatorname{Cov}(X,Y)$ 就是这六个有向面积的平均。
+
+<Definition title="随机变量的独立">
+若对所有 $x,y$ 都有
+$$P(X=x,\ Y=y)=P(X=x)\,P(Y=y),$$
+即事件 $\{X=x\}$ 与 $\{Y=y\}$ 总是[独立](/zh/concepts/conditional-probability)，称离散型随机变量 $X$、$Y$ **相互独立**。多个随机变量相互独立，是指对任意一组取值，相应的事件[相互独立](/zh/concepts/random-variables)。
+</Definition>
+
+## 定理与证明
+
+<Theorem title="期望的线性性">
+若 $EX$、$EY$ 存在，则对任意实数 $a,b$，$E(aX+bY)$ 存在，且
+$$E(aX+bY)=a\,EX+b\,EY.$$
+</Theorem>
+
+<Proof>
+由 $|aX(\omega)+bY(\omega)|\le|a|\,|X(\omega)|+|b|\,|Y(\omega)|$，$\sum_\omega\bigl(aX(\omega)+bY(\omega)\bigr)P(\omega)$ 绝对收敛。按样本点求期望：
+$$E(aX+bY)=\sum_\omega\bigl(aX(\omega)+bY(\omega)\bigr)P(\omega)=a\sum_\omega X(\omega)P(\omega)+b\sum_\omega Y(\omega)P(\omega)=a\,EX+b\,EY.$$
+</Proof>
+
+线性性**不需要独立**，$X$ 与 $Y$ 之间有什么关系都无所谓。它是本节最有用的工具，后面的帽子问题会显示它有多省事。
+
+<Proposition title="方差的计算">
+$$\operatorname{Cov}(X,Y)=E(XY)-EX\cdot EY,\qquad \operatorname{Var}X=EX^2-(EX)^2,\qquad \operatorname{Var}(aX+b)=a^2\operatorname{Var}X.$$
+</Proposition>
+
+<Proof>
+记 $\mu=EX$，$\nu=EY$。展开 $(X-\mu)(Y-\nu)=XY-\nu X-\mu Y+\mu\nu$，用线性性（常数的期望是它自己）：
+$$\operatorname{Cov}(X,Y)=E(XY)-\nu\mu-\mu\nu+\mu\nu=E(XY)-\mu\nu.$$
+取 $Y=X$ 得第二个公式。$E(aX+b)=a\mu+b$，所以 $(aX+b)-E(aX+b)=a(X-\mu)$，平方后取期望得 $a^2\operatorname{Var}X$。
+</Proof>
+
+整体平移不改变方差，因为平移不是晃动；放大 $a$ 倍，方差变成 $a^2$ 倍，标准差变成 $|a|$ 倍。
+
+<Proposition title="独立时乘积的期望可以拆开">
+若 $X$、$Y$ 相互独立，且 $EX$、$EY$ 存在，则 $E(XY)=EX\cdot EY$。因此独立且方差有限的随机变量不相关。
+</Proposition>
+
+<Proof>
+对数对 $(X,Y)$ 用按样本点求期望的公式，按 $(X,Y)$ 的取值分组，再用独立性：
+$$E(XY)=\sum_{x,y}xy\,P(X=x,\,Y=y)=\sum_{x,y}xy\,P(X=x)\,P(Y=y)=\Bigl(\sum_xx\,P(X=x)\Bigr)\Bigl(\sum_yy\,P(Y=y)\Bigr).$$
+把 $xy$ 换成 $|xy|$，同样的计算得到 $E|X|\cdot E|Y|<\infty$，所以这个双重级数绝对收敛，上面的分组和拆分都成立。
+</Proof>
+
+下面是本节的核心：协方差是一种内积。
+
+<Theorem title="协方差是内积，相关系数在 −1 与 1 之间">
+在 $EX^2<\infty$ 的随机变量之间，$\langle X,Y\rangle=E(XY)$ 对称、双线性，且 $\langle X,X\rangle\ge0$，等号当且仅当 $P(X=0)=1$。协方差就是减去均值后的内积：$\operatorname{Cov}(X,Y)=\langle X-EX,\ Y-EY\rangle$。因此
+$$\bigl|\operatorname{Cov}(X,Y)\bigr|\le\sigma_X\,\sigma_Y,\qquad -1\le\rho(X,Y)\le1.$$
+$|\rho|=1$ 当且仅当存在常数 $a\ne0$ 与 $b$，使 $P(Y=aX+b)=1$；这时 $\rho$ 与 $a$ 同号。
+</Theorem>
+
+<Proof>
+对称是显然的，双线性来自期望的线性性。$EX^2=\sum_xx^2P(X=x)\ge0$，等于 $0$ 当且仅当每个 $x\ne0$ 都有 $P(X=x)=0$，即 $P(X=0)=1$。
+
+记 $\tilde X=X-EX$，$\tilde Y=Y-EY$，则 $E\tilde X^2=\sigma_X^2$，$E\tilde Y^2=\sigma_Y^2$，$E(\tilde X\tilde Y)=\operatorname{Cov}(X,Y)$。下面重走[内积](/zh/concepts/inner-product)一节里 Cauchy–Schwarz 的证明：从 $\tilde Y$ 中减去它在 $\tilde X$ 方向上的投影，剩下的部分长度非负。对任意实数 $t$，
+$$0\le E\bigl[(\tilde Y-t\tilde X)^2\bigr]=\sigma_Y^2-2t\operatorname{Cov}(X,Y)+t^2\sigma_X^2.$$
+若 $\sigma_X=0$，右边是 $t$ 的一次函数，对所有 $t$ 都非负只能是 $\operatorname{Cov}(X,Y)=0$，不等式成立。若 $\sigma_X>0$，取投影系数 $t=\operatorname{Cov}(X,Y)/\sigma_X^2$，得
+$$0\le\sigma_Y^2-\frac{\operatorname{Cov}(X,Y)^2}{\sigma_X^2},$$
+即 $\operatorname{Cov}(X,Y)^2\le\sigma_X^2\sigma_Y^2$；两边除以 $\sigma_X\sigma_Y$ 得 $|\rho|\le1$。
+
+$|\rho|=1$ 当且仅当上式取等，即 $E\bigl[(\tilde Y-t\tilde X)^2\bigr]=0$，也就是 $P(\tilde Y=t\tilde X)=1$：以概率 $1$ 有 $Y=tX+(EY-t\,EX)$。这时 $\operatorname{Cov}(X,Y)\ne0$，所以 $a=t\ne0$，且与 $\operatorname{Cov}$、$\rho$ 同号。反过来，若 $P(Y=aX+b)=1$，则 $\tilde Y=a\tilde X$ 以概率 $1$ 成立，$\operatorname{Cov}(X,Y)=a\sigma_X^2$，$\sigma_Y=|a|\sigma_X$，所以 $\rho=a/|a|=\pm1$。
+</Proof>
+
+于是 $\rho=\cos\theta$ 有了意义：$\theta$ 是 $\tilde X$ 与 $\tilde Y$ 这两个"向量"之间的夹角，实验右图画的正是它们张成的那个平面。投影系数 $t=\operatorname{Cov}(X,Y)/\sigma_X^2$ 也出现在左图里：它是那条直线的斜率，后面的应用会说明它为什么是"最佳"的。
+
+<Remark>
+严格地说，$E(XY)$ 只满足内积公理的"一半"：$\langle X,X\rangle=0$ 只能推出 $P(X=0)=1$，推不出 $X$ 处处为 $0$，比如 $X$ 可以在一个概率为 $0$ 的样本点上取非零值。把以概率 $1$ 相等的随机变量看成同一个，它就是真正的内积。上面的不等式只用到 $\langle X,X\rangle\ge0$ 这一半，所以不受影响；取等条件也只能说到"以概率 $1$"为止。
+</Remark>
+
+<Theorem title="和的方差：余弦定理">
+$$\operatorname{Var}(X+Y)=\operatorname{Var}X+\operatorname{Var}Y+2\operatorname{Cov}(X,Y).$$
+若 $X_1,\dots,X_n$ 两两不相关（例如相互独立），则
+$$\operatorname{Var}(X_1+\dots+X_n)=\operatorname{Var}X_1+\dots+\operatorname{Var}X_n.$$
+</Theorem>
+
+<Proof>
+$(X+Y)-E(X+Y)=\tilde X+\tilde Y$，由双线性
+$$E\bigl[(\tilde X+\tilde Y)^2\bigr]=E\tilde X^2+2E(\tilde X\tilde Y)+E\tilde Y^2.$$
+一般地，$\operatorname{Var}\bigl(\sum_iX_i\bigr)=E\bigl[\bigl(\sum_i\tilde X_i\bigr)^2\bigr]=\sum_{i,j}\operatorname{Cov}(X_i,X_j)$，不相关时 $i\ne j$ 的项全为 $0$，剩下 $\sum_i\operatorname{Var}X_i$。
+</Proof>
+
+写成 $\sigma_{X+Y}^2=\sigma_X^2+\sigma_Y^2+2\sigma_X\sigma_Y\cos\theta$，这就是平行四边形对角线的余弦定理，实验右图里的和向量就是这条对角线。不相关时 $\theta=90^\circ$，它变成勾股定理：**独立误差的方差相加，标准差不相加**。$\theta$ 接近 $180^\circ$ 时两个向量几乎抵消，"负相关"预设里 $\operatorname{Var}(X+Y)$ 只剩不到 $0.8$，原因就在这里。
+
+<Theorem title="Chebyshev 不等式与大数定律">
+设 $\operatorname{Var}X<\infty$，则对每个 $\varepsilon>0$，
+$$P\bigl(|X-EX|\ge\varepsilon\bigr)\le\frac{\operatorname{Var}X}{\varepsilon^2}.$$
+若 $X_1,\dots,X_n$ 相互独立，期望都是 $\mu$，方差都是 $\sigma^2$，记 $\bar X_n=\frac1n(X_1+\dots+X_n)$，则 $E\bar X_n=\mu$，$\operatorname{Var}\bar X_n=\frac{\sigma^2}n$，并且对每个 $\varepsilon>0$，
+$$P\bigl(|\bar X_n-\mu|\ge\varepsilon\bigr)\le\frac{\sigma^2}{n\varepsilon^2}\ \longrightarrow\ 0\qquad(n\to\infty).$$
+</Theorem>
+
+<Proof>
+令 $A=\{|X-EX|\ge\varepsilon\}$。对每个 $\omega$，若 $\omega\in A$，则 $(X(\omega)-EX)^2\ge\varepsilon^2=\varepsilon^2\mathbf 1_A(\omega)$；若 $\omega\notin A$，右边是 $0$，不等式也成立。所以随机变量 $(X-EX)^2-\varepsilon^2\mathbf 1_A$ 处处非负，它的期望非负，由线性性和 $E\,\mathbf 1_A=P(A)$，
+$$\operatorname{Var}X-\varepsilon^2P(A)\ge0.$$
+对 $\bar X_n$：由线性性 $E\bar X_n=\frac1n\cdot n\mu=\mu$；由 $\operatorname{Var}(aX)=a^2\operatorname{Var}X$ 和独立变量的方差可加，$\operatorname{Var}\bar X_n=\frac1{n^2}\cdot n\sigma^2=\frac{\sigma^2}n$。对 $\bar X_n$ 用 Chebyshev 不等式即得。
+</Proof>
+
+后半部分称为**弱大数定律**：独立重复地测量、取平均，平均值偏离期望超过任何固定 $\varepsilon$ 的概率都趋于 $0$。它说明了"期望"这个词的来历：期望是大量重复之后平均值的去处。平均值的标准差是 $\sigma/\sqrt n$，不是 $\sigma/n$：想把误差减半，要测 $4$ 次；想减到十分之一，要测 $100$ 次。
+
+<Warning>
+**不相关不等于独立。** 设 $X$ 等可能地取 $-1,0,1$，$Y=X^2$。$EX=0$，$E(XY)=EX^3=0$，所以 $\operatorname{Cov}(X,Y)=0$。可是 $Y$ 完全由 $X$ 决定：$P(X=0,\,Y=0)=\frac13$，而 $P(X=0)\,P(Y=0)=\frac19$。实验里的"不相关却有关系"是同一回事：左右对称的点让正负面积两两抵消。协方差只衡量**线性**关系，独立推出不相关，反过来不成立。
+</Warning>
+
+<Warning>
+**方差不是线性的。** 对独立的 $X$、$Y$，$\operatorname{Var}(X-Y)=\operatorname{Var}X+\operatorname{Var}Y$，是加号不是减号：$-Y$ 的方差是 $(-1)^2\operatorname{Var}Y$。两个误差相减，晃动只会叠加。同样，$\operatorname{Var}(2X)=4\operatorname{Var}X$，而两个独立同分布的 $X_1+X_2$ 只有 $2\operatorname{Var}X$：把一次测量结果乘以 $2$，和把两次独立测量相加，是完全不同的两件事。
+</Warning>
+
+<Warning>
+**$E\,g(X)$ 一般不等于 $g(EX)$，期望也可能不存在。** 由 $\operatorname{Var}X=EX^2-(EX)^2\ge0$，总有 $EX^2\ge(EX)^2$，等号只在方差为 $0$ 时成立；$E(1/X)$ 与 $1/EX$ 一般也不相等。至于存在性：若 $P(X=2^k)=2^{-k}$（$k=1,2,\dots$），则 $\sum_k2^k\cdot2^{-k}=1+1+\cdots$ 发散，$X$ 没有期望。这时谈不上方差、协方差，本节的定理都用不上。
+</Warning>
+
+## 应用
+
+<Application title="回到开头：两台仪器">
+两台仪器的误差 $X$、$Y$ 满足 $EX=EY=0$，$\sigma_X=\sigma_Y=\sigma$，相关系数为 $\rho$。由和的方差公式，
+$$\operatorname{Var}\frac{X+Y}2=\frac{\sigma^2+\sigma^2+2\rho\sigma^2}4=\frac{1+\rho}2\,\sigma^2.$$
+误差独立（$\rho=0$）时，平均值的标准差是 $\sigma/\sqrt2\approx0.71\sigma$；同一个房间里 $\rho=0.9$ 时，是 $\sigma\sqrt{0.95}\approx0.97\sigma$，几乎没有改善；$\rho=1$ 时毫无用处；$\rho=-1$ 时误差完全抵消。$\rho$ 不可能小于 $-1$，正是 Cauchy–Schwarz 不等式。
+
+用 $n$ 台仪器、两两相关系数都是 $\rho$ 时，同样展开：
+$$\operatorname{Var}\bar X_n=\frac1{n^2}\Bigl(n\sigma^2+n(n-1)\rho\sigma^2\Bigr)=\sigma^2\Bigl(\rho+\frac{1-\rho}n\Bigr).$$
+$n\to\infty$ 时它趋于 $\rho\sigma^2$，而不是 $0$。所有仪器共有的那部分误差，再怎么平均也去不掉，只有独立的那部分会按 $1/n$ 消失。
+</Application>
+
+<Application title="二项分布与 Poisson 分布的期望和方差">
+设 $X\sim B(n,p)$。记 $A_i$ 为"第 $i$ 次成功"，则 $X=\mathbf 1_{A_1}+\dots+\mathbf 1_{A_n}$。每个 $\mathbf 1_{A_i}$ 的期望是 $p$；因为 $\mathbf 1_{A_i}^2=\mathbf 1_{A_i}$，方差是 $p-p^2=p(1-p)$。由线性性和独立变量的方差可加，
+$$EX=np,\qquad\operatorname{Var}X=np(1-p),$$
+一个二项式求和都不用算。
+
+设 $Y\sim\mathrm{Poisson}(\lambda)$。去掉 $k=0$ 这一项，再令 $j=k-1$：
+$$EY=\sum_{k\ge1}k\,e^{-\lambda}\frac{\lambda^k}{k!}=\lambda\sum_{j\ge0}e^{-\lambda}\frac{\lambda^j}{j!}=\lambda.$$
+同理 $E\bigl[Y(Y-1)\bigr]=\lambda^2$，所以 $\operatorname{Var}Y=E\bigl[Y(Y-1)\bigr]+EY-(EY)^2=\lambda$。这兑现了[随机变量与分布](/zh/concepts/random-variables)一节的说法：$B(n,p)$ 与 $\mathrm{Poisson}(np)$ 的方差只差一个因子 $1-p$，所以 $p$ 小时两者才接近。
+</Application>
+
+<Application title="帽子问题：不独立也能用线性性">
+$n\ge2$ 个人把帽子放在一起，再随机各拿一顶，$n!$ 种拿法等可能。拿回自己帽子的人数 $N$ 平均是多少？记 $A_i$ 为"第 $i$ 个人拿回自己的帽子"，$P(A_i)=\frac{(n-1)!}{n!}=\frac1n$。$N=\sum_i\mathbf 1_{A_i}$，由线性性
+$$EN=n\cdot\frac1n=1,$$
+与 $n$ 无关。这些事件并不独立（前 $n-1$ 个人都拿对了，最后一个人一定拿对），但线性性不需要独立。
+
+方差也能算：$P(A_i\cap A_j)=\frac{(n-2)!}{n!}=\frac1{n(n-1)}$，所以 $i\ne j$ 时 $\operatorname{Cov}(\mathbf 1_{A_i},\mathbf 1_{A_j})=\frac1{n(n-1)}-\frac1{n^2}=\frac1{n^2(n-1)}$，
+$$\operatorname{Var}N=n\cdot\frac1n\Bigl(1-\frac1n\Bigr)+n(n-1)\cdot\frac1{n^2(n-1)}=1.$$
+期望和方差都是 $1$，正好是 $\mathrm{Poisson}(1)$ 的期望和方差。上一节说的"许多几乎独立的稀有事件"又出现了：事实上 $n\to\infty$ 时，$P(N=k)\to e^{-1}/k!$。
+</Application>
+
+<Application title="用 X 预测 Y：最佳直线">
+要找常数 $\alpha,\beta$，使平方误差的期望 $E\bigl[(Y-\alpha-\beta X)^2\bigr]$ 最小。把 $Y-\alpha-\beta X$ 写成 $(\tilde Y-\beta\tilde X)+c$，其中 $c=EY-\alpha-\beta\,EX$ 是常数。因为 $E\tilde X=E\tilde Y=0$，交叉项的期望是 $0$：
+$$E\bigl[(Y-\alpha-\beta X)^2\bigr]=E\bigl[(\tilde Y-\beta\tilde X)^2\bigr]+c^2=\sigma_Y^2-2\beta\operatorname{Cov}(X,Y)+\beta^2\sigma_X^2+c^2.$$
+取 $\alpha=EY-\beta\,EX$ 使 $c=0$，再对 $\beta$ 求最小值（设 $\sigma_X>0$），得
+$$\beta=\frac{\operatorname{Cov}(X,Y)}{\sigma_X^2},\qquad\min E\bigl[(Y-\alpha-\beta X)^2\bigr]=\sigma_Y^2\bigl(1-\rho^2\bigr).$$
+$\beta$ 正是 $\tilde Y$ 在 $\tilde X$ 方向上的投影系数，最小误差是剩下那部分长度的平方。这就是实验左图里那条直线 $y=EY+\beta(x-EX)$。$\rho^2$ 可以读作"$Y$ 的方差里能被 $X$ 线性解释的比例"：$\rho=\pm1$ 时全部能解释，$\rho=0$ 时最好的直线是水平线 $y=EY$，$X$ 毫无帮助。
+</Application>
+
+<Tool id="plot" />
+
+在绘图器里画 $r+(1-r)/x$，把参数 $r$ 拖到 $0.2$ 附近：这是 $n$ 台两两相关系数为 $r$ 的仪器取平均后的方差（以 $\sigma^2$ 为单位）。$x$ 从 $1$ 增大时曲线先陡降，然后贴着水平线 $y=r$ 停下来；$r=0$ 时它就是 $1/x$，一直降到 $0$。
+
+<Remark>
+大数定律说平均值 $\bar X_n$ 会靠近 $\mu$，偏差的尺度是 $\sigma/\sqrt n$。可是 Chebyshev 不等式只给出了偏差的一个上界，没有说出偏差的**分布**长什么样。把偏差放大 $\sqrt n$ 倍再看，它会趋于一条钟形曲线，而且不管 $X_i$ 原来服从什么分布都是如此。这是下一节**中心极限定理**（建设中）的主题。
+</Remark>

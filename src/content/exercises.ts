@@ -340,6 +340,37 @@ export const exercises: Exercise[] = [
     hint: b("比较二项分布的方差 $np(1-p)$ 与 Poisson 分布的方差 $\\lambda$。", "Compare the binomial variance $np(1-p)$ with the Poisson variance $\\lambda$."),
     solution: b("Poisson 近似要求 $p$ 小。$B(1000,0.005)$ 的方差 $4.975$ 几乎就是 $5$，与 $\\mathrm{Poisson}(5)$ 的距离约 $0.0012$；$B(10,0.5)$ 的方差只有 $2.5$，而且取不到 $10$ 以上的值，距离约 $0.17$。", "The Poisson approximation needs small $p$. $B(1000,0.005)$ has variance $4.975$, almost exactly $5$, and lies about $0.0012$ from $\\mathrm{Poisson}(5)$; $B(10,0.5)$ has variance only $2.5$ and never exceeds $10$, and lies about $0.17$ away."),
   },
+  // ---- expectation-variance ----
+  {
+    id: "expectation-variance-1", concept: "expectation-variance", kind: "numeric",
+    statement: b("掷两枚均匀骰子，点数之和的方差是多少？（保留三位小数，也可以填分数）", "Roll two fair dice. What is the variance of the total? (Three decimals, or a fraction.)"),
+    answer: 35 / 6, tolerance: 6e-4,
+    hint: b("先用 $\\operatorname{Var}X=EX^2-(EX)^2$ 算一枚骰子的方差；两枚骰子相互独立。", "First compute the variance of one die with $\\operatorname{Var}X=EX^2-(EX)^2$; the two dice are independent."),
+    solution: b("一枚骰子 $EX=3.5$，$EX^2=\\frac{1+4+\\dots+36}6=\\frac{91}6$，方差 $\\frac{91}6-\\frac{49}4=\\frac{35}{12}$。两枚独立，方差相加：$\\frac{35}{12}\\times2=\\frac{35}6\\approx5.833$。", "For one die $EX=3.5$ and $EX^2=\\frac{1+4+\\dots+36}6=\\frac{91}6$, so the variance is $\\frac{91}6-\\frac{49}4=\\frac{35}{12}$. The dice are independent, so variances add: $\\frac{35}{12}\\times2=\\frac{35}6\\approx5.833$."),
+  },
+  {
+    id: "expectation-variance-2", concept: "expectation-variance", kind: "numeric",
+    statement: b("两台仪器的误差期望都是 $0$，标准差都是 $2$ mm，相关系数是 $0.5$。两个读数取平均，平均值误差的标准差是多少 mm？（保留三位小数）", "Two instruments have errors with mean $0$, standard deviation $2$ mm each, and correlation $0.5$. Averaging the two readings, what is the standard deviation of the error of the average, in mm? (Three decimals.)"),
+    answer: Math.sqrt(3), tolerance: 6e-4,
+    hint: b("先算 $\\operatorname{Var}\\frac{X+Y}2$，其中 $\\operatorname{Cov}(X,Y)=\\rho\\,\\sigma_X\\sigma_Y$；最后开方。", "First compute $\\operatorname{Var}\\frac{X+Y}2$ using $\\operatorname{Cov}(X,Y)=\\rho\\,\\sigma_X\\sigma_Y$; take the square root at the end."),
+    solution: b("$\\operatorname{Cov}(X,Y)=0.5\\times2\\times2=2$，$\\operatorname{Var}\\frac{X+Y}2=\\frac{4+4+2\\times2}4=3$，标准差 $\\sqrt3\\approx1.732$ mm。误差独立时是 $\\sqrt2\\approx1.414$ mm：相关性吃掉了取平均的一部分好处。", "$\\operatorname{Cov}(X,Y)=0.5\\times2\\times2=2$ and $\\operatorname{Var}\\frac{X+Y}2=\\frac{4+4+2\\times2}4=3$, so the standard deviation is $\\sqrt3\\approx1.732$ mm. With independent errors it would be $\\sqrt2\\approx1.414$ mm: the correlation eats part of the gain from averaging."),
+  },
+  {
+    id: "expectation-variance-3", concept: "expectation-variance", kind: "choice",
+    statement: b("$X$ 等可能地取 $-1,0,1$，$Y=X^2$。下列说法哪个正确？", "$X$ takes $-1,0,1$ with equal probability, and $Y=X^2$. Which statement is true?"),
+    options: [b("$X$ 与 $Y$ 相互独立", "$X$ and $Y$ are independent"), b("$\\operatorname{Cov}(X,Y)=0$，但 $X$ 与 $Y$ 不独立", "$\\operatorname{Cov}(X,Y)=0$, but $X$ and $Y$ are not independent"), b("$\\operatorname{Cov}(X,Y)>0$，因为 $|X|$ 越大 $Y$ 越大", "$\\operatorname{Cov}(X,Y)>0$, because $Y$ grows with $|X|$"), b("$\\rho(X,Y)=1$，因为 $Y$ 由 $X$ 完全决定", "$\\rho(X,Y)=1$, because $Y$ is completely determined by $X$")],
+    correct: 1,
+    hint: b("先算 $\\operatorname{Cov}(X,Y)=E(XY)-EX\\cdot EY$，再比较 $P(X=0,\\,Y=0)$ 与 $P(X=0)\\,P(Y=0)$。", "Compute $\\operatorname{Cov}(X,Y)=E(XY)-EX\\cdot EY$, then compare $P(X=0,\\,Y=0)$ with $P(X=0)\\,P(Y=0)$."),
+    solution: b("$EX=0$，$E(XY)=EX^3=\\frac{-1+0+1}3=0$，所以 $\\operatorname{Cov}(X,Y)=0$。但 $P(X=0,\\,Y=0)=\\frac13$，$P(X=0)\\,P(Y=0)=\\frac19$，两者不相等，所以不独立。协方差只衡量线性关系。", "$EX=0$ and $E(XY)=EX^3=\\frac{-1+0+1}3=0$, so $\\operatorname{Cov}(X,Y)=0$. But $P(X=0,\\,Y=0)=\\frac13$ while $P(X=0)\\,P(Y=0)=\\frac19$, so they are not independent. Covariance measures only linear dependence."),
+  },
+  {
+    id: "expectation-variance-4", concept: "expectation-variance", kind: "choice",
+    statement: b("$10$ 个人把帽子放在一起，再随机各拿一顶。拿回自己帽子的人数，期望是多少？", "$10$ people put their hats in a pile and each takes one at random. What is the expected number of people who get their own hat back?"),
+    options: [b("$\\frac1{10}$", "$\\frac1{10}$"), b("$1$", "$1$"), b("约 $0.368$，即 $e^{-1}$", "about $0.368$, that is $e^{-1}$"), b("不能用线性性来算，因为这些事件不独立", "It cannot be found by linearity, because the events are not independent")],
+    correct: 1,
+    hint: b("把人数写成示性变量之和 $N=\\sum_i\\mathbf 1_{A_i}$。每个 $P(A_i)$ 是多少？", "Write the count as a sum of indicators, $N=\\sum_i\\mathbf 1_{A_i}$. What is each $P(A_i)$?"),
+    solution: b("第 $i$ 个人拿对的概率是 $\\frac{9!}{10!}=\\frac1{10}$，由线性性 $EN=10\\times\\frac1{10}=1$。线性性不需要独立。$e^{-1}\\approx0.368$ 是“没有一个人拿对”的概率的近似值，不是期望。", "Person $i$ gets their own hat with probability $\\frac{9!}{10!}=\\frac1{10}$, so by linearity $EN=10\\times\\frac1{10}=1$. Linearity does not need independence. $e^{-1}\\approx0.368$ approximates the probability that nobody gets their own hat; it is not the expectation."),
+  },
 ];
 
 export function exercisesForConcept(slug: string): Exercise[] {

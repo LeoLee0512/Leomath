@@ -1,6 +1,5 @@
 ---
 import Base from "@/layouts/Base.astro";
-import Formula from "@/components/content/Formula.astro";
 import { getDictionary } from "@/i18n/dictionaries";
 import { FEEDBACK_EMAIL, VERSION } from "@/content/site";
 import { paths, experiments, publishedConcepts } from "@/content/graph";
@@ -26,35 +25,33 @@ const meta = pageMeta(locale, "/about", t.tagline, { title: t.about.title, descr
       <div class="prose-math mt-10">
         {locale === "zh" ? (
           <>
-            <p>GitHub 解决代码托管，博客解决文章阅读，视频解决讲授。LeoMath 想做的是它们之间缺失的一层：<strong>数学知识之间的结构关系，以及数学的可操作性</strong>。</p>
-            <p>学线性代数，不只是看到矩阵乘法公式，而是能亲手操作线性变换；学微分方程，不只是看到解析解，而是能改变初值、参数和步长，直接观察解怎么变化。</p>
-            <Formula display tex={"\\text{知识结构}\\rightarrow\\text{原理与推导}\\rightarrow\\text{交互实验}\\rightarrow\\text{练习}\\rightarrow\\text{计算工具}"} />
-            <p>知识内容从定义出发，经过推导与证明；关键知识点配有可操作实验，并提供检验理解的练习。直觉和严格性两边都要：直觉让你看见结论，推导与证明让你确信它为什么成立。</p>
+            <p>LeoMath 是我一边学一边写的数学站。每一节讲一个概念，顺序基本固定：先抛出一个问题，在实验里动手看一看，再给出定义和证明，最后做几道练习。</p>
+            <p>实验都直接在浏览器里跑。读线性映射时，可以拖动两个基向量，看整个平面跟着怎么变；读微分方程时，可以改初值和步长，看数值解从哪一步开始跑偏。很多结论自己动手试过一次，比只看公式记得牢。</p>
+            <p>证明不会省略。直觉能帮你猜到结论，但要确定它为什么对，还得把推导完整走一遍。</p>
             <h2>现在：v{VERSION}</h2>
-            <p>目前有 {n.paths} 条学习路线、{n.concepts} 个知识点、{n.experiments} 个交互实验、{n.exercises} 道练习。新内容一次只加一个知识点，每个都走完“问题 → 实验 → 定义 → 证明 → 练习”整条链再发布。</p>
+            <p>目前有 {n.paths} 条学习路线、{n.concepts} 个知识点、{n.experiments} 个交互实验、{n.exercises} 道练习。我一次只加一节，问题、实验、定义、证明、练习都写齐了才放上来，所以更新不会太快。</p>
             <h2>第一版：v0.1.1</h2>
-            <p>第一版刻意很小：三条完整路线（微积分基础、线性代数基础、微分方程入门）、三个交互实验（线性变换、ODE 数值解、指数函数的导数）、一个软件页。功能很少，但产品人格已经完整。</p>
-            <h2>关于作者</h2>
-            <p>Leo 在学习数学、做数值计算和开发工具。这个站点是一个长期项目：学到的数学、写的计算程序和做的软件，会逐渐沉淀进来。</p>
+            <p>第一版很小：微积分、线性代数、微分方程三条路线，线性变换、ODE 数值解、指数函数的导数三个实验，再加一个软件页。</p>
+            <h2>关于我</h2>
+            <p>我是 Leo，平时学数学、写数值计算的程序，也做一些工具。学到的东西、写出来的程序和做好的软件，都会慢慢放到这里。</p>
             <h2>反馈</h2>
-            <p>每个知识点、实验和软件页面底部都有讨论区，登录后可以留言。发现数学错误、表述不清或有建议，也可以直接写信到 <a href={`mailto:${FEEDBACK_EMAIL}`}>{FEEDBACK_EMAIL}</a>。</p>
+            <p>每个知识点、实验和软件页面底部都有讨论区，登录后就能留言。发现哪里算错了、哪句话没讲清楚，或者有别的想法，也可以直接写信到 <a href={`mailto:${FEEDBACK_EMAIL}`}>{FEEDBACK_EMAIL}</a>。</p>
             <h2>许可</h2>
-            <p>数学正文内容采用 CC BY-SA 4.0，代码采用 MIT。</p>
+            <p>数学正文采用 CC BY-SA 4.0，代码采用 MIT。</p>
           </>
         ) : (
           <>
-            <p>GitHub solves code hosting, blogs solve reading, videos solve lecturing. LeoMath is about the layer missing between them: <strong>the structural relations between mathematical ideas, and the ability to operate on mathematics directly</strong>.</p>
-            <p>Learning linear algebra should not stop at the formula for matrix multiplication; you should be able to manipulate a linear transformation. Learning differential equations should not stop at a closed-form solution; you should be able to change initial values, parameters and step sizes and watch the solution respond.</p>
-            <Formula display tex={"\\text{Structure}\\rightarrow\\text{Principles \\& derivation}\\rightarrow\\text{Experiments}\\rightarrow\\text{Exercises}\\rightarrow\\text{Tools}"} />
-            <p>The material starts from definitions and proceeds through derivation and proof. Key concepts are accompanied by hands-on experiments, with exercises to test understanding. Both intuition and rigour: intuition lets you see the result; derivation and proof let you know why it holds.</p>
+            <p>LeoMath is a mathematics site I write as I learn. Each section covers one concept, in roughly the same order: a question to start with, an experiment to play with, then the definition and proof, and a few exercises at the end.</p>
+            <p>The experiments run right in your browser. In linear maps you drag two basis vectors and watch the whole plane move with them; in differential equations you change the initial value and the step size and see where the numerical solution starts to drift. Trying something once with your own hands tends to stick better than reading the formula.</p>
+            <p>Proofs are not skipped. Intuition helps you guess a result; to know why it is true you still have to walk through the argument.</p>
             <h2>Now: v{VERSION}</h2>
-            <p>There are {n.paths} learning paths, {n.concepts} concepts, {n.experiments} interactive experiments and {n.exercises} exercises. New material arrives one concept at a time, and each goes through the whole chain of problem → experiment → definition → proof → exercises before it is published.</p>
+            <p>There are {n.paths} learning paths, {n.concepts} concepts, {n.experiments} interactive experiments and {n.exercises} exercises. I add one section at a time and only put it up once the question, experiment, definition, proof and exercises are all written, so updates are not fast.</p>
             <h2>First release: v0.1.1</h2>
-            <p>The first release was deliberately small: three complete paths (calculus, linear algebra, differential equations), three interactive experiments (linear transformation, numerical ODE, the derivative of the exponential), one software page. Few features, but a complete character.</p>
-            <h2>About the author</h2>
-            <p>Leo studies mathematics, does numerical computation and builds tools. This site is a long-term project: the mathematics learned, the programs written and the software built will accumulate here.</p>
+            <p>The first release was small: three paths (calculus, linear algebra, differential equations), three experiments (linear transformation, numerical ODEs, the derivative of the exponential) and one software page.</p>
+            <h2>About me</h2>
+            <p>I'm Leo. I study mathematics, write numerical code and build tools. What I learn, the programs I write and the software I finish will end up here over time.</p>
             <h2>Feedback</h2>
-            <p>Every concept, experiment and software page ends with a discussion section; log in to leave a comment. For mathematical errors, unclear exposition or suggestions you can also write to <a href={`mailto:${FEEDBACK_EMAIL}`}>{FEEDBACK_EMAIL}</a>.</p>
+            <p>Every concept, experiment and software page ends with a discussion section; log in to leave a comment. If you find a mistake, a sentence that doesn't explain enough, or have any other thought, you can also write to <a href={`mailto:${FEEDBACK_EMAIL}`}>{FEEDBACK_EMAIL}</a>.</p>
             <h2>Licence</h2>
             <p>Mathematical content is CC BY-SA 4.0; code is MIT.</p>
           </>
