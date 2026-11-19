@@ -78,7 +78,7 @@ export interface Observation {
   explanation: Bilingual;
 }
 
-export type ExperimentKind = "linear-transform" | "ode-explorer" | "exponential-derivative" | "secant-tangent" | "riemann-sums" | "taylor-approx" | "birthday-problem" | "conditioning" | "bayes-screening" | "binomial-poisson" | "epsilon-band" | "basis-coordinates" | "projection-slack" | "correlation-angle";
+export type ExperimentKind = "linear-transform" | "ode-explorer" | "exponential-derivative" | "secant-tangent" | "riemann-sums" | "taylor-approx" | "birthday-problem" | "conditioning" | "bayes-screening" | "binomial-poisson" | "epsilon-band" | "basis-coordinates" | "projection-slack" | "correlation-angle" | "sample-mean-clt";
 
 export interface Experiment {
   slug: string;
@@ -104,7 +104,7 @@ export const concepts: Concept[] = [
   { slug: "conditional-probability", title: b("条件概率与 Bayes", "Conditioning & Bayes"), summary: b("知道一件事发生了，就把样本空间缩小到它；再用结果反推原因。", "Knowing an event occurred shrinks the sample space to it; then reason from effects back to causes."), parent: "probability", prerequisites: ["probability-space"], status: "published", level: "undergrad", path: "probability", experiments: ["bayes-screening", "conditioning"], tools: ["plot"], credits: [{ url: `${PROB_DEMOS}/ybs`, note: b("筛查实验的思路参考", "Screening experiment idea from") }, { url: `${PROB_DEMOS}/Venn`, note: b("事件关系实验的思路参考", "Event-relations experiment idea from") }] },
   { slug: "random-variables", title: b("随机变量与分布", "Random variables"), summary: b("把结果变成数；二项分布的极限是 Poisson。", "Turning outcomes into numbers; the Poisson law as a limit of binomials."), parent: "probability", prerequisites: ["conditional-probability"], status: "published", level: "undergrad", path: "probability", experiments: ["binomial-poisson"], tools: ["plot"], credits: [{ url: `${PROB_DEMOS}/EXFB`, note: b("二项分布峰值分析的思路参考", "Binomial peak analysis idea from") }, { url: `${PROB_DEMOS}/PoissonDist`, note: b("Poisson 计数模拟的思路参考", "Poisson counting simulation idea from") }] },
   { slug: "expectation-variance", title: b("期望与方差", "Mean & variance"), summary: b("平均值与波动的精确说法；协方差是一种内积，所以相关系数落在 [−1, 1]。", "Average and spread made precise; covariance is an inner product, so correlation lies in [−1, 1]."), parent: "probability", prerequisites: ["random-variables", "inner-product"], status: "published", level: "undergrad", path: "probability", experiments: ["correlation-angle"], tools: ["plot"] },
-  { slug: "central-limit-theorem", title: b("中心极限定理", "Central limit theorem"), summary: b("分布为什么走向钟形。", "Why distributions tend to the bell curve."), parent: "probability", prerequisites: ["expectation-variance"], status: "planned", level: "undergrad", experiments: [] },
+  { slug: "central-limit-theorem", title: b("中心极限定理", "Central limit theorem"), summary: b("样本均值的分布为什么走向钟形；大数定律与中心极限定理各自说了什么。", "Why sample means tend to a bell curve, and what the laws of large numbers and the central limit theorem each say."), parent: "probability", prerequisites: ["expectation-variance"], status: "published", level: "undergrad", path: "probability", experiments: ["sample-mean-clt"], tools: ["plot"] },
 
   // ---- foundations (planned) ----
   { slug: "functions", title: b("函数与实数", "Functions & reals"), summary: b("实数的完备性与函数的语言。", "Completeness of the reals and the language of functions."), parent: "analysis", prerequisites: [], status: "planned", level: "highschool", experiments: [] },
@@ -174,13 +174,13 @@ export const paths: LearningPath[] = [
   {
     slug: "probability",
     title: b("概率论基础", "Foundations of probability"),
-    subtitle: b("概率空间 → 条件概率 → 随机变量 → 期望与方差 → 中心极限定理（建设中）", "Probability spaces → Conditional probability → Random variables → Mean & variance → Central limit theorem (in progress)"),
+    subtitle: b("概率空间 → 条件概率 → 随机变量 → 期望与方差 → 中心极限定理", "Probability spaces → Conditional probability → Random variables → Mean & variance → Central limit theorem"),
     intent: b("不确定性、计数与规律", "uncertainty, counting and regularity"),
     level: "intro",
     requires: b("高中的排列组合；第四节用到「线性代数基础」里的内积", "school counting (permutations and combinations); section four uses inner products from “Linear algebra”"),
-    audience: b("想弄懂“概率到底在算什么”的人。这条路线正在建设，已完成前四节。", "anyone who wants to know what probability actually computes. The path is being built; the first four sections are done."),
-    outcome: b("理解概率空间与三条公理；会用补事件和计数算概率；掌握条件概率、独立性与 Bayes 公式；用随机变量和分布描述计数，知道二项分布何时可以用 Poisson 分布近似；会算期望与方差，理解协方差为什么是内积、平均为什么能减小误差。", "understand probability spaces and the three axioms; compute probabilities by counting and complements; use conditional probability, independence and Bayes' theorem; describe counts with random variables and distributions, know when a binomial law can be replaced by a Poisson law; compute means and variances, and see why covariance is an inner product and why averaging reduces error."),
-    concepts: ["probability-space", "conditional-probability", "random-variables", "expectation-variance"],
+    audience: b("想弄懂“概率到底在算什么”的人。五节构成一条完整路线。", "anyone who wants to know what probability actually computes. Five sections make a complete path."),
+    outcome: b("理解概率空间与三条公理；会用补事件和计数算概率；掌握条件概率、独立性与 Bayes 公式；用随机变量和分布描述计数，知道二项分布何时可以用 Poisson 分布近似；会算期望与方差，理解协方差为什么是内积、平均为什么能减小误差；分清大数定律与中心极限定理，并会用正态近似处理独立同分布的和。", "understand probability spaces and the three axioms; compute probabilities by counting and complements; use conditional probability, independence and Bayes' theorem; describe counts with random variables and distributions, know when a binomial law can be replaced by a Poisson law; compute means and variances, and see why covariance is an inner product and why averaging reduces error; distinguish the law of large numbers from the central limit theorem and use normal approximations for sums of independent, identically distributed variables."),
+    concepts: ["probability-space", "conditional-probability", "random-variables", "expectation-variance", "central-limit-theorem"],
     credits: [{ url: `${PROB_DEMOS}/probability-stats-hub`, note: b("路线规划参考", "Path outline informed by") }],
   },
 ];
@@ -439,6 +439,24 @@ export const experiments: Experiment[] = [
       explanation: b(
         "“完全线性”的六个点都在直线 $y=\\tfrac12x+\\tfrac12$ 上，$Y-EY=\\tfrac12(X-EX)$，两个向量同向，$\\rho=1$，$\\theta=0^\\circ$。把第 6 个点从 $(3,2)$ 拖到 $(3,0)$，$\\rho$ 降到约 $0.726$，夹角约 $43^\\circ$。$\\rho$ 是两个向量夹角的余弦，由 Cauchy–Schwarz 不等式，怎么拖都出不了 $[-1,1]$；只有六个点落在同一条既不水平也不竖直的直线上时，才取到 $\\pm1$。“不相关却有关系”的六个点关于 $x=0$ 对称，$Y=\\tfrac12X^2-\\tfrac52$：$(x,y)$ 与 $(-x,y)$ 的两个矩形一蓝一红，面积相同，两两抵消，所以 $\\operatorname{Cov}=0$。协方差只衡量**线性**关系，$\\rho=0$ 不等于独立。离群点在 $(4,3)$ 时 $\\rho\\approx0.775$；拖到 $(0,0)$ 后 $\\rho=-0.1$，其余五个点本来几乎没有线性关系。这个点离均值很远，它的矩形面积比其他五个加起来还大，而协方差是这些面积的平均，所以它一个点就决定了 $\\rho$ 的符号和大小。",
         "The six points of “On a line” lie on $y=\\tfrac12x+\\tfrac12$, so $Y-EY=\\tfrac12(X-EX)$: the two vectors point the same way, $\\rho=1$ and $\\theta=0^\\circ$. Dragging point 6 from $(3,2)$ to $(3,0)$ lowers $\\rho$ to about $0.726$, an angle of about $43^\\circ$. Since $\\rho$ is the cosine of the angle between two vectors, the Cauchy–Schwarz inequality keeps it inside $[-1,1]$ whatever you drag; it reaches $\\pm1$ only when all six points lie on one line that is neither horizontal nor vertical. The points of “Uncorrelated, yet related” are symmetric about $x=0$, with $Y=\\tfrac12X^2-\\tfrac52$: the rectangles of $(x,y)$ and $(-x,y)$, one blue and one red, have equal area and cancel in pairs, so $\\operatorname{Cov}=0$. Covariance measures only **linear** dependence; $\\rho=0$ does not mean independent. With the outlier at $(4,3)$, $\\rho\\approx0.775$; at $(0,0)$, $\\rho=-0.1$, because the other five points have almost no linear relation. That one point lies far from the mean, its rectangle is larger than the other five together, and the covariance is the average of these areas, so a single point decides the sign and size of $\\rho$."
+      ),
+    },
+  },
+  {
+    slug: "sample-mean-clt",
+    kind: "sample-mean-clt",
+    title: b("样本均值怎样变成钟形", "How sample means become bell-shaped"),
+    summary: b("从偏斜的 0–1 分布、均匀分布和指数分布中反复抽样，比较母分布与样本均值的分布；切换标准化后，观察不同母分布为什么趋向同一条钟形曲线。", "Sample from a skewed 0–1 law, a uniform law and an exponential law, and compare each source with its distribution of sample means. After standardisation, see why all of them approach the same bell curve."),
+    concept: "central-limit-theorem",
+    observe: {
+      questions: [
+        b("选 Bernoulli(p)，先看 n = 1 时直方图的形状，再依次切到 n = 10、30、100。形状和宽度分别怎样变？这和“原始数据会变成正态分布”是一回事吗？", "Choose Bernoulli(p) and look at the histogram at n = 1, then at n = 10, 30 and 100. How do its shape and width change? Is this the same as the original data becoming normal?"),
+        b("保持 n 不变，分别换成均匀分布和指数分布。哪个统计量随 n 按 1/√n 缩小？点“标准化后”，三种母分布的直方图有什么共同点？", "Keep n fixed and switch between the uniform and exponential laws. Which quantity shrinks like 1/√n? Press “Standardised”: what do the three histograms have in common?"),
+        b("把 Bernoulli 的 p 从 0.1 调到 0.5。偏斜程度怎样变化？再把 p 调回 0.1，增大 n 时，为什么正态近似又变得可用？", "Move Bernoulli p from 0.1 to 0.5. How does the skewness change? Now set p back to 0.1: why does the normal approximation become useful again as n grows?"),
+      ],
+      explanation: b(
+        "n = 1 时，样本均值就是一次观测，直方图保留母分布的形状；n 增大后，许多独立项平均起来，形状逐渐接近正态曲线。改变的是**样本均值**的分布，不是母分布本身。若母分布的期望为 μ、方差为 σ²，则样本均值的期望仍是 μ，标准差是 σ/√n：n 每增大 4 倍，宽度减半，这对应大数定律。把均值减去 μ、再除以 σ/√n 后，三种母分布的直方图都以 0 为中心、宽度约为 1，并逐渐接近同一条 N(0,1) 曲线，这才是中心极限定理。Bernoulli 的 p = 0.5 时母分布比较对称，n 很小时形状就较好；p = 0.1 时明显右偏，但独立同分布且方差有限，n 足够大时标准化后的分布仍趋向正态。模拟的 5000 个样本均值有抽样波动，不会与理论曲线完全相同。",
+        "At n = 1 the sample mean is just one observation, so the histogram has the source's shape. As n grows, averaging many independent terms makes the shape approach a normal curve. What changes is the distribution of the **sample mean**, not the source itself. If the source has mean μ and variance σ², the sample mean has mean μ and standard deviation σ/√n: quadrupling n halves the width, which is the law of large numbers. Subtract μ and divide by σ/√n, and all three sources give histograms centred near 0 with spread near 1, increasingly resembling the same N(0,1) curve; this is the central limit theorem. Bernoulli with p = 0.5 is relatively symmetric, so the shape looks good even for small n. With p = 0.1 it is strongly skewed, but the variables are still i.i.d. with finite variance, so standardisation leads to normality for large enough n. The 5000 simulated means fluctuate and need not match the theoretical curve exactly."
       ),
     },
   },

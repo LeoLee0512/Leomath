@@ -1,0 +1,142 @@
+## Start from a problem
+
+<Problem>
+An instrument measures the same quantity repeatedly, with a random error in every reading. Averaging many readings reduces the error: if each error has variance $\sigma^2$, the average of $n$ readings has variance $\sigma^2/n$. This is what the law of large numbers told us.
+
+But there is a more precise question: what does the **distribution** of the average error look like? If a single error is highly skewed, taking only the values $0$ or $1$, will the average be skewed too? And why do many entirely different random phenomena exhibit a similar bell curve after enough independent repetitions?
+</Problem>
+
+<Observe>
+Do not read the theorem yet. Choose Bernoulli($p$) with $p=0.1$. At $n=1$ the sample mean is just one observation, so the histogram has only two bars at $0$ and $1$. Move through $n=10,30,100$ and watch the shape and width change. Now switch to the uniform and exponential laws, and finally press “Standardised”.
+
+**Whose distribution is changing? Do the original data become normal as n grows?**
+</Observe>
+
+<Experiment slug="sample-mean-clt" />
+
+<Conjecture>
+The sample mean remains centred at the original expectation $\mu$, while its spread shrinks like $\sigma/\sqrt n$. Its shape approaches a normal curve as n grows. After subtracting $\mu$ and dividing by $\sigma/\sqrt n$, every source law seems to approach the same $N(0,1)$ curve.
+
+The first statement concerns centre and spread; the second concerns shape. They belong respectively to the law of large numbers and the central limit theorem, and should not be confused.
+</Conjecture>
+
+## Definitions
+
+<Definition title="Independent, identically distributed variables and the sample mean">
+Random variables $X_1,X_2,\dots$ are **independent and identically distributed** (i.i.d.) if they are independent and all have the same distribution. Write $\mu=EX_i$ for their common expectation and $\sigma^2=\operatorname{Var}X_i$ for their common variance, and suppose $\sigma^2<\infty$. The **sample mean** of the first $n$ variables is
+$$\bar X_n=\frac{X_1+\cdots+X_n}{n}.$$
+</Definition>
+
+By linearity and the additivity of variance for independent variables, from [mean and variance](/en/concepts/expectation-variance),
+$$E\bar X_n=\mu,\qquad \operatorname{Var}\bar X_n=\frac{\sigma^2}{n}.$$
+Whether the sample mean is approximately normal is therefore a separate question from whether the source law is normal.
+
+<Definition title="Convergence in distribution">
+Let $F_n$ be the distribution functions of $Z_n$ and $F$ that of $Z$. If, at every continuity point $x$ of $F$,
+$$F_n(x)\longrightarrow F(x),$$
+we say that $Z_n$ **converges in distribution** to $Z$, written $Z_n\Rightarrow Z$. Requiring convergence only at continuity points avoids the jumps of discrete laws; it does not require $Z_n(\omega)$ to approach $Z(\omega)$ at every outcome.
+</Definition>
+
+<Definition title="Characteristic function">
+The **characteristic function** of a random variable $X$ is
+$$\varphi_X(t)=E\bigl[e^{itX}\bigr],\qquad t\in\mathbb R.$$
+The expectation always exists because $|e^{itX}|=1$. The characteristic function of $N(0,1)$ is $e^{-t^2/2}$.
+</Definition>
+
+## Theorems and proofs
+
+<Proposition title="Basic properties of characteristic functions">
+For constants $a,b$,
+$$\varphi_{aX+b}(t)=e^{itb}\varphi_X(at).$$
+If $X$ and $Y$ are independent, then
+$$\varphi_{X+Y}(t)=\varphi_X(t)\varphi_Y(t).$$
+</Proposition>
+
+<Proof>
+Using properties of the exponential and the fact that [independence splits the expectation of a product](/en/concepts/expectation-variance),
+$$\varphi_{aX+b}(t)=E\bigl[e^{it(aX+b)}\bigr]=e^{itb}E\bigl[e^{iatX}\bigr]=e^{itb}\varphi_X(at),$$
+$$\varphi_{X+Y}(t)=E\bigl[e^{itX}e^{itY}\bigr]=E\bigl[e^{itX}\bigr]E\bigl[e^{itY}\bigr]=\varphi_X(t)\varphi_Y(t).$$
+</Proof>
+
+<Proposition title="A second-order expansion with finite variance">
+If $EX^2<\infty$, then for every fixed $t$,
+$$\varphi_X(t)=1+i\mu t-\frac{\sigma^2+\mu^2}{2}t^2+o(t^2)\qquad(t\to0),$$
+where $\mu=EX$ and $\sigma^2=\operatorname{Var}X$. In particular, if $EX=0$, then $\varphi_X(t)=1-\frac{\sigma^2}{2}t^2+o(t^2)$.
+</Proposition>
+
+<Proof>
+Taylor expansion gives
+$$e^{itx}=1+itx-\frac{t^2x^2}{2}+R(t,x),$$
+with the standard estimates $|R(t,x)|\le |t|^3|x|^3/6$ and $|R(t,x)|\le t^2x^2$. Hence
+$$\varphi_X(t)=1+i\mu t-\frac{EX^2}{2}t^2+E\bigl[R(t,X)\bigr].$$
+It remains to show $E[R(t,X)]=o(t^2)$. Given any $\varepsilon>0$, since $EX^2<\infty$, choose $M$ such that $E\bigl[X^2\mathbf 1_{|X|>M}\bigr]<\varepsilon$. Use the first estimate on $|X|\le M$ and the second on $|X|>M$:
+$$E|R(t,X)|\le \frac{|t|^3M^3}{6}+t^2\varepsilon.$$
+Dividing by $t^2$ and letting $t\to0$ gives $\limsup_{t\to0}|E[R(t,X)]|/t^2\le\varepsilon$. As $\varepsilon$ was arbitrary, the remainder is $o(t^2)$. Finally substitute $EX^2=\sigma^2+\mu^2$. Only the second moment is used; no third moment is required.
+</Proof>
+
+<Proposition title="Lévy's continuity theorem">
+If $\varphi_{Z_n}(t)\to\varphi_Z(t)$ for every real $t$, then $Z_n\Rightarrow Z$.
+</Proposition>
+
+This is what makes characteristic functions useful for limits of distributions. We cite Lévy's continuity theorem as an analytic tool; to prove the central limit theorem below, it will suffice to check pointwise convergence of characteristic functions.
+
+<Theorem title="The central limit theorem for independent, identically distributed variables">
+Let $X_1,X_2,\dots$ be i.i.d. with $EX_i=\mu$ and finite $\operatorname{Var}X_i=\sigma^2>0$. Then
+$$Z_n=\frac{\bar X_n-\mu}{\sigma/\sqrt n}\ \Longrightarrow\ N(0,1).$$
+In other words, for every real $x$,
+$$P\bigl(Z_n\le x\bigr)\longrightarrow \Phi(x)=\int_{-\infty}^x\frac{e^{-u^2/2}}{\sqrt{2\pi}}\,du.$$
+</Theorem>
+
+<Proof>
+Write $S_n=X_1+\cdots+X_n$. By the properties above and independence,
+$$\varphi_{Z_n}(t)=e^{-it\mu\sqrt n/\sigma}\left[\varphi_X\!\left(\frac{t}{\sigma\sqrt n}\right)\right]^n.$$
+For fixed $t$, $t/(\sigma\sqrt n)\to0$ as $n\to\infty$, so the second-order expansion gives
+$$\varphi_X\!\left(\frac{t}{\sigma\sqrt n}\right)=1-\frac{t^2}{2n}+o\!\left(\frac1n\right).$$
+Therefore
+$$\varphi_{Z_n}(t)=\left[1+\frac{-t^2/2+o(1)}{n}\right]^n\longrightarrow e^{-t^2/2}.$$
+Here we used the standard limit $(1+z_n/n)^n\to e^z$ when $z_n\to z$; for sufficiently large $n$, take the principal logarithm, so $\log(1+z_n/n)=z_n/n+O(1/n^2)$. The right-hand side is the characteristic function of $N(0,1)$, and Lévy's continuity theorem gives $Z_n\Rightarrow N(0,1)$.
+</Proof>
+
+The theorem does not assume a normal source, a density, a third moment or boundedness. **Being i.i.d. with finite variance is the key hypothesis.** The standardisation also has a precise meaning: subtract $\mu$ and divide by $\sigma/\sqrt n$, not by $\sigma/n$.
+
+<Warning>
+**The law of large numbers and the central limit theorem are different.** The law of large numbers says $\bar X_n-\mu$ tends to $0$ in probability, with typical deviation of order $\sigma/\sqrt n$. The central limit theorem multiplies this deviation by $\sqrt n/\sigma$ and examines its shape, obtaining the standard normal law. One describes where the average settles; the other describes the shape of its standardised fluctuation.
+</Warning>
+
+<Warning>
+**The source law does not become normal as n grows.** Each $X_i$ still has its original Bernoulli, uniform or exponential distribution. It is the distribution of $\bar X_n$ that approaches normality. Discrete sources also have lattice effects: a Bernoulli sample mean can only take values spaced by $1/n$, so the normal curve is a continuous approximation, not a replacement for point probabilities.
+</Warning>
+
+<Warning>
+**The i.i.d. hypothesis cannot simply be dropped.** If every error contains a common component, averaging cannot remove it even when every variance is finite; the previous section's example $\operatorname{Var}\bar X_n\to\rho\sigma^2$ illustrates this. With infinite variance, the second-order expansion and this proof no longer hold, and a different kind of limiting law may appear.
+</Warning>
+
+## Applications
+
+<Application title="Normal approximation to the binomial law and continuity correction">
+If $X\sim B(n,p)$, then $X$ is a sum of $n$ independent indicators, with $EX=np$ and $\operatorname{Var}X=np(1-p)$. When $n$ is large and $np(1-p)$ is not too small, we can approximate
+$$\frac{X-np}{\sqrt{np(1-p)}}\approx N(0,1).$$
+Because $X$ takes integer values, shift each boundary by $0.5$ when computing an interval probability; this is called **continuity correction**:
+$$P(a\le X\le b)\approx \Phi\!\left(\frac{b+0.5-np}{\sqrt{np(1-p)}}\right)-\Phi\!\left(\frac{a-0.5-np}{\sqrt{np(1-p)}}\right).$$
+For example, if $X\sim B(100,0.5)$, then $EX=50$ and $\operatorname{Var}X=25$, so
+$$P(45\le X\le55)\approx \Phi(1.1)-\Phi(-1.1)\approx0.7286.$$
+Since $45$ and $55$ are symmetric around $50$, the corrections give $z=(55.5-50)/5=1.1$.
+</Application>
+
+<Application title="Normal approximation or Poisson approximation?">
+If $n$ is large and $p$ is small, $X\sim B(n,p)$ counts many rare successes, and the [Poisson approximation](/en/concepts/random-variables) is often more natural: the count remains a non-negative integer and its law may be visibly right-skewed. If $p$ is away from $0$ and $1$ and $np(1-p)$ is large, the normal approximation is usually better. The choice depends on shape and parameters, not only on the size of $n$.
+</Application>
+
+<Application title="Errors in repeated measurements">
+With independent repeated measurements, $\bar X_n-\mu$ has standard deviation $\sigma/\sqrt n$, and the central limit theorem further gives an approximate confidence interval. For example,
+$$P\!\left(|\bar X_n-\mu|\le1.96\frac{\sigma}{\sqrt n}\right)\approx0.95.$$
+So repeated measurement not only reduces the error, but also lets us estimate the probability that the error lies within a given range. A common bias or strong correlation invalidates direct use of this formula.
+</Application>
+
+<Tool id="plot" />
+
+In the plotter, draw `exp(-x^2/2)/sqrt(2*pi)`, the density of $N(0,1)$. Now draw `exp(-(x-1)^2/(2*0.25))/(0.5*sqrt(2*pi))` and compare the centre and width: this is the normal density with mean $1$ and standard deviation $0.5$. Standardisation in the experiment turns the distributions of different sample means into the first shape.
+
+<Remark>
+The central limit theorem explains why bell curves often appear when small independent errors accumulate, but it does not say every random phenomenon is normal. It concerns **sums of i.i.d. terms**. Joining independent increments continuously leads to random walks and Brownian motion, one route from probability towards analysis and differential equations.
+</Remark>

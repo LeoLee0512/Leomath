@@ -41,6 +41,11 @@ export const experimentTex: Partial<Record<ExperimentKind, Record<string, Formul
     correlation: "\\rho=\\frac{\\operatorname{Cov}(X,Y)}{\\sigma_X\\sigma_Y}=\\cos\\theta",
     sum: "\\operatorname{Var}(X+Y)=\\sigma_X^2+\\sigma_Y^2+2\\operatorname{Cov}(X,Y)",
   },
+  "sample-mean-clt": {
+    sampleMean: "\\bar X_n=\\frac{X_1+\\cdots+X_n}{n}",
+    standardizedMean: "Z_n=\\frac{\\bar X_n-\\mu}{\\sigma/\\sqrt n}",
+    varianceMean: "\\operatorname{Var}(\\bar X_n)=\\frac{\\sigma^2}{n}",
+  },
   "exponential-derivative": { quotient: "\\frac{a^{x+h}-a^{x}}{h}=a^{x}\\cdot\\frac{a^{h}-1}{h}" },
   "secant-tangent": { quotient: "\\frac{f(x_0+h)-f(x_0)}{h}" },
   "riemann-sums": { sum: "\\sum_{i=1}^{n} f(\\xi_i)\\,\\Delta x" },

@@ -371,6 +371,37 @@ export const exercises: Exercise[] = [
     hint: b("把人数写成示性变量之和 $N=\\sum_i\\mathbf 1_{A_i}$。每个 $P(A_i)$ 是多少？", "Write the count as a sum of indicators, $N=\\sum_i\\mathbf 1_{A_i}$. What is each $P(A_i)$?"),
     solution: b("第 $i$ 个人拿对的概率是 $\\frac{9!}{10!}=\\frac1{10}$，由线性性 $EN=10\\times\\frac1{10}=1$。线性性不需要独立。$e^{-1}\\approx0.368$ 是“没有一个人拿对”的概率的近似值，不是期望。", "Person $i$ gets their own hat with probability $\\frac{9!}{10!}=\\frac1{10}$, so by linearity $EN=10\\times\\frac1{10}=1$. Linearity does not need independence. $e^{-1}\\approx0.368$ approximates the probability that nobody gets their own hat; it is not the expectation."),
   },
+  // ---- central-limit-theorem ----
+  {
+    id: "central-limit-theorem-1", concept: "central-limit-theorem", kind: "numeric",
+    statement: b("独立同分布的随机变量期望都是 $2$、标准差都是 $3$。取 $36$ 个变量求样本均值，样本均值的标准差是多少？", "Independent, identically distributed variables each have mean $2$ and standard deviation $3$. What is the standard deviation of the mean of $36$ variables?"),
+    answer: 0.5, tolerance: 1e-6,
+    hint: b("用 $\\operatorname{Var}\\bar X_n=\\sigma^2/n$，最后开方。", "Use $\\operatorname{Var}\\bar X_n=\\sigma^2/n$, then take the square root."),
+    solution: b("$\\operatorname{Var}\\bar X_n=3^2/36=1/4$，所以标准差是 $\\sqrt{1/4}=0.5$。期望 $2$ 不改变宽度，只决定中心。", "$\\operatorname{Var}\\bar X_n=3^2/36=1/4$, so the standard deviation is $\\sqrt{1/4}=0.5$. The mean $2$ determines the centre, not the spread."),
+  },
+  {
+    id: "central-limit-theorem-2", concept: "central-limit-theorem", kind: "numeric",
+    statement: b("设 $X\\sim B(100,0.5)$。用正态近似和连续性修正估计 $P(45\\le X\\le55)$，保留三位小数。", "Let $X\\sim B(100,0.5)$. Estimate $P(45\\le X\\le55)$ using a normal approximation with continuity correction, to three decimals."),
+    answer: 0.7286, tolerance: 6e-4,
+    hint: b("$EX=50$，$\\sigma=5$；上下界分别取 $55.5$ 与 $44.5$。", "$EX=50$ and $\\sigma=5$; use $55.5$ and $44.5$ as the corrected boundaries."),
+    solution: b("$z=(55.5-50)/5=1.1$，下界为 $(44.5-50)/5=-1.1$。于是概率约为 $\\Phi(1.1)-\\Phi(-1.1)=2\\Phi(1.1)-1\\approx2\\times0.8643-1=0.7286$。", "$z=(55.5-50)/5=1.1$, and the lower boundary is $(44.5-50)/5=-1.1$. Hence the probability is about $\\Phi(1.1)-\\Phi(-1.1)=2\\Phi(1.1)-1\\approx2\\times0.8643-1=0.7286$."),
+  },
+  {
+    id: "central-limit-theorem-3", concept: "central-limit-theorem", kind: "choice",
+    statement: b("关于独立同分布且方差有限的随机变量，下列哪个说法正确？", "For independent, identically distributed variables with finite variance, which statement is true?"),
+    options: [b("$n$ 增大时，母分布会趋于正态分布", "As $n$ grows, the source distribution tends to normal"), b("大数定律给出标准化后的正态分布", "The law of large numbers gives a standard normal distribution after standardisation"), b("样本均值的标准差按 $1/\\sqrt n$ 缩小，标准化后的分布趋于 $N(0,1)$", "The sample mean's standard deviation shrinks like $1/\\sqrt n$, and its standardised distribution tends to $N(0,1)$"), b("样本均值的标准差按 $1/n$ 缩小，所以不需要看分布形状", "The sample mean's standard deviation shrinks like $1/n$, so the shape is irrelevant")],
+    correct: 2,
+    hint: b("分别回忆 $\\operatorname{Var}\\bar X_n$ 和中心极限定理的结论。", "Recall $\\operatorname{Var}\\bar X_n$ and the conclusion of the central limit theorem separately."),
+    solution: b("样本均值的方差是 $\\sigma^2/n$，标准差是 $\\sigma/\\sqrt n$；中心极限定理讨论的是标准化后的分布趋于 $N(0,1)$，不是母分布变成正态，也不是大数定律直接给出正态分布。", "The sample mean has variance $\\sigma^2/n$ and standard deviation $\\sigma/\\sqrt n$. The central limit theorem says the standardised distribution tends to $N(0,1)$; the source does not become normal, and the law of large numbers does not itself produce a normal law."),
+  },
+  {
+    id: "central-limit-theorem-4", concept: "central-limit-theorem", kind: "choice",
+    statement: b("设 $X\\sim B(1000,0.005)$。要近似 $X$ 的分布，下列哪个判断更合适？", "Let $X\\sim B(1000,0.005)$. Which approximation is more appropriate for the distribution of $X$?"),
+    options: [b("直接认为 $X$ 连续且服从正态分布，不需要考虑偏斜", "Treat $X$ as continuous and normal without considering skewness"), b("Poisson(5) 通常比正态近似更合适，因为 $p$ 很小", "Poisson(5) is usually more suitable than a normal approximation because $p$ is small"), b("只要 $n=1000$ 很大，任何近似都一定准确", "Since $n=1000$ is large, every approximation must be accurate"), b("$X$ 的期望是 $1000$，所以只能用正态近似", "$EX=1000$, so only a normal approximation is possible")],
+    correct: 1,
+    hint: b("比较 $\\lambda=np=5$ 与 $p=0.005$，回顾 Poisson 近似的适用条件。", "Compare $\\lambda=np=5$ with $p=0.005$, and recall when the Poisson approximation works."),
+    solution: b("$np=5$ 且 $p=0.005$ 很小，稀有成功事件的计数用 Poisson(5) 通常更自然。正态近似没有考虑偏斜和离散性时会更差；$n$ 大并不保证任何近似都准确。", "Here $np=5$ and $p=0.005$ is small, so Poisson(5) is usually a more natural approximation for a count of rare successes. A normal approximation can be worse if it ignores skewness and discreteness; large $n$ alone does not guarantee accuracy."),
+  },
 ];
 
 export function exercisesForConcept(slug: string): Exercise[] {
