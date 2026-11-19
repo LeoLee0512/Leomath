@@ -1,0 +1,142 @@
+## 从一个问题开始
+
+<Problem>
+同一台仪器反复测量一个量，每次读数都有随机误差。把很多次读数取平均，误差会减小，这我们已经由大数定律知道了：若每次误差的方差是 $\sigma^2$，$n$ 次读数的平均误差的方差就是 $\sigma^2/n$。
+
+但还有一层更精细的问题：平均误差的**分布**长什么样？如果单次误差很偏斜，要么取 $0$、要么取 $1$，平均以后也会偏斜吗？为什么许多完全不同的随机现象，独立重复足够多次以后，都会显出一条相似的钟形曲线？
+</Problem>
+
+<Observe>
+先不要看定理。选 Bernoulli($p$)，保持 $p=0.1$：$n=1$ 时样本均值就是一次观测，所以直方图也只有 $0$ 和 $1$ 两根柱子。把 $n$ 依次调到 $10$、$30$、$100$，看直方图的形状和宽度怎样变化。再换成均匀分布和指数分布，最后点“标准化后”。
+
+**改变的是谁的分布？原始数据会随 $n$ 增大而变成正态分布吗？**
+</Observe>
+
+<Experiment slug="sample-mean-clt" />
+
+<Conjecture>
+样本均值的中心仍是原来的期望 $\mu$，宽度却按 $\sigma/\sqrt n$ 缩小。随着 $n$ 增大，样本均值的形状越来越接近正态曲线；减去 $\mu$、再除以 $\sigma/\sqrt n$ 后，不同母分布似乎都趋向同一条 $N(0,1)$ 曲线。
+
+前一句话关于“中心与宽度”，后一句话关于“形状”。它们分别是大数定律与中心极限定理的内容，不能混为一谈。
+</Conjecture>
+
+## 定义
+
+<Definition title="独立同分布与样本均值">
+随机变量 $X_1,X_2,\dots$ **独立同分布**（i.i.d.），是指它们相互独立，并且服从同一个分布。记它们的共同期望为 $\mu=EX_i$、共同方差为 $\sigma^2=\operatorname{Var}X_i$，并设 $\sigma^2<\infty$。前 $n$ 个变量的**样本均值**是
+$$\bar X_n=\frac{X_1+\cdots+X_n}{n}.$$
+</Definition>
+
+由[期望与方差](/zh/concepts/expectation-variance)一节的线性性和独立变量的方差可加性，
+$$E\bar X_n=\mu,\qquad \operatorname{Var}\bar X_n=\frac{\sigma^2}{n}.$$
+因此样本均值的分布是否接近正态，和母分布是否正态是两个独立的问题。
+
+<Definition title="依分布收敛">
+若随机变量 $Z_n$ 的分布函数 $F_n$ 在 $Z$ 的分布函数 $F$ 的每个连续点 $x$ 上都满足
+$$F_n(x)\longrightarrow F(x),$$
+就称 $Z_n$ **依分布收敛**到 $Z$，记作 $Z_n\Rightarrow Z$。只要求分布函数的连续点，是为了避开离散分布的跳点，并不要求 $Z_n(\omega)$ 在每个样本点上都接近 $Z(\omega)$。
+</Definition>
+
+<Definition title="特征函数">
+随机变量 $X$ 的**特征函数**是
+$$\varphi_X(t)=E\bigl[e^{itX}\bigr],\qquad t\in\mathbb R.$$
+由于 $|e^{itX}|=1$，这个期望总是存在。标准正态分布 $N(0,1)$ 的特征函数是 $e^{-t^2/2}$。
+</Definition>
+
+## 定理与证明
+
+<Proposition title="特征函数的基本性质">
+对常数 $a,b$，
+$$\varphi_{aX+b}(t)=e^{itb}\varphi_X(at).$$
+若 $X$ 与 $Y$ 独立，则
+$$\varphi_{X+Y}(t)=\varphi_X(t)\varphi_Y(t).$$
+</Proposition>
+
+<Proof>
+由指数函数的性质和[独立时乘积的期望可以拆开](/zh/concepts/expectation-variance)，
+$$\varphi_{aX+b}(t)=E\bigl[e^{it(aX+b)}\bigr]=e^{itb}E\bigl[e^{iatX}\bigr]=e^{itb}\varphi_X(at),$$
+$$\varphi_{X+Y}(t)=E\bigl[e^{itX}e^{itY}\bigr]=E\bigl[e^{itX}\bigr]E\bigl[e^{itY}\bigr]=\varphi_X(t)\varphi_Y(t).$$
+</Proof>
+
+<Proposition title="有限方差时的二阶展开">
+若 $EX^2<\infty$，则对每个固定的 $t$，
+$$\varphi_X(t)=1+i\mu t-\frac{\sigma^2+\mu^2}{2}t^2+o(t^2)\qquad(t\to0),$$
+其中 $\mu=EX$，$\sigma^2=\operatorname{Var}X$。特别地，若 $EX=0$，则 $\varphi_X(t)=1-\frac{\sigma^2}{2}t^2+o(t^2)$。
+</Proposition>
+
+<Proof>
+Taylor 展开给出
+$$e^{itx}=1+itx-\frac{t^2x^2}{2}+R(t,x),$$
+并有常用估计 $|R(t,x)|\le |t|^3|x|^3/6$ 和 $|R(t,x)|\le t^2x^2$。于是
+$$\varphi_X(t)=1+i\mu t-\frac{EX^2}{2}t^2+E\bigl[R(t,X)\bigr].$$
+只需证明 $E[R(t,X)]=o(t^2)$。任取 $\varepsilon>0$，由 $EX^2<\infty$，可选取 $M$ 使 $E\bigl[X^2\mathbf 1_{|X|>M}\bigr]<\varepsilon$。在 $|X|\le M$ 上用第一个估计，在 $|X|>M$ 上用第二个估计：
+$$E|R(t,X)|\le \frac{|t|^3M^3}{6}+t^2\varepsilon.$$
+两边除以 $t^2$ 并令 $t\to0$，得 $\limsup_{t\to0}|E[R(t,X)]|/t^2\le\varepsilon$。由于 $\varepsilon$ 任意，余项为 $o(t^2)$。最后代入 $EX^2=\sigma^2+\mu^2$ 即可。这个证明只要求二阶矩，不要求三阶矩。
+</Proof>
+
+<Proposition title="Lévy 连续性定理">
+若对每个实数 $t$ 都有 $\varphi_{Z_n}(t)\to\varphi_Z(t)$，则 $Z_n\Rightarrow Z$。
+</Proposition>
+
+这是特征函数成为研究分布极限的工具的原因。它是 Lévy 连续性定理，本节把它作为分析工具引用；下面证明中心极限定理时，只需验证特征函数逐点收敛。
+
+<Theorem title="独立同分布的中心极限定理">
+设 $X_1,X_2,\dots$ 独立同分布，$EX_i=\mu$，$\operatorname{Var}X_i=\sigma^2>0$ 且有限。则
+$$Z_n=\frac{\bar X_n-\mu}{\sigma/\sqrt n}\ \Longrightarrow\ N(0,1).$$
+也就是说，对任意实数 $x$，
+$$P\bigl(Z_n\le x\bigr)\longrightarrow \Phi(x)=\int_{-\infty}^x\frac{e^{-u^2/2}}{\sqrt{2\pi}}\,du.$$
+</Theorem>
+
+<Proof>
+记 $S_n=X_1+\cdots+X_n$。由上面的性质和独立性，
+$$\varphi_{Z_n}(t)=e^{-it\mu\sqrt n/\sigma}\left[\varphi_X\!\left(\frac{t}{\sigma\sqrt n}\right)\right]^n.$$
+对固定的 $t$，当 $n\to\infty$ 时 $t/(\sigma\sqrt n)\to0$，由二阶展开得
+$$\varphi_X\!\left(\frac{t}{\sigma\sqrt n}\right)=1-\frac{t^2}{2n}+o\!\left(\frac1n\right).$$
+因此
+$$\varphi_{Z_n}(t)=\left[1+\frac{-t^2/2+o(1)}{n}\right]^n\longrightarrow e^{-t^2/2}.$$
+这里使用了标准极限：若 $z_n\to z$，则 $(1+z_n/n)^n\to e^z$；当 $n$ 足够大时可取主分支对数，$\log(1+z_n/n)=z_n/n+O(1/n^2)$。右端正是 $N(0,1)$ 的特征函数，由 Lévy 连续性定理，$Z_n\Rightarrow N(0,1)$。
+</Proof>
+
+定理没有要求母分布是正态，也没有要求它有密度、有三阶矩或有界。**独立同分布和有限方差才是关键条件。** 中心化的方式也有固定含义：先减 $\mu$，再除以 $\sigma/\sqrt n$，而不是除以 $\sigma/n$。
+
+<Warning>
+**大数定律和中心极限定理不是一回事。** 大数定律说 $\bar X_n-\mu$ 依概率趋于 $0$，偏差的典型尺度是 $\sigma/\sqrt n$；中心极限定理把这个偏差乘以 $\sqrt n/\sigma$ 后再看，得到标准正态分布。前者讲“平均会稳定在哪里”，后者讲“标准化后的波动是什么形状”。
+</Warning>
+
+<Warning>
+**母分布不会因为 $n$ 增大而变成正态。** $X_i$ 仍服从原来的 Bernoulli、均匀或指数分布。趋向正态的是 $\bar X_n$ 的分布。离散母分布还有格点效应：Bernoulli 的样本均值只能取间隔为 $1/n$ 的值，正态曲线是连续近似，不是逐点概率的替代。
+</Warning>
+
+<Warning>
+**独立同分布不能随意删掉。** 若所有误差都含同一个公共部分，即使每个误差方差有限，公共部分也不会被平均消去；上一节中 $\operatorname{Var}\bar X_n\to\rho\sigma^2$ 就是例子。若方差无限，二阶展开和本节的证明也不再成立，还可能出现不同于正态的极限分布。
+</Warning>
+
+## 应用
+
+<Application title="二项分布的正态近似与连续性修正">
+设 $X\sim B(n,p)$，则 $X$ 是 $n$ 个独立示性变量之和，$EX=np$，$\operatorname{Var}X=np(1-p)$。当 $n$ 较大且 $np(1-p)$ 不太小时，可以近似
+$$\frac{X-np}{\sqrt{np(1-p)}}\approx N(0,1).$$
+由于 $X$ 取整数值，计算区间概率时把边界移动 $0.5$，称为**连续性修正**：
+$$P(a\le X\le b)\approx \Phi\!\left(\frac{b+0.5-np}{\sqrt{np(1-p)}}\right)-\Phi\!\left(\frac{a-0.5-np}{\sqrt{np(1-p)}}\right).$$
+例如 $X\sim B(100,0.5)$，则 $EX=50$、$\operatorname{Var}X=25$，
+$$P(45\le X\le55)\approx \Phi(1.1)-\Phi(-1.1)\approx0.7286.$$
+这里 $45$ 和 $55$ 恰好关于 $50$ 对称，所以左右各修正 $0.5$ 后 $z=(55.5-50)/5=1.1$。
+</Application>
+
+<Application title="正态近似还是 Poisson 近似？">
+若 $n$ 大而 $p$ 小，$X\sim B(n,p)$ 表示许多稀有成功事件的计数，[Poisson 近似](/zh/concepts/random-variables)通常更自然，因为成功次数仍是非负整数，分布可能明显右偏。若 $p$ 不接近 $0$ 或 $1$，且 $np(1-p)$ 较大，正态近似通常更好。选择近似时要看分布形状和参数，不只是看 $n$ 的大小。
+</Application>
+
+<Application title="重复测量的误差">
+独立重复测量时，$\bar X_n-\mu$ 的标准差是 $\sigma/\sqrt n$，中心极限定理进一步给出近似置信区间。例如近似地有
+$$P\!\left(|\bar X_n-\mu|\le1.96\frac{\sigma}{\sqrt n}\right)\approx0.95.$$
+这解释了“多测几次”不仅能让误差变小，还能用正态曲线估计误差落在某个范围内的概率。若测量误差存在共同偏差或强相关，则不能直接套用这个公式。
+</Application>
+
+<Tool id="plot" />
+
+在绘图器里画 `exp(-x^2/2)/sqrt(2*pi)`，这是 $N(0,1)$ 的密度。再画 `exp(-(x-1)^2/(2*0.25))/(0.5*sqrt(2*pi))`，比较中心和宽度：后者是均值为 $1$、标准差为 $0.5$ 的正态密度。实验中的标准化，就是把不同样本均值的分布都变成前一种形状。
+
+<Remark>
+中心极限定理解释了独立小误差叠加后为什么常出现钟形，却没有说所有随机现象都服从正态。它讨论的是**独立同分布项的和**。把每一步独立增量连续地接起来，就会通向随机游走和 Brown 运动；这也是概率论继续连接分析与微分方程的一条路。
+</Remark>

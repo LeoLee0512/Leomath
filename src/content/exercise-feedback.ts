@@ -122,6 +122,18 @@ export const optionFeedback: Record<string, Bilingual[]> = {
     b("e^{−1}≈0.368 是“没有一个人拿对”的概率的近似值，是一个概率，不是人数的期望。", "e^{−1}≈0.368 approximates the probability that nobody gets their own hat: a probability, not the expected count."),
     b("期望的线性性对任何随机变量都成立，不需要独立。需要独立的是“方差相加”和“乘积的期望拆开”。", "Linearity of expectation holds for any random variables, independent or not. It is additivity of variance and splitting E(XY) that need independence."),
   ],
+  "central-limit-theorem-3": [
+    b("趋于正态的是样本均值的分布，母分布不会随 n 改变。", "It is the sample mean's distribution that tends to normal, not the source distribution."),
+    b("大数定律说平均值趋于稳定，并不直接给出正态分布；标准化后的形状属于中心极限定理。", "The law of large numbers says the average stabilises; it does not itself give a normal law. The standardised shape belongs to the central limit theorem."),
+    b("样本均值的标准差是 σ/√n；再减 μ、除以 σ/√n 后，由中心极限定理趋于 N(0,1)。", "The sample mean has standard deviation σ/√n. Subtracting μ and dividing by σ/√n leads to N(0,1) by the central limit theorem."),
+    b("方差按 1/n 缩小，标准差按 1/√n 缩小；而且分布形状正是中心极限定理所关心的。", "Variance shrinks like 1/n and standard deviation like 1/√n. Shape is exactly what the central limit theorem addresses."),
+  ],
+  "central-limit-theorem-4": [
+    b("X 是离散的且可能偏斜，不能直接当作连续正态变量。", "X is discrete and may be skewed, so it cannot simply be treated as continuous and normal."),
+    b("np=5 且 p=0.005 很小，稀有事件计数用 Poisson(5) 通常比正态近似更自然。", "Here np=5 and p=0.005 is small, so Poisson(5) is usually a more natural approximation for rare-event counts than a normal law."),
+    b("近似是否合适取决于 p 和分布形状，n 大并不保证任何近似都准确。", "Whether an approximation works depends on p and the shape; large n alone does not guarantee accuracy."),
+    b("期望是 np=5，不是 1000。正态与 Poisson 都只是近似，要按参数选择。", "The mean is np=5, not 1000. Normal and Poisson are both approximations, chosen according to the parameters."),
+  ],
 };
 
 /** A specific wrong numeric answer and what it usually means. Checked before the generic diagnoses. */
@@ -181,5 +193,15 @@ export const numericMistakes: Record<string, KnownMistake[]> = {
     { value: 0.5, feedback: b("0.5 是 λ，即每页的平均错误数。没有错误的概率是 P(Y=0)=e^{−λ}。", "0.5 is λ, the average number of misprints per page. The chance of none is P(Y=0)=e^{−λ}.") },
     { value: 1 - Math.exp(-0.5), feedback: b("这是“至少有一处错误”的概率 1−e^{−0.5}，题目问的是没有错误。", "That is the chance of at least one misprint, 1−e^{−0.5}; the question asks for none.") },
     { value: 0.5 * Math.exp(-0.5), feedback: b("λe^{−λ} 是恰好一处错误的概率 P(Y=1)，没有错误是 P(Y=0)。", "λe^{−λ} is the chance of exactly one misprint, P(Y=1); none is P(Y=0).") },
+  ],
+  "central-limit-theorem-1": [
+    { value: 3, feedback: b("3 是单次观测的标准差；36 次取平均后，方差要除以 36。", "3 is the standard deviation of one observation; averaging 36 of them divides the variance by 36.") },
+    { value: 0.25, feedback: b("0.25 是样本均值的方差，不是标准差，还要开方得到 0.5。", "0.25 is the variance of the sample mean, not its standard deviation; take the square root to get 0.5.") },
+    { value: 0.08333333333333333, feedback: b("1/12≈0.0833 是样本均值方差 9/36=1/4 再误除以 3；正确做法是 σ²/n 后开方。", "1/12≈0.0833 comes from dividing the variance 9/36=1/4 incorrectly by 3. Compute σ²/n, then take the square root.") },
+  ],
+  "central-limit-theorem-2": [
+    { value: 0.8643, feedback: b("0.8643≈Φ(1.1)，这只是右尾一侧的值；区间概率还要减去 Φ(−1.1)。", "0.8643≈Φ(1.1) is only one side. For the interval probability, subtract Φ(−1.1) too.") },
+    { value: 0.2714, feedback: b("0.2714 约是 1−0.7286，求成了区间之外的概率。题目问的是 45 到 55 之间。", "0.2714 is about 1−0.7286, the probability outside the interval. The question asks for the probability between 45 and 55.") },
+    { value: 0.7286 - 0.05, feedback: b("结果很接近，但可能没有正确使用连续性修正；上下界应取 44.5 和 55.5，z=±1.1。", "This is close, but check the continuity correction: the boundaries should be 44.5 and 55.5, giving z=±1.1.") },
   ],
 };

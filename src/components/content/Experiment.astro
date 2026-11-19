@@ -22,6 +22,7 @@ import EpsilonBand from "@/components/experiments/islands/EpsilonBand";
 import BasisCoordinates from "@/components/experiments/islands/BasisCoordinates";
 import ProjectionSlack from "@/components/experiments/islands/ProjectionSlack";
 import CorrelationAngle from "@/components/experiments/islands/CorrelationAngle";
+import SampleMeanClt from "@/components/experiments/islands/SampleMeanClt";
 
 interface Props {
   slug: string;
@@ -69,6 +70,7 @@ const props = exp && {
   {exp.kind === "basis-coordinates" && <BasisCoordinates client:visible {...props} />}
   {exp.kind === "projection-slack" && <ProjectionSlack client:visible {...props} />}
   {exp.kind === "correlation-angle" && <CorrelationAngle client:visible {...props} />}
+  {exp.kind === "sample-mean-clt" && <SampleMeanClt client:visible {...props} />}
     <CreditLine credits={exp.credits} class="mt-1" />
     {exp.observe && <ObservationPanel observe={exp.observe} />}
   </figure>
