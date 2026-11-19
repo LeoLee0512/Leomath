@@ -37,7 +37,7 @@ No new nodes until the existing ones are complete. `node scripts/audit-chain.mjs
 
 - [x] Experiments for Limits (ε–N band on a sequence), Vectors (basis and coordinates), Inner products (projection and the Cauchy–Schwarz slack).
 - [x] A definition block for the mean value theorem article: local extrema and stationary points, with Fermat's lemma proved on its own.
-- [ ] Observation questions reviewed against what the experiments actually show.
+- [x] Observation questions reviewed against what the experiments actually show. Riemann sums now respects interval orientation, so reversing a and b flips the sign.
 
 - [x] Lighter pages: Astro islands instead of Next.js hydration, MathML (Temml) instead of KaTeX.
 

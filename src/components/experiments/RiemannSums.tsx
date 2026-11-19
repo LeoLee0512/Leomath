@@ -32,8 +32,8 @@ export function RiemannSums({ locale }: { locale: Locale }) {
   const [rule, setRule] = useUrlState<Rule>("rule", "left", RULES);
   const p = getPreset(fid);
   const lo = p.domain ? Math.max(p.domain[0], -3) : -3;
-  const aa = Math.max(lo, Math.min(a, b));
-  const bb = Math.max(aa + 0.05, Math.max(a, b));
+  const aa = Math.max(lo, a);
+  const bb = Math.max(lo, b);
 
   const { sum, exact } = useMemo(() => {
     const dx = (bb - aa) / n;
