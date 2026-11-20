@@ -8,9 +8,9 @@ import { defineAction, type ActionAPIContext } from "astro:actions";
 import { z } from "astro/zod";
 import { isLocale, type Locale } from "@/i18n/config";
 import { getDictionary } from "@/i18n/dictionaries";
-import { createUser, endSession, startSession, verifyUser } from "@/lib/auth";
+import { createUserAndSession, endSession, startSession, verifyUser } from "@/lib/auth";
 import { hasDatabase } from "@/lib/db";
-import { recordAttempt, setProgress, type ProgressStatus } from "@/lib/progress";
+import { recordAttempt, setProgress, canRecordProgress, type ProgressStatus } from "@/lib/progress";
 import { addComment, deleteComment, isAdmin, postedRecently, COMMENT_MAX_LENGTH, type CommentTarget } from "@/lib/comments";
 import { normaliseBody } from "@/lib/comments-format";
 import { checkAnswer, diagnose, getExercise, type Diagnosis } from "@/content/exercises";
@@ -85,6 +85,8 @@ const commentInput = z.object({
   body: z.string().transform(normaliseBody).pipe(z.string().min(1).max(COMMENT_MAX_LENGTH)),
 });
 
+const EXERCISE_LIMIT = 120;
+
 function targetExists(type: CommentTarget["type"], slug: string): boolean {
   if (type === "concept") return getConcept(slug)?.status === "published";
   if (type === "experiment") return Boolean(getExperiment(slug));
@@ -112,8 +114,7 @@ export const server = {
         return { ok: false, error: issue.path[0] === "email" ? t.invalidEmail : t.shortPassword, email: echo };
       }
       try {
-        const user = await createUser(parsed.data.email, parsed.data.password, parsed.data.displayName || null, locale);
-        await startSession(context.cookies, user.id);
+        await createUserAndSession(parsed.data.email, parsed.data.password, parsed.data.displayName || null, locale, context.cookies);
       } catch (err) {
         const code = (err as { code?: string }).code;
         return { ok: false, error: code === "23505" ? t.emailTaken : t.generic, email: echo };
@@ -190,7 +191,7 @@ export const server = {
       const user = context.locals.user;
       const slug = String(form.get("slug") ?? "");
       const status = String(form.get("status") ?? "") as ProgressStatus;
-      if (user && getConcept(slug) && ["none", "learning", "done"].includes(status)) await setProgress(user.id, slug, status);
+      if (user && canRecordProgress(slug, status)) await setProgress(user.id, slug, status);
       return { ok: true, redirect: `/${locale}/concepts/${getConcept(slug) ? slug : ""}` };
     },
   }),
@@ -200,6 +201,9 @@ export const server = {
     handler: async (form: FormData, context): Promise<AnswerResult> => {
       const id = String(form.get("exercise") ?? "");
       const answer = String(form.get("answer") ?? "").trim().slice(0, 200);
+      const exerciseKey = `exercise:${ip(context)}`;
+      if (isLimited(exerciseKey, EXERCISE_LIMIT)) return { exercise: id, checked: false, correct: false, answer };
+      record(exerciseKey, ONE_HOUR);
       const exercise = getExercise(id);
       if (!exercise || !answer) return { exercise: id, checked: false, correct: false, answer };
       const correct = checkAnswer(exercise, answer);
@@ -213,7 +217,10 @@ export const server = {
   /** A hint or solution as HTML, fetched when the reader opens it. */
   exerciseText: defineAction({
     input: z.object({ id: z.string().max(80), part: z.enum(["hint", "solution"]), locale: z.string().max(5) }),
-    handler: async ({ id, part, locale }): Promise<string> => {
+    handler: async ({ id, part, locale }, context): Promise<string> => {
+      const exerciseKey = `exercise:${ip(context)}`;
+      if (isLimited(exerciseKey, EXERCISE_LIMIT)) return `<p>${getDictionary(isLocale(locale) ? locale : "zh").auth.errors.tooMany}</p>`;
+      record(exerciseKey, ONE_HOUR);
       const exercise = getExercise(id);
       return exercise ? richHtml(exercise[part][isLocale(locale) ? locale : "zh"]) : "";
     },

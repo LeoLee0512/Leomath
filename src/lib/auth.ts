@@ -1,7 +1,8 @@
 import { createHash, randomBytes } from "node:crypto";
 import type { AstroCookies } from "astro";
+import type { Queryable } from "./account";
 import bcrypt from "bcryptjs";
-import { db, hasDatabase } from "./db";
+import { db, hasDatabase, withTransaction } from "./db";
 
 export const SESSION_COOKIE = "leomath_session";
 const SESSION_DAYS = 30;
@@ -18,9 +19,9 @@ function hashToken(token: string): string {
   return createHash("sha256").update(token).digest("hex");
 }
 
-export async function createUser(email: string, password: string, displayName: string | null, locale: string): Promise<User> {
+async function insertUser(client: Queryable, email: string, password: string, displayName: string | null, locale: string): Promise<User> {
   const passwordHash = await bcrypt.hash(password, 12);
-  const { rows } = await db().query<{ id: string; email: string; display_name: string | null; is_admin: boolean }>(
+  const { rows } = await client.query<{ id: string; email: string; display_name: string | null; is_admin: boolean }>(
     `INSERT INTO users(email, password_hash, display_name, locale)
      VALUES ($1, $2, $3, $4) RETURNING id, email, display_name, is_admin`,
     [email.toLowerCase(), passwordHash, displayName, locale],
@@ -28,10 +29,25 @@ export async function createUser(email: string, password: string, displayName: s
   return { id: rows[0].id, email: rows[0].email, displayName: rows[0].display_name, isAdmin: rows[0].is_admin };
 }
 
+export async function createUser(email: string, password: string, displayName: string | null, locale: string): Promise<User> {
+  return insertUser(db(), email, password, displayName, locale);
+}
+
+export async function createUserAndSession(email: string, password: string, displayName: string | null, locale: string, cookies: AstroCookies): Promise<User> {
+  const { user, token, expires } = await withTransaction(async (client) => {
+    const user = await insertUser(client, email, password, displayName, locale);
+    const { token, expires } = newSession();
+    await insertSession(client, user.id, token, expires);
+    return { user, token, expires };
+  });
+  setSessionCookie(cookies, token, expires);
+  return user;
+}
+
 export async function verifyUser(email: string, password: string): Promise<User | null> {
   const { rows } = await db().query<{ id: string; email: string; display_name: string | null; is_admin: boolean; password_hash: string }>(
     "SELECT id, email, display_name, is_admin, password_hash FROM users WHERE email = $1",
-    [email.toLowerCase()],
+    [email.trim().toLowerCase()],
   );
   if (rows.length === 0) {
     // Burn comparable time so timing does not reveal whether the email exists.
@@ -43,13 +59,18 @@ export async function verifyUser(email: string, password: string): Promise<User 
   return { id: rows[0].id, email: rows[0].email, displayName: rows[0].display_name, isAdmin: rows[0].is_admin };
 }
 
-export async function startSession(cookies: AstroCookies, userId: string): Promise<void> {
-  const token = randomBytes(32).toString("base64url");
-  const expires = new Date(Date.now() + SESSION_DAYS * 86_400_000);
-  await db().query(
+function newSession(): { token: string; expires: Date } {
+  return { token: randomBytes(32).toString("base64url"), expires: new Date(Date.now() + SESSION_DAYS * 86_400_000) };
+}
+
+async function insertSession(client: Queryable, userId: string, token: string, expires: Date): Promise<void> {
+  await client.query(
     "INSERT INTO sessions(token_hash, user_id, expires_at) VALUES ($1, $2, $3)",
     [hashToken(token), userId, expires],
   );
+}
+
+function setSessionCookie(cookies: AstroCookies, token: string, expires: Date): void {
   cookies.set(SESSION_COOKIE, token, {
     httpOnly: true,
     sameSite: "lax",
@@ -57,6 +78,12 @@ export async function startSession(cookies: AstroCookies, userId: string): Promi
     path: "/",
     expires,
   });
+}
+
+export async function startSession(cookies: AstroCookies, userId: string): Promise<void> {
+  const { token, expires } = newSession();
+  await insertSession(db(), userId, token, expires);
+  setSessionCookie(cookies, token, expires);
 }
 
 export async function endSession(cookies: AstroCookies): Promise<void> {

@@ -1,6 +1,11 @@
 import { db } from "./db";
+import { getConcept } from "@/content/graph";
 
 export type ProgressStatus = "none" | "learning" | "done";
+
+export function canRecordProgress(slug: string, status: string): boolean {
+  return getConcept(slug)?.status === "published" && ["none", "learning", "done"].includes(status);
+}
 
 export async function getProgress(userId: string): Promise<Record<string, ProgressStatus>> {
   const { rows } = await db().query<{ concept_slug: string; status: "learning" | "done" }>(

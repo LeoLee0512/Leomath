@@ -11,12 +11,31 @@ const TYPES = ["application/csp-report", "application/reports+json", "applicatio
 // eslint-disable-next-line no-control-regex
 const clean = (v: unknown) => String(v ?? "").replace(/[\u0000-\u001f\u007f-\u009f]/g, " ").slice(0, 200);
 
+export async function readLimitedText(request: Request, maxBytes: number): Promise<string> {
+  if (!request.body) return "";
+  const reader = request.body.getReader();
+  const decoder = new TextDecoder();
+  let size = 0;
+  let text = "";
+  while (true) {
+    const { done, value } = await reader.read();
+    if (done) break;
+    size += value.byteLength;
+    if (size > maxBytes) {
+      await reader.cancel().catch(() => undefined);
+      throw new Error("request body too large");
+    }
+    text += decoder.decode(value, { stream: true });
+  }
+  return text + decoder.decode();
+}
+
 export const POST: APIRoute = async ({ request }) => {
   const type = (request.headers.get("content-type") ?? "").split(";")[0].trim().toLowerCase();
   const length = Number(request.headers.get("content-length") ?? "0");
   if (!TYPES.includes(type) || length > MAX_BYTES) return new Response(null, { status: 204 });
   try {
-    const text = (await request.text()).slice(0, MAX_BYTES);
+    const text = await readLimitedText(request, MAX_BYTES);
     const parsed = JSON.parse(text) as unknown;
     // Two formats: { "csp-report": {...} } (report-uri) or [{ body: {...} }] (Reporting API).
     const r = ((parsed as { "csp-report"?: Record<string, unknown> })["csp-report"] ??
