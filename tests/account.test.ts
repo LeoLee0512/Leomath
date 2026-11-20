@@ -5,6 +5,7 @@ import { PGlite } from "@electric-sql/pglite";
 import { pgcrypto } from "@electric-sql/pglite/contrib/pgcrypto";
 import bcrypt from "bcryptjs";
 import { deleteAccount, exportUserData, passwordMatches, type Queryable } from "@/lib/account";
+import { verifyUser } from "@/lib/auth";
 
 // A real Postgres (compiled to WebAssembly) running the site's own migrations.
 let pg: PGlite;
@@ -29,6 +30,8 @@ async function count(table: string, userId: string): Promise<number> {
 
 beforeAll(async () => {
   pg = new PGlite({ extensions: { pgcrypto } });
+  process.env.DATABASE_URL = "postgres://account-test";
+  globalThis.__leomathPool = pg as never;
   const dir = path.resolve("db/migrations");
   for (const f of (await readdir(dir)).filter((x) => x.endsWith(".sql")).sort()) {
     await pg.exec(await readFile(path.join(dir, f), "utf8"));
@@ -51,6 +54,11 @@ describe("account data export and deletion", () => {
     expect(await passwordMatches(id, "correct horse battery", q())).toBe(true);
     expect(await passwordMatches(id, "wrong password here", q())).toBe(false);
     expect(await passwordMatches("00000000-0000-0000-0000-000000000000", "anything", q())).toBe(false);
+  });
+
+  it("normalises email casing and surrounding whitespace at login", async () => {
+    await makeUser("trim@example.com", "correct horse battery");
+    expect(await verifyUser(" trim@example.com ", "correct horse battery")).not.toBeNull();
   });
 
   it("deleting an account removes every linked row, including soft-deleted comments, and nobody else's", async () => {

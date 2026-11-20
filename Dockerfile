@@ -15,6 +15,7 @@ COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 # The site URL decides which host the app trusts behind nginx (security.allowedDomains in astro.config.mjs).
 ARG SITE_URL=https://leomath.cn
+ENV NODE_ENV=production
 ENV ASTRO_TELEMETRY_DISABLED=1 SITE_URL=$SITE_URL
 RUN npm run build
 
